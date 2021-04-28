@@ -60,7 +60,7 @@ public class SecurityController {
         if ( authentication != null && authentication.isAuthenticated() ) {
             return ResponseEntity.ok().body( Map.of(
                     "access_token", this.jwtTokenHandler.createToken( this.userDetailsService.loadUserByUsername( ( String ) this.request.getParameter( "auth_username" ) ) ),
-                    "token_type", "bearer",
+                    "token_type", "Bearer",
                     "expire_in", Integer.valueOf( this.environment.getEnv( EnvironmentVariable.JWT_LIFE_TIME ) )
             ) );
         }

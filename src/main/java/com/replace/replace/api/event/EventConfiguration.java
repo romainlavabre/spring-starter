@@ -5,7 +5,6 @@ import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.history.HistoryHandler;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.api.upload.UploadHandler;
-import com.replace.replace.model.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,20 +22,20 @@ public class EventConfiguration implements Event {
     protected HistoryHandler historyHandler;
 
     public EventConfiguration(
-            UploadHandler uploadHandler,
-            HistoryHandler historyHandler ) {
+            final UploadHandler uploadHandler,
+            final HistoryHandler historyHandler ) {
         this.uploadHandler  = uploadHandler;
         this.historyHandler = historyHandler;
     }
 
-    @UnitEvent( name = TRANSACTION_SUCCESS )
+    @UnitEvent( name = Event.TRANSACTION_SUCCESS )
     public Map< String, Class > transactionSuccess() {
         return new HashMap<>();
     }
 
-    @Subscribers( event = TRANSACTION_SUCCESS )
+    @Subscribers( event = Event.TRANSACTION_SUCCESS )
     public List< EventSubscriber > subscribersTransactionSuccess() {
-        List< EventSubscriber > list = new ArrayList<>();
+        final List< EventSubscriber > list = new ArrayList<>();
 
         list.add( this.uploadHandler );
         list.add( this.historyHandler );
@@ -44,9 +43,9 @@ public class EventConfiguration implements Event {
         return list;
     }
 
-    @UnitEvent( name = PRODUCT_NAME_ALTERED )
+    @UnitEvent( name = Event.PRODUCT_NAME_ALTERED )
     public Map< String, Class > productNameAltered() {
-        Map< String, Class > map = new HashMap<>();
+        final Map< String, Class > map = new HashMap<>();
 
         map.put( Request.class.getName(), Request.class );
         map.put( Product.class.getName(), Product.class );
