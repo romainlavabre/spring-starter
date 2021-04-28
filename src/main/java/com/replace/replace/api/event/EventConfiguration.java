@@ -3,7 +3,6 @@ package com.replace.replace.api.event;
 import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.history.HistoryHandler;
-import com.replace.replace.api.request.Request;
 import com.replace.replace.api.upload.UploadHandler;
 import org.springframework.stereotype.Service;
 
@@ -43,14 +42,5 @@ public class EventConfiguration implements Event {
         return list;
     }
 
-    @UnitEvent( name = Event.PRODUCT_NAME_ALTERED )
-    public Map< String, Class > productNameAltered() {
-        final Map< String, Class > map = new HashMap<>();
-
-        map.put( Request.class.getName(), Request.class );
-        map.put( Product.class.getName(), Product.class );
-
-        return map;
-    }
 
 }

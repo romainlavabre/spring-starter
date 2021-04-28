@@ -3,16 +3,14 @@ package com.replace.replace.api.upload;
 import com.replace.replace.api.event.EventSubscriber;
 import com.replace.replace.api.upload.annotation.*;
 import com.replace.replace.api.upload.exception.UploadException;
-import com.replace.replace.upload.DuplicationS3;
-import com.replace.replace.upload.MoveS3;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 public interface UploadHandler extends EventSubscriber {
 
-    @Move( moveRule = MoveS3.class )
-    @Duplication( duplicationRule = DuplicationS3.class )
+    @Move( moveRule = Object.class )
+    @Duplication( duplicationRule = Object.class )
     @AcceptType( types = {
             ContentTypeResolver.APPLICATION_PDF,
             ContentTypeResolver.IMAGE_PNG,
@@ -20,7 +18,7 @@ public interface UploadHandler extends EventSubscriber {
     } )
     @Size( size = 1250000 )
     @TransactionSynchronized
-    static final String DOCUMENT = "document";
+    String DOCUMENT = "document";
 
     /**
      * Upload a received file base on configuration
