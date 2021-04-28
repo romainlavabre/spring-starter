@@ -12,6 +12,13 @@ public interface DataStorageHandler {
      */
     void persist( Object entity );
 
+
+    /**
+     * @param entity Target unit of persistence
+     */
+    void remove( Object entity );
+
+
     /**
      * Commit in database
      */

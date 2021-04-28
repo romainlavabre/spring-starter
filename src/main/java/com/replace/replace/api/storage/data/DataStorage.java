@@ -16,17 +16,26 @@ public class DataStorage implements DataStorageHandler {
     protected EntityManager   entityManager;
     protected EventDispatcher eventDispatcher;
 
+
     public DataStorage(
-            EntityManager entityManager,
-            EventDispatcher eventDispatcher ) {
+            final EntityManager entityManager,
+            final EventDispatcher eventDispatcher ) {
         this.entityManager   = entityManager;
         this.eventDispatcher = eventDispatcher;
     }
 
+
     @Override
-    public void persist( Object entity ) {
+    public void persist( final Object entity ) {
         this.entityManager.persist( entity );
     }
+
+
+    @Override
+    public void remove( final Object entity ) {
+        this.entityManager.remove( entity );
+    }
+
 
     @Override
     public void save() {
