@@ -189,7 +189,8 @@ output:
 #### Multiple configurations
 
 ```java
-import com.replace.replace.api.json.GroupType;import com.replace.replace.api.json.annotation.Group;
+import com.replace.replace.api.json.GroupType;
+import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
 
 public class Sample{
@@ -202,7 +203,7 @@ public class Sample{
 
     @Json(groups = {
         @Group(object = true, onlyId = false, ascent = true),
-        @Group(object = true, key = "sample1_id")
+        @Group(name = GroupType.GROUP_NAME, object = true, key = "sample1_id")
     })
     private Sample1 sample1;
 }
