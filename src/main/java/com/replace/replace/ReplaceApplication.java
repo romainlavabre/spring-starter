@@ -4,35 +4,34 @@ import com.replace.replace.api.environment.Environment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class ReplaceApplication {
 
-	public static void main(String[] args) {
-		new ClassPathXmlApplicationContext( "ApplicationContext.xml" );
-		SpringApplication.run(ReplaceApplication.class, args);
-	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer( Environment environment ) {
+    public static void main( final String[] args ) {
+        SpringApplication.run( ReplaceApplication.class, args );
+    }
 
 
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings( CorsRegistry registry ) {
+    @Bean
+    public WebMvcConfigurer corsConfigurer( final Environment environment ) {
 
-				String pattern = "/**";
-				String origins = environment.getEnv( "request.allowed-origin" );
 
-				registry.addMapping( pattern )
-						.allowedMethods( "GET", "POST", "PUT", "DELETE" )
-						.allowedOrigins( origins )
-						.exposedHeaders( "Location", "Authorization" );
-			}
-		};
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings( final CorsRegistry registry ) {
 
-	}
+                final String pattern = "/**";
+                final String origins = environment.getEnv( "request.allowed-origin" );
+
+                registry.addMapping( pattern )
+                        .allowedMethods( "GET", "POST", "PUT", "DELETE" )
+                        .allowedOrigins( origins )
+                        .exposedHeaders( "Location", "Authorization" );
+            }
+        };
+
+    }
 }

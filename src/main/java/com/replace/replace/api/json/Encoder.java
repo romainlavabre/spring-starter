@@ -13,70 +13,78 @@ import java.util.*;
  */
 public class Encoder {
 
-    public static < T > Map< String, Object > encode( T entity ) {
+    public static < T > Map< String, Object > encode( final T entity ) {
 
-        return encode( entity, GroupType.DEFAULT );
+        return Encoder.encode( entity, GroupType.DEFAULT );
     }
 
-    public static Map< String, Object > encode( Map< String, Object > entity ) {
-        return encode( entity, GroupType.DEFAULT );
+
+    public static Map< String, Object > encode( final Map< String, Object > entity ) {
+        return Encoder.encode( entity, GroupType.DEFAULT );
     }
 
-    public static < T > List< Map< String, Object > > encode( List< T > entity ) {
-        return encode( entity, GroupType.DEFAULT );
+
+    public static < T > List< Map< String, Object > > encode( final List< T > entity ) {
+        return Encoder.encode( entity, GroupType.DEFAULT );
     }
 
-    public static < T > List< Map< String, Object > > encode( T[] entity ) {
-        return encode( entity, GroupType.DEFAULT );
+
+    public static < T > List< Map< String, Object > > encode( final T[] entity ) {
+        return Encoder.encode( entity, GroupType.DEFAULT );
     }
 
-    public static < T > Map< String, Object > encode( T entity, String group ) {
-        return core( entity, group );
+
+    public static < T > Map< String, Object > encode( final T entity, final String group ) {
+        return Encoder.core( entity, group );
     }
 
-    public static < T > Map< String, Object > encode( Map< String, T > entity, String group ) {
-        Map< String, Object > map = new HashMap<>();
 
-        for ( Map.Entry< String, T > entry : entity.entrySet() ) {
+    public static < T > Map< String, Object > encode( final Map< String, T > entity, final String group ) {
+        final Map< String, Object > map = new HashMap<>();
+
+        for ( final Map.Entry< String, T > entry : entity.entrySet() ) {
             map.put( entry.getKey(), Encoder.core( entry.getValue(), group ) );
         }
 
         return map;
     }
 
-    public static < T > List< Map< String, Object > > encode( List< T > entity, String group ) {
 
-        List< Map< String, Object > > list = new ArrayList<>();
+    public static < T > List< Map< String, Object > > encode( final List< T > entity, final String group ) {
 
-        for ( T unit : entity ) {
+        final List< Map< String, Object > > list = new ArrayList<>();
+
+        for ( final T unit : entity ) {
             list.add( Encoder.core( unit, group ) );
         }
 
         return list;
     }
 
-    public static < T > List< Map< String, Object > > encode( T[] entities, String group ) {
-        List< Map< String, Object > > list = new ArrayList<>();
 
-        for ( T unit : entities ) {
+    public static < T > List< Map< String, Object > > encode( final T[] entities, final String group ) {
+        final List< Map< String, Object > > list = new ArrayList<>();
+
+        for ( final T unit : entities ) {
             list.add( Encoder.core( unit, group ) );
         }
 
         return list;
     }
 
-    protected static Map< String, Object > core( Object entity, String targetGroup ) {
-        Map< String, Object > mapped = new HashMap<>();
 
-        for ( Field field : entity.getClass().getDeclaredFields() ) {
-            Json json = field.getAnnotation( Json.class );
+    protected static Map< String, Object > core( final Object entity, final String targetGroup ) {
+        final Map< String, Object > mapped = new HashMap<>();
+
+        for ( final Field field : entity.getClass().getDeclaredFields() ) {
+            final Json json = field.getAnnotation( Json.class );
 
             if ( json == null ) {
                 continue;
             }
 
             searchGroup:
-            for ( Group group : List.of( json.groups() ) ) {
+            for ( final Group group : List.of( json.groups() ) ) {
 
                 if ( !group.name().equals( targetGroup ) ) {
                     continue;
@@ -84,12 +92,12 @@ public class Encoder {
 
                 field.setAccessible( true );
 
-                String key    = group.key().isBlank() || group.key().isEmpty() ? field.getName() : group.key();
-                Object object = null;
+                final String key    = group.key().isBlank() || group.key().isEmpty() ? field.getName() : group.key();
+                Object       object = null;
 
                 try {
                     object = field.get( entity );
-                } catch ( IllegalAccessException e ) {
+                } catch ( final IllegalAccessException e ) {
                     e.printStackTrace();
                 }
 
@@ -105,29 +113,30 @@ public class Encoder {
 
                         boolean onArray = false;
 
-                        List< Object >  ids;
-                        List< Integer > nextIds = new ArrayList<>();
+                        final List< Object > ids;
+                        final List< Long >   nextIds = new ArrayList<>();
 
                         if ( object instanceof Map ) {
                             onArray = true;
-                            Map< Object, Object > map = ( Map< Object, Object > ) object;
+                            final Map< Object, Object > map = ( Map< Object, Object > ) object;
 
                             ids = new ArrayList( map.values() );
                         } else if ( object instanceof Collection ) {
                             onArray = true;
-                            ids     = ( List< Object > ) object;
+                            ids     = new ArrayList<>();
+                            (( Collection< ? > ) object).forEach( ids::add );
                         } else {
                             ids = List.of( object );
                         }
 
 
-                        for ( Object data : ids ) {
+                        for ( final Object data : ids ) {
 
                             try {
-                                Field relationId = data.getClass().getDeclaredField( "id" );
+                                final Field relationId = data.getClass().getDeclaredField( "id" );
                                 relationId.setAccessible( true );
-                                nextIds.add( ( Integer ) relationId.get( data ) );
-                            } catch ( IllegalAccessException | NoSuchFieldException e ) {
+                                nextIds.add( ( Long ) relationId.get( data ) );
+                            } catch ( final IllegalAccessException | NoSuchFieldException e ) {
                                 e.printStackTrace();
                             }
                         }
@@ -148,7 +157,7 @@ public class Encoder {
 
                         try {
                             object = (( Overwrite ) group.overwrite().newInstance()).overwrite( object );
-                        } catch ( InstantiationException | IllegalAccessException e ) {
+                        } catch ( final InstantiationException | IllegalAccessException e ) {
                             e.printStackTrace();
                         }
                     }
@@ -156,7 +165,7 @@ public class Encoder {
                     if ( !group.formatter().isInterface() ) {
                         try {
                             object = (( Formatter ) group.formatter().newInstance()).format( object );
-                        } catch ( InstantiationException | IllegalAccessException e ) {
+                        } catch ( final InstantiationException | IllegalAccessException e ) {
                             e.printStackTrace();
                         }
                     }
@@ -176,9 +185,9 @@ public class Encoder {
                 if ( !group.ascent() ) {
                     mapped.put( key, object );
                 } else {
-                    Map< String, Object > objectMap = ( Map< String, Object > ) object;
+                    final Map< String, Object > objectMap = ( Map< String, Object > ) object;
 
-                    for ( Map.Entry< String, Object > entry : objectMap.entrySet() ) {
+                    for ( final Map.Entry< String, Object > entry : objectMap.entrySet() ) {
                         mapped.put( entry.getKey(), entry.getValue() );
                     }
                 }

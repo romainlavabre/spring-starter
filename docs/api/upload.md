@@ -45,6 +45,24 @@ public interface UploadHandler extends EventSubscriber {
 - Max size is 1250000 bytes (10 MegaBits)
 - The file will be uploaded when transaction will be succeeded
 
+
+##### Payload
+
+```json
+{
+    "uploaded_file": {
+        "request_parameter_name": {
+            "name": "image_name",
+            "content-type": "content type",
+            "content": "base64",
+            "infos": {
+                "entity_id": 1
+            }
+        }
+    }
+}
+```
+
 ##### Exception
 
 You can accept all types:

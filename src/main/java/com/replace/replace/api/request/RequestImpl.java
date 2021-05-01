@@ -23,6 +23,7 @@ public class RequestImpl implements Request {
     private final HttpServletRequest    request;
     private final Map< String, Object > parameters;
 
+
     public RequestImpl() throws JsonProcessingException {
         this.parameters = new HashMap<>();
         this.request    = (( ServletRequestAttributes ) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -31,50 +32,58 @@ public class RequestImpl implements Request {
 
 
     @Override
-    public Object getParameter( String name ) {
+    public Object getParameter( final String name ) {
 
         return this.parameters.get( name );
     }
 
+
     @Override
-    public void setParameter( String name, Object value ) {
+    public void setParameter( final String name, final Object value ) {
         this.parameters.put( name, value );
     }
 
+
     @Override
-    public List< Object > getParameters( String name ) {
+    public List< Object > getParameters( final String name ) {
         return ( List< Object > ) this.parameters.get( name );
     }
 
+
     @Override
-    public String getQueryString( String name ) {
+    public String getQueryString( final String name ) {
         return ( String ) this.request.getAttribute( name );
     }
 
+
     @Override
-    public void setQueryString( String name, Object value ) {
+    public void setQueryString( final String name, final Object value ) {
         this.request.setAttribute( name, value );
     }
+
 
     @Override
     public String getClientIp() {
         return this.request.getRemoteAddr();
     }
 
+
     @Override
-    public UploadedFile getFile( String name ) {
+    public UploadedFile getFile( final String name ) {
         return ( UploadedFile ) this.parameters.get( name );
     }
 
+
     @Override
-    public List< UploadedFile > getFiles( String name ) {
+    public List< UploadedFile > getFiles( final String name ) {
         return ( List< UploadedFile > ) this.parameters.get( name );
     }
 
+
     @Override
-    public void setUploadedFile( String name, UploadedFile uploadedFile ) {
+    public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
         if ( this.parameters.get( name ) instanceof List ) {
-            List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
+            final List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
 
             uploadedFiles.add( uploadedFile );
 
@@ -85,35 +94,42 @@ public class RequestImpl implements Request {
 
     }
 
+
     @Override
-    public String getHeader( String name ) {
+    public String getHeader( final String name ) {
         return this.request.getHeader( name );
     }
+
 
     @Override
     public String getContentType() {
         return this.request.getContentType();
     }
 
+
     @Override
     public Integer getPort() {
         return this.request.getServerPort();
     }
+
 
     @Override
     public String getHost() {
         return this.request.getRemoteHost();
     }
 
+
     @Override
     public String getScheme() {
         return this.request.getScheme();
     }
 
+
     @Override
     public String getUri() {
         return this.request.getRequestURI();
     }
+
 
     @Override
     public String getBaseUrl() {
@@ -123,6 +139,7 @@ public class RequestImpl implements Request {
                 .replaceAll( this.getUri(), "" );
     }
 
+
     @Override
     public String getMethod() {
         return this.request.getMethod();
@@ -131,7 +148,7 @@ public class RequestImpl implements Request {
 
     private void parseJson() throws JsonProcessingException {
 
-        StringBuffer json = new StringBuffer();
+        final StringBuffer json = new StringBuffer();
 
         String         line   = null;
         BufferedReader reader = null;
@@ -142,36 +159,36 @@ public class RequestImpl implements Request {
             while ( (line = reader.readLine()) != null ) {
                 json.append( line );
             }
-        } catch ( IOException e ) {
+        } catch ( final IOException e ) {
             e.printStackTrace();
         }
 
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
-        Map< String, Object > map = objectMapper.readValue( json.toString(), HashMap.class );
+        final Map< String, Object > map = objectMapper.readValue( json.toString(), HashMap.class );
 
-        for ( Map.Entry< String, Object > input : map.entrySet() ) {
+        for ( final Map.Entry< String, Object > input : map.entrySet() ) {
 
             if ( input.getKey().equals( "uploaded_file" ) ) {
 
-                for ( Map.Entry< String, Map< String, Object > > entry : (( Map< String, Map< String, Object > > ) input.getValue()).entrySet() ) {
+                for ( final Map.Entry< String, Map< String, Object > > entry : (( Map< String, Map< String, Object > > ) input.getValue()).entrySet() ) {
 
                     if ( entry.getValue() instanceof Map ) {
-                        this.setUploadedFile( entry.getKey(), this.getUploadedFile( ( Map< String, Object > ) entry.getValue() ) );
+                        this.setUploadedFile( entry.getKey(), this.getUploadedFile( entry.getValue() ) );
                     }
 
                     if ( entry.getValue() instanceof List ) {
-                        for ( Map< String, Object > uploadedFile : ( List< Map< String, Object > > ) entry.getValue() ) {
+                        for ( final Map< String, Object > uploadedFile : ( List< Map< String, Object > > ) entry.getValue() ) {
 
                             if ( this.parameters.containsKey( entry.getKey() ) ) {
-                                List< UploadedFile > list = ( List< UploadedFile > ) this.parameters.get( entry.getKey() );
+                                final List< UploadedFile > list = ( List< UploadedFile > ) this.parameters.get( entry.getKey() );
                                 list.add( this.getUploadedFile( uploadedFile ) );
 
                                 continue;
                             }
 
-                            List< UploadedFile > list = new ArrayList<>();
+                            final List< UploadedFile > list = new ArrayList<>();
 
                             list.add( this.getUploadedFile( uploadedFile ) );
 
@@ -185,25 +202,25 @@ public class RequestImpl implements Request {
             }
 
             if ( input.getValue() instanceof Map ) {
-                Map< String, Object > secondLevel = ( Map< String, Object > ) input.getValue();
+                final Map< String, Object > secondLevel = ( Map< String, Object > ) input.getValue();
 
-                for ( Map.Entry< String, Object > content : secondLevel.entrySet() ) {
+                for ( final Map.Entry< String, Object > content : secondLevel.entrySet() ) {
                     this.parameters.put( input.getKey() + "_" + content.getKey(), content.getValue() );
                 }
             }
 
             if ( input.getValue() instanceof List ) {
 
-                for ( Map< String, Object > thirdLevel : ( List< HashMap< String, Object > > ) input.getValue() ) {
-                    for ( Map.Entry< String, Object > content : thirdLevel.entrySet() ) {
-                        String key = input.getKey() + "_" + content.getKey();
+                for ( final Map< String, Object > thirdLevel : ( List< HashMap< String, Object > > ) input.getValue() ) {
+                    for ( final Map.Entry< String, Object > content : thirdLevel.entrySet() ) {
+                        final String key = input.getKey() + "_" + content.getKey();
 
                         if ( this.parameters.containsKey( key ) ) {
-                            List< Object > list = ( List< Object > ) this.parameters.get( key );
+                            final List< Object > list = ( List< Object > ) this.parameters.get( key );
                             list.add( content.getValue() );
 
                         } else {
-                            List< Object > list = new ArrayList<>();
+                            final List< Object > list = new ArrayList<>();
                             list.add( content.getValue() );
 
                             this.parameters.put( key, list );
@@ -215,12 +232,13 @@ public class RequestImpl implements Request {
     }
 
 
-    protected UploadedFile getUploadedFile( Map< String, Object > map ) {
-        UploadedFile uploadedFile = new UploadedFileImpl();
+    protected UploadedFile getUploadedFile( final Map< String, Object > map ) {
+        final UploadedFile uploadedFile = new UploadedFileImpl();
         uploadedFile.setName( ( String ) map.get( "name" ) );
         uploadedFile.setContent( Base64.getDecoder().decode( ( String ) map.get( "content" ) ) );
         uploadedFile.setContentType( ( String ) map.get( "content-type" ) );
         uploadedFile.setSize( uploadedFile.getContent().length );
+        uploadedFile.setInfos( ( Map< String, Object > ) map.get( "infos" ) );
 
         return uploadedFile;
     }

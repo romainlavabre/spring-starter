@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected            UserDetailsService userDetailsService;
     protected            Security           security;
 
+
     public WebSecurityConfig(
             final JwtTokenHandler jwtTokenHandler,
             @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService,
@@ -42,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
         this.security           = security;
     }
+
 
     @Override
     protected void configure( final HttpSecurity http ) throws Exception {
@@ -55,13 +57,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers( WebSecurityConfig.WHITE_ENDPOINT ).permitAll()
-                .antMatchers( "/products/{\\d+}" ).access( "hasRole('ROLE_ADMIN')" )
+                .antMatchers( "/**" ).access( "hasRole('ROLE_ADMIN')" )
                 .anyRequest().authenticated();
 
         http
                 .addFilterBefore( this.authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class );
 
     }
+
 
     @Autowired
     public void configureGlobal( final AuthenticationManagerBuilder authenticationManagerBuilder ) throws Exception {
@@ -75,10 +78,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
     @Bean
     public AuthenticationFilter authenticationTokenFilterBean() {
         return new AuthenticationFilter( this.jwtTokenHandler, this.security );
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
