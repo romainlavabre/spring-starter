@@ -2,10 +2,12 @@ package com.replace.replace.controller;
 
 import com.replace.replace.api.environment.Environment;
 import com.replace.replace.api.environment.EnvironmentVariable;
+import com.replace.replace.api.json.Encoder;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.api.security.AuthenticationHandler;
 import com.replace.replace.api.security.JwtTokenHandler;
 import com.replace.replace.api.security.Security;
+import com.replace.replace.api.security.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +25,14 @@ import java.util.Map;
 @RestController
 public class SecurityController {
 
-    protected JwtTokenHandler       jwtTokenHandler;
-    protected AuthenticationHandler authenticationHandler;
-    protected Request               request;
-    protected UserDetailsService    userDetailsService;
-    protected Environment           environment;
-    protected Security              security;
+    protected final JwtTokenHandler       jwtTokenHandler;
+    protected final AuthenticationHandler authenticationHandler;
+    protected final Request               request;
+    protected final UserDetailsService    userDetailsService;
+    protected final Environment           environment;
+    protected final Security              security;
+    protected final UserRepository        userRepository;
+
 
     public SecurityController(
             final JwtTokenHandler jwtTokenHandler,
@@ -36,14 +40,17 @@ public class SecurityController {
             final Request request,
             final Environment environment,
             final Security security,
-            @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService ) {
+            @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService,
+            final UserRepository userRepository ) {
         this.jwtTokenHandler       = jwtTokenHandler;
         this.authenticationHandler = authenticationHandler;
         this.request               = request;
         this.environment           = environment;
         this.userDetailsService    = userDetailsService;
         this.security              = security;
+        this.userRepository        = userRepository;
     }
+
 
     @PostMapping( path = "/auth" )
     public ResponseEntity< Object > authenticate() {
@@ -68,15 +75,12 @@ public class SecurityController {
         return ResponseEntity.status( HttpStatus.UNAUTHORIZED ).body( Map.of( "message", message ) );
     }
 
-    @GetMapping( path = "/info" )
+
+    @GetMapping( path = "/user/info" )
     public ResponseEntity< Map< String, Object > > userInfo() {
 
         return ResponseEntity.ok(
-                Map.of(
-                        "id", this.security.getId(),
-                        "username", this.security.getUsername(),
-                        "roles", this.security.getRoles()
-                )
+                Encoder.encode( this.userRepository.findByUsername( this.security.getUsername() ) )
         );
     }
 }
