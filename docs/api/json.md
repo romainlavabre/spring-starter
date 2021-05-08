@@ -209,6 +209,28 @@ public class Sample{
 }
 ```
 
+#### Add row
+
+```java
+import com.replace.replace.api.json.GroupType;
+import com.replace.replace.api.json.annotation.Group;
+import com.replace.replace.api.json.annotation.JsonPut;
+import com.replace.replace.api.json.annotation.Row;
+import com.replace.replace.api.json.put.Handler;
+
+
+@JsonPut( group = {
+        @Group( name = GroupType.GROUP_NAME, row = {
+                @Row( key = "key", handler = Handler.class )
+        } )
+} )
+
+public class Sample{
+
+    ...
+}
+```
+
 ### Encode your data
 
 ```java

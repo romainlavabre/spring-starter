@@ -2,8 +2,11 @@ package com.replace.replace.api.json;
 
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
+import com.replace.replace.api.json.annotation.JsonPut;
+import com.replace.replace.api.json.annotation.Row;
 import com.replace.replace.api.json.formatter.Formatter;
 import com.replace.replace.api.json.overwritter.Overwrite;
+import com.replace.replace.api.json.put.Handler;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -192,6 +195,24 @@ public class Encoder {
                     }
                 }
 
+            }
+        }
+
+        final JsonPut jsonPut = entity.getClass().getAnnotation( JsonPut.class );
+
+        if ( jsonPut != null ) {
+            for ( final Group group : jsonPut.group() ) {
+                if ( !group.name().equals( targetGroup ) ) {
+                    continue;
+                }
+
+                for ( final Row row : group.row() ) {
+                    try {
+                        mapped.put( row.key(), (( Handler ) row.handler().newInstance()).build( entity ) );
+                    } catch ( final InstantiationException | IllegalAccessException e ) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 

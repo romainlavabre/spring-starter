@@ -13,16 +13,24 @@ import java.lang.annotation.Target;
 public @interface Group {
     String name() default "_default";
 
+
     boolean onlyId() default true;
+
 
     boolean ascent() default false;
 
+
     boolean object() default false;
+
 
     String key() default "";
 
+
     Class formatter() default Formatter.class;
+
 
     Class overwrite() default Overwrite.class;
 
+
+    Row[] row() default {};
 }
