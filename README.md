@@ -11,7 +11,13 @@ This project is custom spring starter.
 ### Start software
 
 ```shell script
-mvn spring-boot:run -Dspring-boot.run.profiles={profile}
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"
+```
+
+With spring-cloud-config
+
+```shell script
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev -Dspring.cloud.bootstrap.enabled=true"
 ```
 ### Launch
 
