@@ -8,6 +8,11 @@ This project is custom spring starter.
 {{host}}/api/documentation/swagger-ui/index.html
 ```
 
+### Start software
+
+```shell script
+mvn spring-boot:run -Dspring-boot.run.profiles={profile}
+```
 ### Launch
 
 
