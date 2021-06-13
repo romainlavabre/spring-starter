@@ -6,6 +6,5 @@ package com.replace.replace.api.event;
 public interface Event {
 
 
-    String PRODUCT_NAME_ALTERED = "product_name_altered";
-    String TRANSACTION_SUCCESS  = "transaction_success";
+    String TRANSACTION_SUCCESS = "transaction_success";
 }
