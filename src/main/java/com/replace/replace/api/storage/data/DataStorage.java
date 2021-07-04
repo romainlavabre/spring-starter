@@ -5,7 +5,9 @@ import com.replace.replace.api.event.EventDispatcher;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -13,8 +15,12 @@ import java.util.HashMap;
 @Service
 public class DataStorage implements DataStorageHandler {
 
-    protected EntityManager   entityManager;
-    protected EventDispatcher eventDispatcher;
+    protected static final Map< Integer, LockModeType > LOCK_TYPE = Map.of(
+            4, LockModeType.PESSIMISTIC_READ,
+            5, LockModeType.PESSIMISTIC_WRITE
+    );
+    protected              EntityManager                entityManager;
+    protected              EventDispatcher              eventDispatcher;
 
 
     public DataStorage(
@@ -22,6 +28,12 @@ public class DataStorage implements DataStorageHandler {
             final EventDispatcher eventDispatcher ) {
         this.entityManager   = entityManager;
         this.eventDispatcher = eventDispatcher;
+    }
+
+
+    @Override
+    public void lock( final Object entity, final int type ) {
+        this.entityManager.lock( entity, DataStorage.LOCK_TYPE.get( type ) );
     }
 
 
@@ -39,11 +51,9 @@ public class DataStorage implements DataStorageHandler {
 
     @Override
     public void save() {
-        this.entityManager.flush();
-
+        entityManager.flush();
+        
         this.eventDispatcher.newEvent( Event.TRANSACTION_SUCCESS, new HashMap<>() );
-
-        this.entityManager.flush();
     }
 
 }
