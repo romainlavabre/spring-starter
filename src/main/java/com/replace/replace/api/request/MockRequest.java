@@ -146,4 +146,14 @@ public class MockRequest implements Request {
 
         return request;
     }
+
+
+    public static Request build( final Map< String, Object > parameters ) {
+
+        final Request request = new MockRequest();
+
+        parameters.forEach( request::setParameter );
+
+        return request;
+    }
 }
