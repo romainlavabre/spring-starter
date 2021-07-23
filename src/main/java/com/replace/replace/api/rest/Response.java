@@ -19,6 +19,9 @@ public interface Response {
     String getHeader( String header );
 
 
+    Map< String, String > getHeaders();
+
+
     Map< String, Object > getBody();
 
 }

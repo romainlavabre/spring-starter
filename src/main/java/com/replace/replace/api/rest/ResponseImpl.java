@@ -1,8 +1,10 @@
 package com.replace.replace.api.rest;
 
+import kong.unirest.Header;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,6 +37,18 @@ public class ResponseImpl implements Response {
     @Override
     public String getHeader( final String header ) {
         return this.response.getHeaders().get( header ).get( 0 );
+    }
+
+
+    @Override
+    public Map< String, String > getHeaders() {
+        final Map< String, String > headers = new HashMap<>();
+
+        for ( final Header header : this.response.getHeaders().all() ) {
+            headers.put( header.getName(), header.getValue() );
+        }
+
+        return headers;
     }
 
 
