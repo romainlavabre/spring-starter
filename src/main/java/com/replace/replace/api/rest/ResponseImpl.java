@@ -17,31 +17,52 @@ public class ResponseImpl implements Response {
 
     @Override
     public int status() {
-        return this.response.getStatus();
+        if ( this.response != null ) {
+            return this.response.getStatus();
+        }
+
+        return 0;
     }
 
 
     @Override
     public boolean isSuccess() {
-        return this.response.getStatus() >= 200
-                && this.response.getStatus() < 300;
+        if ( this.response != null ) {
+            return this.response.getStatus() >= 200
+                    && this.response.getStatus() < 300;
+        }
+
+        return false;
     }
 
 
     @Override
     public boolean hasHeader( final String header ) {
-        return this.response.getHeaders().containsKey( header );
+        if ( this.response != null ) {
+            return this.response.getHeaders().containsKey( header );
+        }
+
+        return false;
     }
 
 
     @Override
     public String getHeader( final String header ) {
-        return this.response.getHeaders().get( header ).get( 0 );
+        if ( this.response != null ) {
+            return this.response.getHeaders().get( header ).get( 0 );
+        }
+
+        return null;
     }
 
 
     @Override
     public Map< String, String > getHeaders() {
+
+        if ( this.response == null ) {
+            return new HashMap<>();
+        }
+
         final Map< String, String > headers = new HashMap<>();
 
         for ( final Header header : this.response.getHeaders().all() ) {
@@ -54,12 +75,23 @@ public class ResponseImpl implements Response {
 
     @Override
     public Map< String, Object > getBody() {
-        return this.response.getBody().getObject().toMap();
+        if ( this.response != null ) {
+            return this.response.getBody().getObject().toMap();
+        }
+
+        return new HashMap<>();
     }
 
 
     protected Response supply( final HttpResponse< JsonNode > response ) {
         this.response = response;
+
+        return this;
+    }
+
+
+    protected Response supply() {
+        this.response = null;
 
         return this;
     }

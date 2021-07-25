@@ -50,6 +50,4 @@ public interface RequestBuilder {
 
 
     Response buildAndSend();
-
-
 }

@@ -132,21 +132,27 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public Response buildAndSend() {
-        final HttpResponse< JsonNode > response;
+        HttpResponse< JsonNode > response = null;
 
-        if ( this.multipartBody != null ) {
-            response = this.multipartBody.asJson();
-        } else if ( this.requestBodyEntity != null ) {
-            response = this.requestBodyEntity.asJson();
-        } else {
-            response = this.requestWithBody.asJson();
+        try {
+            if ( this.multipartBody != null ) {
+                response = this.multipartBody.asJson();
+            } else if ( this.requestBodyEntity != null ) {
+                response = this.requestBodyEntity.asJson();
+            } else {
+                response = this.requestWithBody.asJson();
+            }
+        } catch ( final Throwable ignored ) {
         }
 
         this.requestWithBody   = null;
         this.requestBodyEntity = null;
         this.multipartBody     = null;
 
-        return (new ResponseImpl()).supply( response );
-    }
+        if ( response != null ) {
+            return (new ResponseImpl()).supply( response );
+        }
 
+        return (new ResponseImpl()).supply();
+    }
 }
