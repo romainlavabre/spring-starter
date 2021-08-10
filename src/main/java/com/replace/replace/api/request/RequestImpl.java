@@ -32,6 +32,12 @@ public class RequestImpl implements Request {
 
 
     @Override
+    public boolean containsParameter( final String name ) {
+        return this.parameters.containsKey( name );
+    }
+
+
+    @Override
     public Object getParameter( final String name ) {
 
         return this.parameters.get( name );
@@ -51,14 +57,33 @@ public class RequestImpl implements Request {
 
 
     @Override
+    public Map< String, Object > getAllParameters() {
+        return this.parameters;
+    }
+
+
+    @Override
+    public Map< String, Object > getAllParameters( final String prefix ) {
+        final Map< String, Object > parameters = new HashMap<>();
+
+        for ( final Map.Entry< String, Object > entry : parameters.entrySet() ) {
+            if ( entry.getKey().startsWith( prefix ) ) {
+                parameters.put( entry.getKey().replace( prefix, "" ), entry.getValue() );
+            }
+        }
+
+        return parameters;
+    }
+
+
+    @Override
     public String getQueryString( final String name ) {
-        return ( String ) this.request.getAttribute( name );
+        return ( String ) this.request.getParameter( name );
     }
 
 
     @Override
     public void setQueryString( final String name, final Object value ) {
-        this.request.setAttribute( name, value );
     }
 
 
@@ -91,7 +116,6 @@ public class RequestImpl implements Request {
         }
 
         this.parameters.put( name, uploadedFile );
-
     }
 
 
@@ -211,14 +235,13 @@ public class RequestImpl implements Request {
 
             if ( input.getValue() instanceof List ) {
 
-                for ( final Map< String, Object > thirdLevel : ( List< HashMap< String, Object > > ) input.getValue() ) {
+                for ( final Map< String, Object > thirdLevel : ( List< Map< String, Object > > ) input.getValue() ) {
                     for ( final Map.Entry< String, Object > content : thirdLevel.entrySet() ) {
                         final String key = input.getKey() + "_" + content.getKey();
 
                         if ( this.parameters.containsKey( key ) ) {
                             final List< Object > list = ( List< Object > ) this.parameters.get( key );
                             list.add( content.getValue() );
-
                         } else {
                             final List< Object > list = new ArrayList<>();
                             list.add( content.getValue() );
@@ -242,5 +265,4 @@ public class RequestImpl implements Request {
 
         return uploadedFile;
     }
-
 }

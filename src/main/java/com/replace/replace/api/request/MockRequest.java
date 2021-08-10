@@ -24,6 +24,12 @@ public class MockRequest implements Request {
 
 
     @Override
+    public boolean containsParameter( final String name ) {
+        return this.parameters.containsKey( name );
+    }
+
+
+    @Override
     public Object getParameter( final String name ) {
         return this.parameters.get( name );
     }
@@ -44,6 +50,26 @@ public class MockRequest implements Request {
         } );
 
         return list;
+    }
+
+
+    @Override
+    public Map< String, Object > getAllParameters() {
+        return this.parameters;
+    }
+
+
+    @Override
+    public Map< String, Object > getAllParameters( final String prefix ) {
+        final Map< String, Object > parameters = new HashMap<>();
+
+        for ( final Map.Entry< String, Object > entry : parameters.entrySet() ) {
+            if ( entry.getKey().startsWith( prefix ) ) {
+                parameters.put( entry.getKey().replace( prefix, "" ), entry.getValue() );
+            }
+        }
+
+        return parameters;
     }
 
 
