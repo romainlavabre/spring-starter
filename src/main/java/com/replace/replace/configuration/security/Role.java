@@ -1,4 +1,4 @@
-package com.replace.replace.api.security;
+package com.replace.replace.configuration.security;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
