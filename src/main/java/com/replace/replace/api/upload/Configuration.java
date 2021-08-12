@@ -4,6 +4,7 @@ import com.replace.replace.api.container.Container;
 import com.replace.replace.api.upload.Move.MoveRule;
 import com.replace.replace.api.upload.annotation.*;
 import com.replace.replace.api.upload.duplication.DuplicationRule;
+import com.replace.replace.configuration.upload.UploadConfig;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -20,62 +21,69 @@ public class Configuration {
     protected Map< String, Map< String, Object > > repository = new HashMap<>();
 
 
-    public Configuration( Container container ) throws IllegalAccessException {
+    public Configuration( final Container container ) throws IllegalAccessException {
         this.container = container;
         this.load();
     }
 
-    public boolean hasMaxSize( String config ) {
+
+    public boolean hasMaxSize( final String config ) {
         return ( int ) this.repository
                 .get( config )
                 .get( Size.class.getName() ) > 0;
     }
 
-    public int getSize( String config ) {
+
+    public int getSize( final String config ) {
         return ( int ) this.repository
                 .get( config )
                 .get( Size.class.getName() );
     }
 
-    public MoveRule getMoveRule( String config ) {
+
+    public MoveRule getMoveRule( final String config ) {
         return ( MoveRule ) this.repository
                 .get( config )
                 .get( Move.class.getName() );
     }
 
-    public DuplicationRule getDuplicationRule( String config ) {
+
+    public DuplicationRule getDuplicationRule( final String config ) {
         return ( DuplicationRule ) this.repository
                 .get( config )
                 .get( Duplication.class.getName() );
     }
 
-    public boolean isAcceptAllType( String config ) {
+
+    public boolean isAcceptAllType( final String config ) {
         return this.repository
                 .get( config )
                 .get( AcceptType.class.getName() ) == null;
-
     }
 
-    public String[] getAcceptType( String config ) {
+
+    public String[] getAcceptType( final String config ) {
         return ( String[] ) this.repository
                 .get( config )
                 .get( AcceptType.class.getName() );
     }
 
-    public boolean isTransactionSynchronized( String config ) {
+
+    public boolean isTransactionSynchronized( final String config ) {
         return ( boolean ) this.repository
                 .get( config )
                 .get( TransactionSynchronized.class.getName() );
     }
 
+
     protected void load() throws IllegalAccessException {
-        for ( Field field : UploadHandler.class.getDeclaredFields() ) {
-            Move                    move                    = field.getAnnotation( Move.class );
-            Duplication             duplication             = field.getAnnotation( Duplication.class );
-            AcceptType              acceptType              = field.getAnnotation( AcceptType.class );
-            Size                    size                    = field.getAnnotation( Size.class );
-            TransactionSynchronized transactionSynchronized = field.getAnnotation( TransactionSynchronized.class );
-            String                  name                    = ( String ) field.get( null );
+        for ( final Field field : UploadConfig.class.getDeclaredFields() ) {
+            final Move                    move                    = field.getAnnotation( Move.class );
+            final Duplication             duplication             = field.getAnnotation( Duplication.class );
+            final AcceptType              acceptType              = field.getAnnotation( AcceptType.class );
+            final Size                    size                    = field.getAnnotation( Size.class );
+            final TransactionSynchronized transactionSynchronized = field.getAnnotation( TransactionSynchronized.class );
+            final String                  name                    = ( String ) field.get( null );
 
             this.repository.put( name, new HashMap<>() );
 

@@ -4,7 +4,7 @@ import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.event.exception.InvalidEventCredentialsException;
 import com.replace.replace.api.event.exception.NotRegisteredEventException;
-import com.replace.replace.configuration.event.EventConfiguration;
+import com.replace.replace.configuration.event.EventConfig;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,12 +20,12 @@ import java.util.Map;
 @Service
 public class EventRegisterImpl implements EventRepository {
 
-    protected EventConfiguration                  event;
+    protected EventConfig                         event;
     protected Map< String, Map< String, Class > > events;
 
 
     public EventRegisterImpl(
-            final EventConfiguration event )
+            final EventConfig event )
             throws InvocationTargetException, IllegalAccessException {
         this.event = event;
         this.initEventRegistered();
@@ -57,7 +57,7 @@ public class EventRegisterImpl implements EventRepository {
 
     @Override
     public boolean hasDefaultSubscribers( final String event ) {
-        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+        for ( final Method method : EventConfig.class.getDeclaredMethods() ) {
             final Subscribers subscribers = method.getAnnotation( Subscribers.class );
 
             if ( subscribers == null || !subscribers.event().equals( event ) ) {
@@ -73,7 +73,7 @@ public class EventRegisterImpl implements EventRepository {
 
     @Override
     public List< EventSubscriber > getDefaultSubscribers( final String event ) {
-        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+        for ( final Method method : EventConfig.class.getDeclaredMethods() ) {
             final Subscribers subscribers = method.getAnnotation( Subscribers.class );
 
             if ( subscribers == null || !subscribers.event().equals( event ) ) {
@@ -100,7 +100,7 @@ public class EventRegisterImpl implements EventRepository {
     private void initEventRegistered() throws InvocationTargetException, IllegalAccessException {
         this.events = new HashMap<>();
 
-        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+        for ( final Method method : EventConfig.class.getDeclaredMethods() ) {
             final UnitEvent unitEvent = method.getAnnotation( UnitEvent.class );
 
             if ( unitEvent == null ) {

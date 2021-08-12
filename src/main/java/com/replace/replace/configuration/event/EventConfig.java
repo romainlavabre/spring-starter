@@ -16,13 +16,13 @@ import java.util.Map;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service
-public class EventConfiguration implements Event {
+public class EventConfig implements Event {
 
     protected UploadHandler  uploadHandler;
     protected HistoryHandler historyHandler;
 
 
-    public EventConfiguration(
+    public EventConfig(
             final UploadHandler uploadHandler,
             final HistoryHandler historyHandler ) {
         this.uploadHandler  = uploadHandler;
