@@ -33,12 +33,15 @@ public class RequestImpl implements Request {
 
     @Override
     public boolean containsParameter( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return this.parameters.containsKey( name );
     }
 
 
     @Override
     public Object getParameter( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
 
         return this.parameters.get( name );
     }
@@ -46,12 +49,16 @@ public class RequestImpl implements Request {
 
     @Override
     public void setParameter( final String name, final Object value ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         this.parameters.put( name, value );
     }
 
 
     @Override
     public List< Object > getParameters( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return ( List< Object > ) this.parameters.get( name );
     }
 
@@ -64,6 +71,8 @@ public class RequestImpl implements Request {
 
     @Override
     public Map< String, Object > getAllParameters( final String prefix ) {
+        assert prefix != null && !prefix.isBlank() : "variable prefix should not be null or blank";
+
         final Map< String, Object > parameters = new HashMap<>();
 
         for ( final Map.Entry< String, Object > entry : parameters.entrySet() ) {
@@ -78,6 +87,8 @@ public class RequestImpl implements Request {
 
     @Override
     public String getQueryString( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return ( String ) this.request.getParameter( name );
     }
 
@@ -95,18 +106,24 @@ public class RequestImpl implements Request {
 
     @Override
     public UploadedFile getFile( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return ( UploadedFile ) this.parameters.get( name );
     }
 
 
     @Override
     public List< UploadedFile > getFiles( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return ( List< UploadedFile > ) this.parameters.get( name );
     }
 
 
     @Override
     public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         if ( this.parameters.get( name ) instanceof List ) {
             final List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
 
@@ -121,6 +138,8 @@ public class RequestImpl implements Request {
 
     @Override
     public String getHeader( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return this.request.getHeader( name );
     }
 

@@ -24,6 +24,8 @@ public class ContainerImpl implements Container, ApplicationContextAware {
     @Override
     public Object getInstance( final String classname ) {
 
+        assert classname != null && !classname.isBlank() : "classname variable should not be null or blank";
+
         if ( this.applicationContext.containsBean( classname ) ) {
             return this.applicationContext.getBean( classname );
         }
@@ -45,6 +47,5 @@ public class ContainerImpl implements Container, ApplicationContextAware {
 
 
         return null;
-
     }
 }

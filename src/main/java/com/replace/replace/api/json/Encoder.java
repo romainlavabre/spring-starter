@@ -77,6 +77,8 @@ public class Encoder {
 
 
     protected static Map< String, Object > core( final Object entity, final String targetGroup ) {
+        assert entity != null : "variable entity should not be null";
+
         final Map< String, Object > mapped = new HashMap<>();
 
         for ( final Field field : entity.getClass().getDeclaredFields() ) {
@@ -153,7 +155,6 @@ public class Encoder {
                                 object = nextIds;
                             }
                         }
-
                     }
 
                     if ( !group.overwrite().isInterface() ) {
@@ -194,7 +195,6 @@ public class Encoder {
                         mapped.put( entry.getKey(), entry.getValue() );
                     }
                 }
-
             }
         }
 
@@ -218,5 +218,4 @@ public class Encoder {
 
         return mapped;
     }
-
 }

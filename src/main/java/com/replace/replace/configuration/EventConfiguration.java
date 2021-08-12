@@ -1,5 +1,7 @@
-package com.replace.replace.api.event;
+package com.replace.replace.configuration;
 
+import com.replace.replace.api.event.Event;
+import com.replace.replace.api.event.EventSubscriber;
 import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.history.HistoryHandler;
@@ -20,6 +22,7 @@ public class EventConfiguration implements Event {
     protected UploadHandler  uploadHandler;
     protected HistoryHandler historyHandler;
 
+
     public EventConfiguration(
             final UploadHandler uploadHandler,
             final HistoryHandler historyHandler ) {
@@ -27,10 +30,12 @@ public class EventConfiguration implements Event {
         this.historyHandler = historyHandler;
     }
 
+
     @UnitEvent( name = Event.TRANSACTION_SUCCESS )
     public Map< String, Class > transactionSuccess() {
         return new HashMap<>();
     }
+
 
     @Subscribers( event = Event.TRANSACTION_SUCCESS )
     public List< EventSubscriber > subscribersTransactionSuccess() {
@@ -41,6 +46,4 @@ public class EventConfiguration implements Event {
 
         return list;
     }
-
-
 }

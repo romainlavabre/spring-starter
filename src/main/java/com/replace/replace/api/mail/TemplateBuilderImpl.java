@@ -20,40 +20,49 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     protected              VelocityEngine velocityEngine;
     protected              Environment    environment;
 
+
     public TemplateBuilderImpl(
-            Environment environment
+            final Environment environment
     ) {
         this.environment    = environment;
         this.velocityEngine = new VelocityEngine();
     }
 
+
     @Override
-    public String build( String name ) {
+    public String build( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
         return this.build( name, Map.of() );
     }
 
 
     @Override
-    public String build( String name, Map< String, Object > parameters ) {
+    public String build( final String name, final Map< String, Object > parameters ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
 
-        Template template = this.velocityEngine.getTemplate( this.getPath( name ), ENCODING );
+        final Template template = this.velocityEngine.getTemplate( this.getPath( name ), TemplateBuilderImpl.ENCODING );
 
-        VelocityContext velocityContext = new VelocityContext();
+        final VelocityContext velocityContext = new VelocityContext();
 
-        parameters.forEach( velocityContext::put );
+        if ( parameters != null ) {
+            parameters.forEach( velocityContext::put );
+        }
 
         return this.getContent( velocityContext, template );
     }
 
-    protected String getContent( VelocityContext velocityContext, Template template ) {
-        StringWriter content = new StringWriter();
+
+    protected String getContent( final VelocityContext velocityContext, final Template template ) {
+        final StringWriter content = new StringWriter();
 
         template.merge( velocityContext, content );
 
         return content.toString();
     }
 
-    protected String getPath( String name ) {
+
+    protected String getPath( final String name ) {
 
         return this.environment.getEnv( EnvironmentVariable.MAIL_TEMPLATE_PATH ) +
                 name +

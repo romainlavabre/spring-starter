@@ -4,6 +4,7 @@ import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.event.exception.InvalidEventCredentialsException;
 import com.replace.replace.api.event.exception.NotRegisteredEventException;
+import com.replace.replace.configuration.EventConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,28 +23,30 @@ public class EventRegisterImpl implements EventRepository {
     protected EventConfiguration                  event;
     protected Map< String, Map< String, Class > > events;
 
+
     public EventRegisterImpl(
-            EventConfiguration event )
+            final EventConfiguration event )
             throws InvocationTargetException, IllegalAccessException {
         this.event = event;
         this.initEventRegistered();
     }
 
+
     @Override
-    public void isValidCredentials( String event, Map< String, Object > params ) {
+    public void isValidCredentials( final String event, final Map< String, Object > params ) {
 
         if ( !this.events.containsKey( event ) ) {
             throw new NotRegisteredEventException();
         }
 
 
-        for ( Map.Entry< String, Class > credentials : this.events.get( event ).entrySet() ) {
+        for ( final Map.Entry< String, Class > credentials : this.events.get( event ).entrySet() ) {
 
             if ( credentials.getValue() == null ) {
                 continue;
             }
 
-            
+
             if ( params.get( credentials.getKey() ).getClass() != credentials.getValue()
                     && !Proxy.isProxyClass( params.get( credentials.getKey() ).getClass() ) ) {
                 throw new InvalidEventCredentialsException();
@@ -51,10 +54,11 @@ public class EventRegisterImpl implements EventRepository {
         }
     }
 
+
     @Override
-    public boolean hasDefaultSubscribers( String event ) {
-        for ( Method method : EventConfiguration.class.getDeclaredMethods() ) {
-            Subscribers subscribers = method.getAnnotation( Subscribers.class );
+    public boolean hasDefaultSubscribers( final String event ) {
+        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+            final Subscribers subscribers = method.getAnnotation( Subscribers.class );
 
             if ( subscribers == null || !subscribers.event().equals( event ) ) {
                 continue;
@@ -66,10 +70,11 @@ public class EventRegisterImpl implements EventRepository {
         return false;
     }
 
+
     @Override
-    public List< EventSubscriber > getDefaultSubscribers( String event ) {
-        for ( Method method : EventConfiguration.class.getDeclaredMethods() ) {
-            Subscribers subscribers = method.getAnnotation( Subscribers.class );
+    public List< EventSubscriber > getDefaultSubscribers( final String event ) {
+        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+            final Subscribers subscribers = method.getAnnotation( Subscribers.class );
 
             if ( subscribers == null || !subscribers.event().equals( event ) ) {
                 continue;
@@ -77,13 +82,14 @@ public class EventRegisterImpl implements EventRepository {
 
             try {
                 return ( List< EventSubscriber > ) method.invoke( this.event );
-            } catch ( IllegalAccessException | InvocationTargetException e ) {
+            } catch ( final IllegalAccessException | InvocationTargetException e ) {
                 e.printStackTrace();
             }
         }
 
         return null;
     }
+
 
     /**
      * Init all event registered by developer
@@ -94,14 +100,14 @@ public class EventRegisterImpl implements EventRepository {
     private void initEventRegistered() throws InvocationTargetException, IllegalAccessException {
         this.events = new HashMap<>();
 
-        for ( Method method : EventConfiguration.class.getDeclaredMethods() ) {
-            UnitEvent unitEvent = method.getAnnotation( UnitEvent.class );
+        for ( final Method method : EventConfiguration.class.getDeclaredMethods() ) {
+            final UnitEvent unitEvent = method.getAnnotation( UnitEvent.class );
 
             if ( unitEvent == null ) {
                 continue;
             }
 
-            Map< String, Class > credentials = ( Map< String, Class > ) method.invoke( this.event );
+            final Map< String, Class > credentials = ( Map< String, Class > ) method.invoke( this.event );
 
             this.events.put( unitEvent.name(), credentials );
         }

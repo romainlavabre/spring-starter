@@ -16,15 +16,18 @@ public class Twilio implements SmsSender {
 
     protected Environment environment;
 
+
     public Twilio( final Environment environment ) {
         this.environment = environment;
     }
+
 
     @Override
     public boolean send( final String to, final String message ) {
 
         return this.core( to, message );
     }
+
 
     @Override
     public Boolean[] send( final List< String > to, final String message ) {
@@ -41,21 +44,23 @@ public class Twilio implements SmsSender {
         return results;
     }
 
+
     protected boolean core( final String to, final String message ) {
+        assert to != null && !to.isBlank() : "variable to should not be null or blank";
+
         com.twilio.Twilio.init(
                 this.environment.getEnv( EnvironmentVariable.SMS_TWILIO_SID ),
                 this.environment.getEnv( EnvironmentVariable.SMS_PRIVATE_KEY )
         );
 
 
-        final Message response =
-                Message
-                        .creator(
-                                new PhoneNumber( to ),
-                                new PhoneNumber( this.environment.getEnv( EnvironmentVariable.SMS_FROM ) ),
-                                message
-                        )
-                        .create();
+        Message
+                .creator(
+                        new PhoneNumber( to ),
+                        new PhoneNumber( this.environment.getEnv( EnvironmentVariable.SMS_FROM ) ),
+                        message
+                )
+                .create();
 
         return true;
     }

@@ -10,7 +10,7 @@
 Configuration class:
 
 ```java
-com.replace.replace.api.event.EventConfiguration
+com.replace.replace.configuration.EventConfiguration
 ```
 
 Create your function:

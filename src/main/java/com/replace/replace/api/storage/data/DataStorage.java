@@ -33,27 +33,32 @@ public class DataStorage implements DataStorageHandler {
 
     @Override
     public void lock( final Object entity, final int type ) {
+        assert entity != null : "variable entity should not be null";
+
         this.entityManager.lock( entity, DataStorage.LOCK_TYPE.get( type ) );
     }
 
 
     @Override
     public void persist( final Object entity ) {
+        assert entity != null : "variable entity should not be null";
+
         this.entityManager.persist( entity );
     }
 
 
     @Override
     public void remove( final Object entity ) {
+        assert entity != null : "variable entity should not be null";
+        
         this.entityManager.remove( entity );
     }
 
 
     @Override
     public void save() {
-        entityManager.flush();
-        
+        this.entityManager.flush();
+
         this.eventDispatcher.newEvent( Event.TRANSACTION_SUCCESS, new HashMap<>() );
     }
-
 }

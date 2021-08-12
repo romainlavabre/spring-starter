@@ -16,14 +16,18 @@ public class HistoryHandlerImpl implements HistoryHandler {
     private final Map< Object, History > store;
     private       EntityManager          entityManager;
 
+
     public HistoryHandlerImpl(
             EntityManager entityManager ) {
         this.entityManager = entityManager;
         this.store         = new HashMap<>();
     }
 
+
     @Override
     public void create( Object object ) {
+        assert object != null : "variable object should not be null";
+
         History history = new History();
         history.setAuthorId( 0 );
         history.setAuthorType( "Unknow" );
@@ -34,8 +38,11 @@ public class HistoryHandlerImpl implements HistoryHandler {
         this.store.put( object, history );
     }
 
+
     @Override
     public void update( Object object, String property ) {
+
+        assert object != null : "variable object should not be null";
 
         History history = new History();
         history.setAuthorId( 0 );
@@ -49,8 +56,11 @@ public class HistoryHandlerImpl implements HistoryHandler {
         this.store.put( object, history );
     }
 
+
     @Override
     public void delete( Object object ) {
+        assert object != null : "variable object should not be null";
+        
         History history = new History();
         history.setAuthorId( 0 );
         history.setAuthorType( "Unknow" );
@@ -61,6 +71,7 @@ public class HistoryHandlerImpl implements HistoryHandler {
 
         this.entityManager.persist( history );
     }
+
 
     /**
      * Return new value of subject property target
@@ -81,14 +92,15 @@ public class HistoryHandlerImpl implements HistoryHandler {
         }
 
         return null;
-
     }
+
 
     private String getRemoteAddr() {
         return (( ServletRequestAttributes ) RequestContextHolder.currentRequestAttributes())
                 .getRequest()
                 .getRemoteAddr();
     }
+
 
     @Override
     public void receiveEvent( String event, Map< String, Object > params ) throws RuntimeException {
