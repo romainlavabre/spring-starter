@@ -4,7 +4,7 @@ import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import com.replace.replace.api.event.exception.InvalidEventCredentialsException;
 import com.replace.replace.api.event.exception.NotRegisteredEventException;
-import com.replace.replace.configuration.EventConfiguration;
+import com.replace.replace.configuration.event.EventConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;

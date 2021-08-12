@@ -10,13 +10,13 @@
 Configuration class:
 
 ```java
-com.replace.replace.configuration.EventConfiguration
+com.replace.replace.configuration.event.EventConfiguration
 ```
 
 Create your function:
 
 ```java
-import com.replace.replace.api.event.Event;
+import com.replace.replace.configuration.event.Event;
 import com.replace.replace.api.event.annotation.UnitEvent;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ package com.replace.replace.tutorial;
 
 import com.replace.replace.api.event.EventSubscriber;
 import com.replace.replace.api.event.EventDispatcher;
-import com.replace.replace.api.event.Event;
+import com.replace.replace.configuration.event.Event;
 
 @Service
 public class EventTutorial implements EventSubscriber{
@@ -97,8 +97,6 @@ For it, see the next sample
 package com.replace.replace.tutorial;
 
 import com.replace.replace.api.event.EventSubscriber;
-import com.replace.replace.api.event.EventDispatcher;
-import com.replace.replace.api.event.Event;
 
 @Service
 @RequestScope
@@ -120,12 +118,11 @@ Now, pass the proxy directly to the EventConfiguration
 
 
 ```java
-import com.replace.replace.api.event.Event;
+import com.replace.replace.configuration.event.Event;
 import com.replace.replace.api.event.EventSubscriber;
-import com.replace.replace.api.event.annotation.Subscribers;import com.replace.replace.api.event.annotation.UnitEvent;
+import com.replace.replace.api.event.annotation.Subscribers;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 

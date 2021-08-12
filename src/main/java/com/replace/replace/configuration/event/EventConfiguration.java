@@ -1,6 +1,5 @@
-package com.replace.replace.configuration;
+package com.replace.replace.configuration.event;
 
-import com.replace.replace.api.event.Event;
 import com.replace.replace.api.event.EventSubscriber;
 import com.replace.replace.api.event.annotation.Subscribers;
 import com.replace.replace.api.event.annotation.UnitEvent;

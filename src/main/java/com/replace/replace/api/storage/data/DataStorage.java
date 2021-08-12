@@ -1,7 +1,7 @@
 package com.replace.replace.api.storage.data;
 
-import com.replace.replace.api.event.Event;
 import com.replace.replace.api.event.EventDispatcher;
+import com.replace.replace.configuration.event.Event;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -50,7 +50,7 @@ public class DataStorage implements DataStorageHandler {
     @Override
     public void remove( final Object entity ) {
         assert entity != null : "variable entity should not be null";
-        
+
         this.entityManager.remove( entity );
     }
 
