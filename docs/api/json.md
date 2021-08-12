@@ -189,7 +189,7 @@ output:
 #### Multiple configurations
 
 ```java
-import com.replace.replace.api.json.GroupType;
+import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
 
@@ -212,16 +212,16 @@ public class Sample{
 #### Add row
 
 ```java
-import com.replace.replace.api.json.GroupType;
+import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.JsonPut;
 import com.replace.replace.api.json.annotation.Row;
-import com.replace.replace.api.json.put.Handler;
+import com.replace.replace.api.json.put.Put;
 
 
 @JsonPut( group = {
         @Group( name = GroupType.GROUP_NAME, row = {
-                @Row( key = "key", handler = Handler.class )
+                @Row( key = "key", handler = Put.class )
         } )
 } )
 
@@ -234,7 +234,7 @@ public class Sample{
 ### Encode your data
 
 ```java
-import com.replace.replace.api.json.Encoder;import com.replace.replace.api.json.GroupType;import java.util.Map;
+import com.replace.replace.api.json.Encoder;import com.replace.replace.configuration.json.GroupType;import java.util.Map;
 
 public class SampleController {
 

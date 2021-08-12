@@ -1,4 +1,4 @@
-package com.replace.replace.api.json;
+package com.replace.replace.configuration.json;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>

@@ -6,7 +6,8 @@ import com.replace.replace.api.json.annotation.JsonPut;
 import com.replace.replace.api.json.annotation.Row;
 import com.replace.replace.api.json.formatter.Formatter;
 import com.replace.replace.api.json.overwritter.Overwrite;
-import com.replace.replace.api.json.put.Handler;
+import com.replace.replace.api.json.put.Put;
+import com.replace.replace.configuration.json.GroupType;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -208,7 +209,7 @@ public class Encoder {
 
                 for ( final Row row : group.row() ) {
                     try {
-                        mapped.put( row.key(), (( Handler ) row.handler().newInstance()).build( entity ) );
+                        mapped.put( row.key(), (( Put ) row.handler().newInstance()).build( entity ) );
                     } catch ( final InstantiationException | IllegalAccessException e ) {
                         e.printStackTrace();
                     }
