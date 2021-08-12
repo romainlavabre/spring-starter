@@ -1,7 +1,7 @@
 package com.replace.replace.api.sms;
 
 import com.replace.replace.api.environment.Environment;
-import com.replace.replace.api.environment.EnvironmentVariable;
+import com.replace.replace.configuration.environment.Variable;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import org.springframework.stereotype.Service;
@@ -49,15 +49,15 @@ public class Twilio implements SmsSender {
         assert to != null && !to.isBlank() : "variable to should not be null or blank";
 
         com.twilio.Twilio.init(
-                this.environment.getEnv( EnvironmentVariable.SMS_TWILIO_SID ),
-                this.environment.getEnv( EnvironmentVariable.SMS_PRIVATE_KEY )
+                this.environment.getEnv( Variable.SMS_TWILIO_SID ),
+                this.environment.getEnv( Variable.SMS_PRIVATE_KEY )
         );
 
 
         Message
                 .creator(
                         new PhoneNumber( to ),
-                        new PhoneNumber( this.environment.getEnv( EnvironmentVariable.SMS_FROM ) ),
+                        new PhoneNumber( this.environment.getEnv( Variable.SMS_FROM ) ),
                         message
                 )
                 .create();

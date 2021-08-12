@@ -1,13 +1,13 @@
 package com.replace.replace.controller;
 
 import com.replace.replace.api.environment.Environment;
-import com.replace.replace.api.environment.EnvironmentVariable;
 import com.replace.replace.api.json.Encoder;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.api.security.AuthenticationHandler;
 import com.replace.replace.api.security.JwtTokenHandler;
 import com.replace.replace.api.security.Security;
 import com.replace.replace.api.security.UserRepository;
+import com.replace.replace.configuration.environment.Variable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +68,7 @@ public class SecurityController {
             return ResponseEntity.ok().body( Map.of(
                     "access_token", this.jwtTokenHandler.createToken( this.userDetailsService.loadUserByUsername( ( String ) this.request.getParameter( "auth_username" ) ) ),
                     "token_type", "Bearer",
-                    "expire_in", Integer.valueOf( this.environment.getEnv( EnvironmentVariable.JWT_LIFE_TIME ) )
+                    "expire_in", Integer.valueOf( this.environment.getEnv( Variable.JWT_LIFE_TIME ) )
             ) );
         }
 

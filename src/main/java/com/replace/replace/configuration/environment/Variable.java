@@ -1,9 +1,9 @@
-package com.replace.replace.api.environment;
+package com.replace.replace.configuration.environment;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-public interface EnvironmentVariable {
+public interface Variable {
     String SERVER_PORT          = "server.port";
     String MAIL_DOMAIN          = "mail.mailgun.domain";
     String MAIL_FROM            = "mail.from";

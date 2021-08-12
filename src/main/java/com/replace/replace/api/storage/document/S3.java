@@ -1,7 +1,7 @@
 package com.replace.replace.api.storage.document;
 
 import com.replace.replace.api.environment.Environment;
-import com.replace.replace.api.environment.EnvironmentVariable;
+import com.replace.replace.configuration.environment.Variable;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -41,7 +41,7 @@ public class S3 implements DocumentStorageHandler {
     public boolean create( final String path, final File file ) {
         final PutObjectRequest putObjectRequest =
                 PutObjectRequest.builder()
-                                .bucket( this.environment.getEnv( EnvironmentVariable.DOCUMENT_AWS_BUCKET ) )
+                                .bucket( this.environment.getEnv( Variable.DOCUMENT_AWS_BUCKET ) )
                                 .key( path )
                                 .build();
 
@@ -64,7 +64,7 @@ public class S3 implements DocumentStorageHandler {
     public boolean create( final String path, final ByteBuffer byteBuffer ) {
         final PutObjectRequest putObjectRequest =
                 PutObjectRequest.builder()
-                                .bucket( this.environment.getEnv( EnvironmentVariable.DOCUMENT_AWS_BUCKET ) )
+                                .bucket( this.environment.getEnv( Variable.DOCUMENT_AWS_BUCKET ) )
                                 .key( path )
                                 .build();
 
@@ -78,7 +78,7 @@ public class S3 implements DocumentStorageHandler {
     public boolean create( final String path, final byte[] bytes ) {
         final PutObjectRequest putObjectRequest =
                 PutObjectRequest.builder()
-                                .bucket( this.environment.getEnv( EnvironmentVariable.DOCUMENT_AWS_BUCKET ) )
+                                .bucket( this.environment.getEnv( Variable.DOCUMENT_AWS_BUCKET ) )
                                 .key( path )
                                 .build();
 
@@ -93,7 +93,7 @@ public class S3 implements DocumentStorageHandler {
 
         final DeleteObjectRequest deleteObjectRequest =
                 DeleteObjectRequest.builder()
-                                   .bucket( this.environment.getEnv( EnvironmentVariable.DOCUMENT_AWS_BUCKET ) )
+                                   .bucket( this.environment.getEnv( Variable.DOCUMENT_AWS_BUCKET ) )
                                    .key( path )
                                    .build();
 
@@ -126,8 +126,8 @@ public class S3 implements DocumentStorageHandler {
 
 
         final AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(
-                this.environment.getEnv( EnvironmentVariable.DOCUMENT_PUBLIC_KEY ),
-                this.environment.getEnv( EnvironmentVariable.DOCUMENT_PRIVATE_KEY )
+                this.environment.getEnv( Variable.DOCUMENT_PUBLIC_KEY ),
+                this.environment.getEnv( Variable.DOCUMENT_PRIVATE_KEY )
         );
 
         final S3Presigner s3Presigner =
@@ -153,7 +153,7 @@ public class S3 implements DocumentStorageHandler {
 
     protected GetObjectRequest getObjectRequest( final String path ) {
         return GetObjectRequest.builder()
-                               .bucket( this.environment.getEnv( EnvironmentVariable.DOCUMENT_AWS_BUCKET ) )
+                               .bucket( this.environment.getEnv( Variable.DOCUMENT_AWS_BUCKET ) )
                                .key( path )
                                .build();
     }
@@ -165,8 +165,8 @@ public class S3 implements DocumentStorageHandler {
         }
 
         final AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(
-                this.environment.getEnv( EnvironmentVariable.DOCUMENT_PUBLIC_KEY ),
-                this.environment.getEnv( EnvironmentVariable.DOCUMENT_PRIVATE_KEY )
+                this.environment.getEnv( Variable.DOCUMENT_PUBLIC_KEY ),
+                this.environment.getEnv( Variable.DOCUMENT_PRIVATE_KEY )
         );
 
         return this.s3Client =
@@ -174,6 +174,5 @@ public class S3 implements DocumentStorageHandler {
                         .credentialsProvider( StaticCredentialsProvider.create( awsBasicCredentials ) )
                         .region( Region.EU_WEST_3 )
                         .build();
-
     }
 }

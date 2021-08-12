@@ -1,7 +1,7 @@
 package com.replace.replace.api.mail;
 
 import com.replace.replace.api.environment.Environment;
-import com.replace.replace.api.environment.EnvironmentVariable;
+import com.replace.replace.configuration.environment.Variable;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -64,7 +64,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
     protected String getPath( final String name ) {
 
-        return this.environment.getEnv( EnvironmentVariable.MAIL_TEMPLATE_PATH ) +
+        return this.environment.getEnv( Variable.MAIL_TEMPLATE_PATH ) +
                 name +
                 ".vm";
     }

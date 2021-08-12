@@ -1,7 +1,7 @@
 package com.replace.replace.api.security;
 
 import com.replace.replace.api.environment.Environment;
-import com.replace.replace.api.environment.EnvironmentVariable;
+import com.replace.replace.configuration.environment.Variable;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +22,7 @@ public class JwtTokenImpl implements JwtTokenHandler {
     protected Environment    environment;
     protected UserRepository userRepository;
 
+
     public JwtTokenImpl(
             final Environment environment,
             final UserRepository userRepository ) {
@@ -29,12 +30,13 @@ public class JwtTokenImpl implements JwtTokenHandler {
         this.userRepository = userRepository;
     }
 
+
     @Override
     public String createToken( final UserDetails userDetails ) {
         final User user = this.userRepository.findByUsername( userDetails.getUsername() );
 
         return Jwts.builder()
-                   .signWith( SignatureAlgorithm.HS512, this.environment.getEnv( EnvironmentVariable.JWT_SECRET ) )
+                   .signWith( SignatureAlgorithm.HS512, this.environment.getEnv( Variable.JWT_SECRET ) )
                    .setExpiration( this.getExpiration() )
                    .setIssuedAt( new Date() )
                    .setSubject( String.valueOf( user.getId() ) )
@@ -46,12 +48,13 @@ public class JwtTokenImpl implements JwtTokenHandler {
 
     @Override
     public Jws< Claims > validateJwtToken( final String token ) {
-        return Jwts.parser().setSigningKey( this.environment.getEnv( EnvironmentVariable.JWT_SECRET ) ).parseClaimsJws( token );
+        return Jwts.parser().setSigningKey( this.environment.getEnv( Variable.JWT_SECRET ) ).parseClaimsJws( token );
     }
+
 
     protected Date getExpiration() {
         final Calendar calendar = Calendar.getInstance();
-        calendar.add( Calendar.SECOND, Integer.parseInt( this.environment.getEnv( EnvironmentVariable.JWT_LIFE_TIME ) ) );
+        calendar.add( Calendar.SECOND, Integer.parseInt( this.environment.getEnv( Variable.JWT_LIFE_TIME ) ) );
 
         return calendar.getTime();
     }
