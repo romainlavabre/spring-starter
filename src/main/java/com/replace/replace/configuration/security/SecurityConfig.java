@@ -1,5 +1,8 @@
-package com.replace.replace.api.security;
+package com.replace.replace.configuration.security;
 
+import com.replace.replace.api.security.AuthenticationFilter;
+import com.replace.replace.api.security.JwtTokenHandler;
+import com.replace.replace.api.security.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[]           WHITE_ENDPOINT = {
             "/auth",
@@ -35,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected            Security           security;
 
 
-    public WebSecurityConfig(
+    public SecurityConfig(
             final JwtTokenHandler jwtTokenHandler,
             @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService,
             final Security security ) {
@@ -56,13 +59,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anonymous()
                 .and()
                 .authorizeRequests()
-                .antMatchers( WebSecurityConfig.WHITE_ENDPOINT ).permitAll()
+                .antMatchers( SecurityConfig.WHITE_ENDPOINT ).permitAll()
                 .antMatchers( "/**" ).access( "hasRole('ROLE_ADMIN')" )
                 .anyRequest().authenticated();
 
         http
                 .addFilterBefore( this.authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class );
-
     }
 
 

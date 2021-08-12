@@ -11,7 +11,7 @@ inspired of [this repository](https://github.com/Kaway/jwt-auth).
 For configure your access:
 
 ```java
-com.replace.replace.api.security.WebSecurityConfig;
+com.replace.replace.configuration.security.WebSecurityConfig;
 ```
 
 ---
