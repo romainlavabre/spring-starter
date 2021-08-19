@@ -1,9 +1,9 @@
 package com.replace.replace.api.request;
 
+import com.fairfair.invoice.api.upload.UploadedFile;
+import com.fairfair.invoice.api.upload.UploadedFileImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.replace.replace.api.upload.UploadedFile;
-import com.replace.replace.api.upload.UploadedFileImpl;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ public class RequestImpl implements Request {
 
     private final HttpServletRequest    request;
     private final Map< String, Object > parameters;
+    private       String                body;
 
 
     public RequestImpl() throws JsonProcessingException {
@@ -189,6 +190,12 @@ public class RequestImpl implements Request {
     }
 
 
+    @Override
+    public String getBody() {
+        return null;
+    }
+
+
     private void parseJson() throws JsonProcessingException {
 
         final StringBuffer json = new StringBuffer();
@@ -206,10 +213,12 @@ public class RequestImpl implements Request {
             e.printStackTrace();
         }
 
+        final String body = json.toString();
+        this.body = body;
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final Map< String, Object > map = objectMapper.readValue( json.toString(), HashMap.class );
+        final Map< String, Object > map = objectMapper.readValue( body, HashMap.class );
 
         for ( final Map.Entry< String, Object > input : map.entrySet() ) {
 

@@ -43,13 +43,7 @@ public class MockRequest implements Request {
 
     @Override
     public List< Object > getParameters( final String name ) {
-        final List< Object > list = new ArrayList<>();
-
-        this.parameters.forEach( ( key, value ) -> {
-            list.add( value );
-        } );
-
-        return list;
+        return ( List< Object > ) this.parameters.get( name );
     }
 
 
@@ -160,6 +154,12 @@ public class MockRequest implements Request {
     @Override
     public String getMethod() {
         return null;
+    }
+
+
+    @Override
+    public String getBody() {
+        return "";
     }
 
 

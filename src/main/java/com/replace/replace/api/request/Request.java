@@ -134,4 +134,10 @@ public interface Request {
      * @return Request method
      */
     String getMethod();
+
+
+    /**
+     * @return Raw body
+     */
+    String getBody();
 }
