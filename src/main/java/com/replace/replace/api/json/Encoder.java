@@ -82,7 +82,7 @@ public class Encoder {
 
         final Map< String, Object > mapped = new HashMap<>();
 
-        for ( final Field field : entity.getClass().getDeclaredFields() ) {
+        for ( final Field field : Encoder.getAllField( entity ) ) {
             final Json json = field.getAnnotation( Json.class );
 
             if ( json == null ) {
@@ -218,5 +218,27 @@ public class Encoder {
         }
 
         return mapped;
+    }
+
+
+    private static List< Field > getAllField( final Object entity ) {
+        final List< Field > fields = new ArrayList<>();
+
+        for ( final Field field : entity.getClass().getDeclaredFields() ) {
+            fields.add( field );
+        }
+
+        Class superClass = entity.getClass().getSuperclass();
+
+        while ( superClass != null ) {
+
+            for ( final Field field : superClass.getDeclaredFields() ) {
+                fields.add( field );
+            }
+
+            superClass = superClass.getSuperclass();
+        }
+
+        return fields;
     }
 }
