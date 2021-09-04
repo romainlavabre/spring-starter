@@ -4,7 +4,9 @@ import kong.unirest.Header;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -74,12 +76,22 @@ public class ResponseImpl implements Response {
 
 
     @Override
-    public Map< String, Object > getBody() {
+    public Map< String, Object > getBodyAsMap() {
         if ( this.response != null ) {
             return this.response.getBody().getObject().toMap();
         }
 
         return new HashMap<>();
+    }
+
+
+    @Override
+    public List< Object > getBodyAsList() {
+        if ( this.response != null ) {
+            return this.response.getBody().getArray().toList();
+        }
+
+        return new ArrayList<>();
     }
 
 

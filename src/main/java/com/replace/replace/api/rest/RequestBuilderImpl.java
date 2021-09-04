@@ -19,8 +19,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder init( final String method, final String url ) {
-        assert method != null && !method.isBlank() : "variable method should not be null or blank";
-        assert url != null && !url.isBlank() : "variable url should not be null or blank";
 
         this.requestWithBody = Unirest.request( method, url );
 
@@ -30,9 +28,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder routeParam( final String param, final String value ) {
-        assert param != null && !param.isBlank() : "variable param should not be null or blank";
-        assert value != null && !value.isBlank() : "variable value should not be null or blank";
-
         this.requestWithBody.routeParam( param, value );
 
         return this;
@@ -41,8 +36,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder queryString( final String key, final String value ) {
-        assert key != null && !key.isBlank() : "variable key should not be null or blank";
-
         this.requestWithBody.queryString( key, value );
 
         return this;
@@ -51,8 +44,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder field( final String key, final String value ) {
-        assert key != null && !key.isBlank() : "variable key should not be null or blank";
-
         if ( this.multipartBody == null ) {
             this.multipartBody = this.requestWithBody.field( key, value );
         } else {
@@ -65,8 +56,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder field( final String key, final File value ) {
-        assert key != null && !key.isBlank() : "variable key should not be null or blank";
-
         if ( this.multipartBody == null ) {
             this.multipartBody = this.requestWithBody.field( key, value );
         } else {
@@ -79,8 +68,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder field( final String key, final Collection value ) {
-        assert key != null && !key.isBlank() : "variable key should not be null or blank";
-
         if ( this.multipartBody == null ) {
             this.multipartBody = this.requestWithBody.field( key, value );
         } else {
@@ -103,8 +90,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder inContentType( final String contentType ) {
-        assert contentType != null && !contentType.isBlank() : "variable contentType should not be null or blank";
-
         if ( this.multipartBody != null ) {
             this.multipartBody.contentType( contentType );
         } else if ( this.requestBodyEntity != null ) {
@@ -119,8 +104,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder addHeader( final String header, final String value ) {
-        assert header != null && !header.isBlank() : "variable header should not be null or blank";
-
         if ( this.multipartBody != null ) {
             this.multipartBody.header( header, value );
         } else if ( this.requestBodyEntity != null ) {
@@ -135,8 +118,6 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder addHeader( final String header, final Integer value ) {
-        assert header != null && !header.isBlank() : "variable header should not be null or blank";
-
         if ( this.multipartBody != null ) {
             this.multipartBody.header( header, value.toString() );
         } else if ( this.requestBodyEntity != null ) {

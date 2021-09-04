@@ -16,11 +16,13 @@ public interface EventRepository {
      */
     void isValidCredentials( String event, Map< String, Object > params );
 
+
     /**
      * @param event
      * @return TRUE if target event has default subscribers
      */
     boolean hasDefaultSubscribers( String event );
+
 
     /**
      * Return all default subscribers where potentially ignored (Not Application scoped)

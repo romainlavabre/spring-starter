@@ -1,9 +1,9 @@
 package com.replace.replace.api.request;
 
-import com.fairfair.invoice.api.upload.UploadedFile;
-import com.fairfair.invoice.api.upload.UploadedFileImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replace.replace.api.upload.UploadedFile;
+import com.replace.replace.api.upload.UploadedFileImpl;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;

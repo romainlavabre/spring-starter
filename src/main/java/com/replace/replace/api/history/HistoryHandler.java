@@ -11,6 +11,7 @@ public interface HistoryHandler extends EventSubscriber {
      */
     void create( Object object );
 
+
     /**
      * Create a log for update
      *
@@ -18,6 +19,7 @@ public interface HistoryHandler extends EventSubscriber {
      * @param property
      */
     void update( Object object, String property );
+
 
     /**
      * Create log for deletion

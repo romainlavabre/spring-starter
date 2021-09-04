@@ -1,5 +1,6 @@
 package com.replace.replace.api.rest;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +23,8 @@ public interface Response {
     Map< String, String > getHeaders();
 
 
-    Map< String, Object > getBody();
+    Map< String, Object > getBodyAsMap();
+
+
+    List< Object > getBodyAsList();
 }

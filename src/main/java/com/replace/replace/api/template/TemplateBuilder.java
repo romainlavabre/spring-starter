@@ -1,4 +1,4 @@
-package com.replace.replace.api.mail;
+package com.replace.replace.api.template;
 
 import java.util.Map;
 
@@ -7,6 +7,7 @@ import java.util.Map;
  */
 public interface TemplateBuilder {
     String build( String name );
+
 
     String build( String name, Map< String, Object > parameters );
 }

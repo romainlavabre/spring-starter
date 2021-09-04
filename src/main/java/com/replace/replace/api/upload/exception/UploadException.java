@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus( code = HttpStatus.UNPROCESSABLE_ENTITY )
 public class UploadException extends RuntimeException {
 
-    public UploadException( String message ) {
+    public UploadException( final String message ) {
         super( message );
     }
 }

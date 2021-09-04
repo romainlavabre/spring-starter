@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus( code = HttpStatus.UNPROCESSABLE_ENTITY )
 public class DuplicationException extends RuntimeException {
 
-    public DuplicationException( String message ) {
+    public DuplicationException( final String message ) {
         super( message );
     }
 }

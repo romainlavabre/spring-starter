@@ -19,13 +19,15 @@ public class EventDispatcherImpl implements EventDispatcher {
     protected final EventRepository                        eventRepository;
     protected       Logger                                 logger = LoggerFactory.getLogger( this.getClass() );
 
-    public EventDispatcherImpl( EventRepository eventRepository ) {
+
+    public EventDispatcherImpl( final EventRepository eventRepository ) {
         this.subscribers     = new HashMap<>();
         this.eventRepository = eventRepository;
     }
 
+
     @Override
-    public EventDispatcher follow( String event, EventSubscriber eventSubscriber ) {
+    public EventDispatcher follow( final String event, final EventSubscriber eventSubscriber ) {
 
         this.logger.info( eventSubscriber.getClass().getName() + " as subscribed to event \"" + event + "\"" );
 
@@ -42,45 +44,62 @@ public class EventDispatcherImpl implements EventDispatcher {
 
 
     @Override
-    public EventDispatcher newEvent( String event, Map< String, Object > params ) {
+    public EventDispatcher newEvent( final String event, final Map< String, Object > params ) {
 
         this.eventRepository.isValidCredentials( event, params );
 
 
-        List< EventSubscriber > calledClass = new ArrayList<>();
+        final List< EventSubscriber > subscribers = new ArrayList<>();
 
         if ( this.eventRepository.hasDefaultSubscribers( event ) ) {
-            for ( EventSubscriber eventSubscriber : this.eventRepository.getDefaultSubscribers( event ) ) {
-                eventSubscriber.receiveEvent( event, params );
-
-                calledClass.add( eventSubscriber );
+            for ( final EventSubscriber eventSubscriber : this.eventRepository.getDefaultSubscribers( event ) ) {
+                subscribers.add( eventSubscriber );
             }
         }
 
         if ( this.isInitializedEvent( event ) ) {
-            for ( EventSubscriber eventSubscriber : this.subscribers.get( event ) ) {
-                if ( calledClass.contains( eventSubscriber ) ) {
+            for ( final EventSubscriber eventSubscriber : this.subscribers.get( event ) ) {
+                if ( subscribers.contains( eventSubscriber ) ) {
                     continue;
                 }
 
-                eventSubscriber.receiveEvent( event, params );
+                subscribers.add( eventSubscriber );
             }
+        }
+
+        subscribers.sort( ( es1, es2 ) -> {
+
+            if ( es1.getPriority() == es2.getPriority() ) {
+                return 0;
+            }
+
+            if ( es1.getPriority() > es2.getPriority() || es1.getPriority() == 0 ) {
+                return 1;
+            }
+
+            return -1;
+        } );
+
+        for ( final EventSubscriber eventSubscriber : subscribers ) {
+            eventSubscriber.receiveEvent( event, params );
         }
 
         return this;
     }
 
+
     /**
      * Control that event is already initialized in subscribers repository
      */
-    protected boolean isInitializedEvent( String event ) {
+    protected boolean isInitializedEvent( final String event ) {
         return this.subscribers.containsKey( event );
     }
+
 
     /**
      * Initialize event in subscribers repository
      */
-    protected void initializeEventSubscribers( String event ) {
+    protected void initializeEventSubscribers( final String event ) {
 
         this.subscribers.put( event, new ArrayList<>() );
     }

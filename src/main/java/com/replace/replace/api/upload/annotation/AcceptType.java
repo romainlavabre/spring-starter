@@ -11,5 +11,6 @@ public @interface AcceptType {
 
     String[] types() default {};
 
+
     boolean all() default false;
 }

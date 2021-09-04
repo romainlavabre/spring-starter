@@ -14,21 +14,21 @@ import java.util.Map;
 @RequestScope
 public class HistoryHandlerImpl implements HistoryHandler {
     private final Map< Object, History > store;
-    private       EntityManager          entityManager;
+    private final EntityManager          entityManager;
 
 
     public HistoryHandlerImpl(
-            EntityManager entityManager ) {
+            final EntityManager entityManager ) {
         this.entityManager = entityManager;
         this.store         = new HashMap<>();
     }
 
 
     @Override
-    public void create( Object object ) {
+    public void create( final Object object ) {
         assert object != null : "variable object should not be null";
 
-        History history = new History();
+        final History history = new History();
         history.setAuthorId( 0 );
         history.setAuthorType( "Unknow" );
         history.setSubjectType( object.getClass().getName() );
@@ -40,11 +40,11 @@ public class HistoryHandlerImpl implements HistoryHandler {
 
 
     @Override
-    public void update( Object object, String property ) {
+    public void update( final Object object, final String property ) {
 
         assert object != null : "variable object should not be null";
 
-        History history = new History();
+        final History history = new History();
         history.setAuthorId( 0 );
         history.setAuthorType( "Unknow" );
         history.setSubjectType( object.getClass().getName() );
@@ -58,10 +58,10 @@ public class HistoryHandlerImpl implements HistoryHandler {
 
 
     @Override
-    public void delete( Object object ) {
+    public void delete( final Object object ) {
         assert object != null : "variable object should not be null";
-        
-        History history = new History();
+
+        final History history = new History();
         history.setAuthorId( 0 );
         history.setAuthorType( "Unknow" );
         history.setSubjectId( Integer.valueOf( this.getFieldValue( object, "id" ) ) );
@@ -80,18 +80,25 @@ public class HistoryHandlerImpl implements HistoryHandler {
      * @param property
      * @return
      */
-    private String getFieldValue( Object object, String property ) {
+    private String getFieldValue( final Object object, final String property ) {
         Field reflectionProperty = null;
 
-        try {
-            reflectionProperty = object.getClass().getDeclaredField( property );
-            reflectionProperty.setAccessible( true );
-            return String.valueOf( reflectionProperty.get( object ) );
-        } catch ( NoSuchFieldException | IllegalAccessException e ) {
-            e.printStackTrace();
-        }
+        Class objectClass = object.getClass();
 
-        return null;
+        while ( true ) {
+            try {
+                reflectionProperty = objectClass.getDeclaredField( property );
+                reflectionProperty.setAccessible( true );
+                return String.valueOf( reflectionProperty.get( object ) );
+            } catch ( final NoSuchFieldException | IllegalAccessException e ) {
+                if ( objectClass.getSuperclass() != null ) {
+                    objectClass = objectClass.getSuperclass();
+                    continue;
+                }
+
+                return null;
+            }
+        }
     }
 
 
@@ -103,14 +110,20 @@ public class HistoryHandlerImpl implements HistoryHandler {
 
 
     @Override
-    public void receiveEvent( String event, Map< String, Object > params ) throws RuntimeException {
-        for ( Map.Entry< Object, History > entry : this.store.entrySet() ) {
-            History history = entry.getValue();
+    public void receiveEvent( final String event, final Map< String, Object > params ) throws RuntimeException {
+        for ( final Map.Entry< Object, History > entry : this.store.entrySet() ) {
+            final History history = entry.getValue();
 
             history.setSubjectId( Integer.parseInt( this.getFieldValue( entry.getKey(), "id" ) ) );
 
 
             this.entityManager.persist( history );
         }
+    }
+
+
+    @Override
+    public int getPriority() {
+        return 0;
     }
 }

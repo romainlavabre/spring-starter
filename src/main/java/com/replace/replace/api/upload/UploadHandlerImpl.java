@@ -22,12 +22,14 @@ public class UploadHandlerImpl implements UploadHandler {
     protected Configuration               configuration;
     protected Map< UploadedFile, String > triggers = new HashMap<>();
 
-    public UploadHandlerImpl( Configuration configuration ) {
+
+    public UploadHandlerImpl( final Configuration configuration ) {
         this.configuration = configuration;
     }
 
+
     @Override
-    public boolean upload( UploadedFile uploadedFile, String config ) {
+    public boolean upload( final UploadedFile uploadedFile, final String config ) {
         this.assertValidSize( uploadedFile.getSize(), config );
         this.assertValidContentType( uploadedFile.getContentType(), config );
         this.configuration.getMoveRule( config ).setDestination( uploadedFile );
@@ -43,6 +45,7 @@ public class UploadHandlerImpl implements UploadHandler {
         return false;
     }
 
+
     /**
      * Control that valid file has valid size
      *
@@ -50,7 +53,7 @@ public class UploadHandlerImpl implements UploadHandler {
      * @param config Configuration
      * @throws UploadException If is invalid size
      */
-    protected void assertValidSize( int size, String config )
+    protected void assertValidSize( final int size, final String config )
             throws UploadException {
 
         if ( !this.configuration.hasMaxSize( config ) ) {
@@ -70,7 +73,7 @@ public class UploadHandlerImpl implements UploadHandler {
      * @param config      Configuration
      * @throws UploadException If is invalid content type
      */
-    protected void assertValidContentType( String contentType, String config )
+    protected void assertValidContentType( final String contentType, final String config )
             throws UploadException {
 
         if ( this.configuration.isAcceptAllType( config ) ) {
@@ -91,10 +94,16 @@ public class UploadHandlerImpl implements UploadHandler {
      * @throws RuntimeException
      */
     @Override
-    public void receiveEvent( String event, Map< String, Object > params ) throws RuntimeException {
+    public void receiveEvent( final String event, final Map< String, Object > params ) throws RuntimeException {
 
-        for ( Map.Entry< UploadedFile, String > entry : this.triggers.entrySet() ) {
+        for ( final Map.Entry< UploadedFile, String > entry : this.triggers.entrySet() ) {
             this.configuration.getMoveRule( entry.getValue() ).move( entry.getKey() );
         }
+    }
+
+
+    @Override
+    public int getPriority() {
+        return 0;
     }
 }

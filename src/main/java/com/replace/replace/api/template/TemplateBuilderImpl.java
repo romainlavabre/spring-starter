@@ -1,4 +1,4 @@
-package com.replace.replace.api.mail;
+package com.replace.replace.api.template;
 
 import com.replace.replace.api.environment.Environment;
 import com.replace.replace.configuration.environment.Variable;
@@ -64,7 +64,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
     protected String getPath( final String name ) {
 
-        return this.environment.getEnv( Variable.MAIL_TEMPLATE_PATH ) +
+        return this.environment.getEnv( Variable.BASE_TEMPLATE_PATH ) +
                 name +
                 ".vm";
     }

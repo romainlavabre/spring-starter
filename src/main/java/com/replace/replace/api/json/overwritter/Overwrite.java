@@ -5,5 +5,5 @@ package com.replace.replace.api.json.overwritter;
  */
 public interface Overwrite< T > {
 
-    T overwrite( T data );
+    Object overwrite( T data );
 }

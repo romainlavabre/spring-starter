@@ -222,19 +222,14 @@ public class Encoder {
 
 
     private static List< Field > getAllField( final Object entity ) {
-        final List< Field > fields = new ArrayList<>();
 
-        for ( final Field field : entity.getClass().getDeclaredFields() ) {
-            fields.add( field );
-        }
+        final List< Field > fields = new ArrayList<>( Arrays.asList( entity.getClass().getDeclaredFields() ) );
 
         Class superClass = entity.getClass().getSuperclass();
 
         while ( superClass != null ) {
 
-            for ( final Field field : superClass.getDeclaredFields() ) {
-                fields.add( field );
-            }
+            fields.addAll( Arrays.asList( superClass.getDeclaredFields() ) );
 
             superClass = superClass.getSuperclass();
         }

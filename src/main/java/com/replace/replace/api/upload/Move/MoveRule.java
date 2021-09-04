@@ -14,6 +14,7 @@ public interface MoveRule {
      */
     void setDestination( UploadedFile uploadedFile );
 
+
     /**
      * Upload your file where tou want (path is ready)
      *

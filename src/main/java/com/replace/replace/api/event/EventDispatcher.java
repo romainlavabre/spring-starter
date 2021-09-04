@@ -11,10 +11,11 @@ public interface EventDispatcher {
      * Subscribe to event
      *
      * @param event
-     * @param service
+     * @param eventSubscriber
      * @return
      */
     EventDispatcher follow( String event, EventSubscriber eventSubscriber );
+
 
     /**
      * Launch new event
