@@ -76,7 +76,7 @@ public class RequestImpl implements Request {
 
         final Map< String, Object > parameters = new HashMap<>();
 
-        for ( final Map.Entry< String, Object > entry : parameters.entrySet() ) {
+        for ( final Map.Entry< String, Object > entry : this.parameters.entrySet() ) {
             if ( entry.getKey().startsWith( prefix ) ) {
                 parameters.put( entry.getKey().replace( prefix, "" ), entry.getValue() );
             }
