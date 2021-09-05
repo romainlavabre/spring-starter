@@ -22,7 +22,6 @@ public class RequestImpl implements Request {
 
     private final HttpServletRequest    request;
     private final Map< String, Object > parameters;
-    private       String                body;
 
 
     public RequestImpl() throws JsonProcessingException {
@@ -211,14 +210,19 @@ public class RequestImpl implements Request {
             }
         } catch ( final IOException e ) {
             e.printStackTrace();
+            return;
         }
 
-        final String body = json.toString();
-        this.body = body;
+        final String jsonStr = json.toString();
+
+        if ( jsonStr.isBlank() ) {
+            return;
+        }
+
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final Map< String, Object > map = objectMapper.readValue( body, HashMap.class );
+        final Map< String, Object > map = objectMapper.readValue( jsonStr, HashMap.class );
 
         for ( final Map.Entry< String, Object > input : map.entrySet() ) {
 
