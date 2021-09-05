@@ -1,7 +1,5 @@
 package com.replace.replace.api.request;
 
-import com.replace.replace.api.upload.UploadedFile;
-
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +48,9 @@ public interface Request {
     Map< String, Object > getAllParameters( String prefix );
 
 
+    String getRawQueryString();
+
+
     /**
      * @param name Query string name
      * @return Query string associate to name, null otherwise
@@ -62,38 +63,14 @@ public interface Request {
      *
      * @param name  Query string name
      * @param value Query string value
-     * @deprecated Not supported
      */
-    void setQueryString( String name, Object value );
+    void setQueryString( String name, String value );
 
 
     /**
      * @return Client IP
      */
     String getClientIp();
-
-
-    /**
-     * @param name Parameter name
-     * @return File associate to the name
-     */
-    UploadedFile getFile( String name );
-
-
-    /**
-     * @param name Parameter name
-     * @return All Files associate to the name
-     */
-    List< UploadedFile > getFiles( String name );
-
-
-    /**
-     * Add or overwrite uploaded file
-     *
-     * @param name         Parameter name
-     * @param uploadedFile Uploaded file
-     */
-    void setUploadedFile( String name, UploadedFile uploadedFile );
 
 
     /**

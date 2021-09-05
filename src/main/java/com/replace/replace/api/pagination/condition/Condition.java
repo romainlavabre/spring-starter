@@ -35,7 +35,7 @@ public class Condition {
 
 
     public Condition( final String key, final String operator ) {
-        this.key      = key;
+        this.key        = key;
         this.operator   = operator;
         this.values     = new ArrayList<>();
         this.parameters = new HashMap<>();
@@ -77,7 +77,7 @@ public class Condition {
                 condition.append( this.key + " " + operator + " " + this.getParameter( this.values.get( i ), operator, parameter ) );
 
 
-                if ( i <= this.values.size() - 1 ) {
+                if ( i < this.values.size() - 1 ) {
                     condition.append( " OR " );
                 }
             }
@@ -108,10 +108,10 @@ public class Condition {
 
 
     private String getParameter( final String value, final String operator, final String parameter ) {
-        if ( operator.contains( "LIKE" ) ) {
-            this.parameters.put( parameter, value );
-            return "%:" + parameter + "%";
-        } else if ( !operator.contains( "NULL" ) ) {
+        if ( operator.contains( "contains" ) ) {
+            this.parameters.put( parameter, "%" + value + "%" );
+            return ":" + parameter;
+        } else if ( !value.toUpperCase().equals( "NULL" ) ) {
             this.parameters.put( parameter, value );
             return ":" + parameter;
         }

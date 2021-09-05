@@ -2,8 +2,6 @@ package com.replace.replace.api.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.replace.replace.api.upload.UploadedFile;
-import com.replace.replace.api.upload.UploadedFileImpl;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Scope( value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES )
@@ -22,11 +23,14 @@ public class RequestImpl implements Request {
 
     private final HttpServletRequest    request;
     private final Map< String, Object > parameters;
+    private final Map< String, String > queryStrings;
+    private       String                body;
 
 
     public RequestImpl() throws JsonProcessingException {
-        this.parameters = new HashMap<>();
-        this.request    = (( ServletRequestAttributes ) RequestContextHolder.getRequestAttributes()).getRequest();
+        this.parameters   = new HashMap<>();
+        this.queryStrings = new HashMap<>();
+        this.request      = (( ServletRequestAttributes ) RequestContextHolder.getRequestAttributes()).getRequest();
         this.parseJson();
     }
 
@@ -70,6 +74,12 @@ public class RequestImpl implements Request {
 
 
     @Override
+    public String getRawQueryString() {
+        return this.request.getQueryString();
+    }
+
+
+    @Override
     public Map< String, Object > getAllParameters( final String prefix ) {
         assert prefix != null && !prefix.isBlank() : "variable prefix should not be null or blank";
 
@@ -89,50 +99,23 @@ public class RequestImpl implements Request {
     public String getQueryString( final String name ) {
         assert name != null && !name.isBlank() : "variable name should not be null or blank";
 
-        return ( String ) this.request.getParameter( name );
+        if ( this.queryStrings.containsKey( name ) ) {
+            return this.queryStrings.get( name );
+        }
+
+        return this.request.getParameter( name );
     }
 
 
     @Override
-    public void setQueryString( final String name, final Object value ) {
+    public void setQueryString( final String name, final String value ) {
+        this.queryStrings.put( name, value.toString() );
     }
 
 
     @Override
     public String getClientIp() {
         return this.request.getRemoteAddr();
-    }
-
-
-    @Override
-    public UploadedFile getFile( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
-        return ( UploadedFile ) this.parameters.get( name );
-    }
-
-
-    @Override
-    public List< UploadedFile > getFiles( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
-        return ( List< UploadedFile > ) this.parameters.get( name );
-    }
-
-
-    @Override
-    public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
-        if ( this.parameters.get( name ) instanceof List ) {
-            final List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
-
-            uploadedFiles.add( uploadedFile );
-
-            return;
-        }
-
-        this.parameters.put( name, uploadedFile );
     }
 
 
@@ -197,6 +180,11 @@ public class RequestImpl implements Request {
 
     private void parseJson() throws JsonProcessingException {
 
+        if ( this.request.getContentType() == null
+                || !this.request.getContentType().equals( "application/json" ) ) {
+            return;
+        }
+
         final StringBuffer json = new StringBuffer();
 
         String         line   = null;
@@ -210,7 +198,6 @@ public class RequestImpl implements Request {
             }
         } catch ( final IOException e ) {
             e.printStackTrace();
-            return;
         }
 
         final String jsonStr = json.toString();
@@ -225,37 +212,6 @@ public class RequestImpl implements Request {
         final Map< String, Object > map = objectMapper.readValue( jsonStr, HashMap.class );
 
         for ( final Map.Entry< String, Object > input : map.entrySet() ) {
-
-            if ( input.getKey().equals( "uploaded_file" ) ) {
-
-                for ( final Map.Entry< String, Map< String, Object > > entry : (( Map< String, Map< String, Object > > ) input.getValue()).entrySet() ) {
-
-                    if ( entry.getValue() instanceof Map ) {
-                        this.setUploadedFile( entry.getKey(), this.getUploadedFile( entry.getValue() ) );
-                    }
-
-                    if ( entry.getValue() instanceof List ) {
-                        for ( final Map< String, Object > uploadedFile : ( List< Map< String, Object > > ) entry.getValue() ) {
-
-                            if ( this.parameters.containsKey( entry.getKey() ) ) {
-                                final List< UploadedFile > list = ( List< UploadedFile > ) this.parameters.get( entry.getKey() );
-                                list.add( this.getUploadedFile( uploadedFile ) );
-
-                                continue;
-                            }
-
-                            final List< UploadedFile > list = new ArrayList<>();
-
-                            list.add( this.getUploadedFile( uploadedFile ) );
-
-                            this.parameters.put( entry.getKey(), list );
-                        }
-                    }
-                }
-
-
-                continue;
-            }
 
             if ( input.getValue() instanceof Map ) {
                 final Map< String, Object > secondLevel = ( Map< String, Object > ) input.getValue();
@@ -284,17 +240,5 @@ public class RequestImpl implements Request {
                 }
             }
         }
-    }
-
-
-    protected UploadedFile getUploadedFile( final Map< String, Object > map ) {
-        final UploadedFile uploadedFile = new UploadedFileImpl();
-        uploadedFile.setName( ( String ) map.get( "name" ) );
-        uploadedFile.setContent( Base64.getDecoder().decode( ( String ) map.get( "content" ) ) );
-        uploadedFile.setContentType( ( String ) map.get( "content-type" ) );
-        uploadedFile.setSize( uploadedFile.getContent().length );
-        uploadedFile.setInfos( ( Map< String, Object > ) map.get( "infos" ) );
-
-        return uploadedFile;
     }
 }

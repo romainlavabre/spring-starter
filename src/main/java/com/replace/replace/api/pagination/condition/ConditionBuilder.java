@@ -2,6 +2,8 @@ package com.replace.replace.api.pagination.condition;
 
 import com.replace.replace.api.request.Request;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +13,23 @@ import java.util.List;
 public class ConditionBuilder {
 
     public static List< Condition > getConditions( final Request request ) {
-        final String            queryString  = request.getUri().split( "\\?", 2 )[ 1 ];
-        final String[]          queryStrings = queryString.split( "[^\\\\]&" );
+
+
+        final String            queryString  = request.getRawQueryString();
+        final String[]          queryStrings = queryString.split( "&" );
         final List< Condition > result       = new ArrayList<>();
 
         for ( int i = 0; i < queryStrings.length; i++ ) {
+            queryStrings[ i ] = URLDecoder.decode( queryStrings[ i ], StandardCharsets.UTF_8 );
+
             if ( !queryStrings[ i ].matches( "[a-zA-Z0-9]+\\[[a-z]+\\]=.+" ) ) {
                 continue;
             }
 
-            final String[] pair     = queryStrings[ i ].split( "[^\\\\]=" );
-            final String   key      = pair[ 0 ].split( "[^\\\\]\\[" )[ 0 ];
-            final String   operator = pair[ 0 ].replace( key, "" ).replaceAll( "(\\[|\\])", "" );
+
+            final String[] pair     = queryStrings[ i ].split( "=" );
+            final String   key      = pair[ 0 ].split( "\\[" )[ 0 ];
+            final String   operator = pair[ 0 ].replace( key, "" ).replaceAll( "\\[|\\]", "" );
             final String   value    = pair[ 1 ];
 
             Condition conditionFound = null;

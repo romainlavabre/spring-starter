@@ -61,8 +61,6 @@ public class Query {
 
     public void setOffset( final int offset ) {
         this.offset = offset;
-
-        this.parameters.put( "offset", String.valueOf( offset ) );
     }
 
 
@@ -73,7 +71,5 @@ public class Query {
 
     public void setLimit( final int limit ) {
         this.limit = limit;
-
-        this.parameters.put( "limit", String.valueOf( limit ) );
     }
 }

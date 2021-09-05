@@ -28,7 +28,7 @@ public class Pagination {
     } )
     private int to;
 
-    private List< AbstractDto > data;
+    private List< Object > data;
 
     @Json( groups = {
             @Group( key = "per_page" )
@@ -82,12 +82,12 @@ public class Pagination {
     }
 
 
-    public List< AbstractDto > getData() {
+    public List< Object > getData() {
         return this.data;
     }
 
 
-    public Pagination setData( final List< AbstractDto > data ) {
+    public Pagination setData( final List< Object > data ) {
         this.data = data;
 
         return this;

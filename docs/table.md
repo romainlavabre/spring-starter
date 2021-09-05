@@ -13,3 +13,4 @@
 - 1.10 [Environment](api/environment.md)
 - 1.11 [History](api/history.md)
 - 1.12 [Security](api/security.md)
+- 1.13 [Pagination](api/pagination.md)

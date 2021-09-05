@@ -1,9 +1,9 @@
 package com.replace.replace.api.pagination.query;
 
-import com.replace.replace.api.pagination.Constraint;
 import com.replace.replace.api.pagination.condition.Condition;
 import com.replace.replace.api.pagination.exception.NotSupportedKey;
 import com.replace.replace.api.pagination.exception.NotSupportedOperator;
+import com.replace.replace.api.pagination.exception.NotSupportedValue;
 import com.replace.replace.api.request.Request;
 
 import java.util.List;
@@ -15,10 +15,14 @@ import java.util.Map;
 public class QueryBuilder {
 
     public static Query build( final Request request, final List< Condition > conditions, final String view )
-            throws NotSupportedKey, NotSupportedOperator {
+            throws NotSupportedKey, NotSupportedOperator, NotSupportedValue {
         final Query query = new Query();
 
-        final StringBuilder sqlQuery = new StringBuilder( "SELECT {SELECTED} FROM " + view + " WHERE" );
+        final StringBuilder sqlQuery = new StringBuilder( "SELECT {SELECTED} FROM " + view );
+
+        if ( !conditions.isEmpty() ) {
+            sqlQuery.append( " WHERE" );
+        }
 
         for ( int i = 0; i < conditions.size(); i++ ) {
             final Condition condition = conditions.get( i );
@@ -36,19 +40,37 @@ public class QueryBuilder {
             }
         }
 
-        final String orderBy = request.getQueryString( "sortBy" );
-        Constraint.assertValidKey( orderBy );
-        query.setCountQuery( sqlQuery.toString().replace( "{SELECTED}", "COUNT(" + orderBy + ") AS total" ) );
-        final String order = request.getQueryString( "asc" ) != null ? "ASC" : "DESC";
+        query.setCountQuery( sqlQuery.toString().replace( "{SELECTED}", "COUNT(id)" ) );
+        final String sortBy  = request.getQueryString( "sortBy" );
+        final String orderBy = request.getQueryString( "orderBy" );
+        final String limit   = request.getQueryString( "per_page" );
+
+        if ( !limit.matches( "[0-9]+" ) ) {
+            throw new NotSupportedValue( "per_page", limit );
+        }
+
+        final int offset = Integer.parseInt( request.getQueryString( "per_page" ) ) * (Integer.parseInt( request.getQueryString( "page" ) ) - 1);
 
 
-        sqlQuery.append( " ORDER BY " )
-                .append( orderBy )
+        sqlQuery.append( " " )
+                .append( "ORDER BY" )
                 .append( " " )
-                .append( order )
-                .append( " LIMIT :limit OFFSET :offset" )
+                .append( sortBy.replace( " ", "" ) )
+                .append( " " )
+                .append( orderBy.toUpperCase().equals( "ASC" ) ? "ASC" : "DESC" )
+                .append( " " )
+                .append( "LIMIT" )
+                .append( " " )
+                .append( limit )
+                .append( " " )
+                .append( "OFFSET" )
+                .append( " " )
+                .append( offset )
+                .append( " " )
                 .append( ";" );
 
+        query.setOffset( offset );
+        query.setLimit( Integer.parseInt( limit ) );
         query.setDataQuery( sqlQuery.toString().replace( "{SELECTED}", "*" ) );
 
         return query;
