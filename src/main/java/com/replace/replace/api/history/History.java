@@ -18,19 +18,19 @@ public class History {
     private String    authorType;
     @Column( name = "author_id" )
     private int       authorId;
-    @Column( name = "subject_type" )
+    @Column( name = "subject_type", nullable = false )
     private String    subjectType;
-    @Column( name = "subject_id" )
+    @Column( name = "subject_id", nullable = false )
     private int       subjectId;
     @Column( name = "subject_property" )
     private String    subjectProperty;
-    @Column( name = "new_value" )
+    @Column( name = "new_value", columnDefinition = "TEXT" )
     private String    newValue;
-    @Column( name = "log_type" )
+    @Column( name = "log_type", nullable = false )
     private String    logType;
     @Column( name = "ip_address" )
     private String    ipAddress;
-    @Column( name = "created_at" )
+    @Column( name = "created_at", nullable = false )
     private Timestamp createdAt;
 
 
