@@ -73,7 +73,7 @@ public class EventDispatcherImpl implements EventDispatcher {
                 return 0;
             }
 
-            if ( es1.getPriority() > es2.getPriority() || es1.getPriority() == 0 ) {
+            if ( es1.getPriority() != 0 && es1.getPriority() < es2.getPriority() ) {
                 return 1;
             }
 
