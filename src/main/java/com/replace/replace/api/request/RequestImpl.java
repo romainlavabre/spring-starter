@@ -2,6 +2,8 @@ package com.replace.replace.api.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replace.replace.api.upload.UploadedFile;
+import com.replace.replace.api.upload.UploadedFileImpl;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Scope( value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES )
@@ -110,6 +109,38 @@ public class RequestImpl implements Request {
     @Override
     public void setQueryString( final String name, final String value ) {
         this.queryStrings.put( name, value.toString() );
+    }
+
+
+    @Override
+    public UploadedFile getFile( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
+        return ( UploadedFile ) this.parameters.get( name );
+    }
+
+
+    @Override
+    public List< UploadedFile > getFiles( final String name ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
+        return ( List< UploadedFile > ) this.parameters.get( name );
+    }
+
+
+    @Override
+    public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
+        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+
+        if ( this.parameters.get( name ) instanceof List ) {
+            final List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
+
+            uploadedFiles.add( uploadedFile );
+
+            return;
+        }
+
+        this.parameters.put( name, uploadedFile );
     }
 
 
@@ -213,6 +244,37 @@ public class RequestImpl implements Request {
 
         for ( final Map.Entry< String, Object > input : map.entrySet() ) {
 
+            if ( input.getKey().equals( "uploaded_file" ) ) {
+
+                for ( final Map.Entry< String, Map< String, Object > > entry : (( Map< String, Map< String, Object > > ) input.getValue()).entrySet() ) {
+
+                    if ( entry.getValue() instanceof Map ) {
+                        this.setUploadedFile( entry.getKey(), this.getUploadedFile( entry.getValue() ) );
+                    }
+
+                    if ( entry.getValue() instanceof List ) {
+                        for ( final Map< String, Object > uploadedFile : ( List< Map< String, Object > > ) entry.getValue() ) {
+
+                            if ( this.parameters.containsKey( entry.getKey() ) ) {
+                                final List< UploadedFile > list = ( List< UploadedFile > ) this.parameters.get( entry.getKey() );
+                                list.add( this.getUploadedFile( uploadedFile ) );
+
+                                continue;
+                            }
+
+                            final List< UploadedFile > list = new ArrayList<>();
+
+                            list.add( this.getUploadedFile( uploadedFile ) );
+
+                            this.parameters.put( entry.getKey(), list );
+                        }
+                    }
+                }
+
+
+                continue;
+            }
+
             if ( input.getValue() instanceof Map ) {
                 final Map< String, Object > secondLevel = ( Map< String, Object > ) input.getValue();
 
@@ -240,5 +302,17 @@ public class RequestImpl implements Request {
                 }
             }
         }
+    }
+
+
+    protected UploadedFile getUploadedFile( final Map< String, Object > map ) {
+        final UploadedFile uploadedFile = new UploadedFileImpl();
+        uploadedFile.setName( ( String ) map.get( "name" ) );
+        uploadedFile.setContent( Base64.getDecoder().decode( ( String ) map.get( "content" ) ) );
+        uploadedFile.setContentType( ( String ) map.get( "content-type" ) );
+        uploadedFile.setSize( uploadedFile.getContent().length );
+        uploadedFile.setInfos( ( Map< String, Object > ) map.get( "infos" ) );
+
+        return uploadedFile;
     }
 }

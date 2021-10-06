@@ -1,5 +1,7 @@
 package com.replace.replace.api.request;
 
+import com.replace.replace.api.upload.UploadedFile;
+
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +67,29 @@ public interface Request {
      * @param value Query string value
      */
     void setQueryString( String name, String value );
+
+
+    /**
+     * @param name Parameter name
+     * @return File associate to the name
+     */
+    UploadedFile getFile( String name );
+
+
+    /**
+     * @param name Parameter name
+     * @return All Files associate to the name
+     */
+    List< UploadedFile > getFiles( String name );
+
+
+    /**
+     * Add or overwrite uploaded file
+     *
+     * @param name         Parameter name
+     * @param uploadedFile Uploaded file
+     */
+    void setUploadedFile( String name, UploadedFile uploadedFile );
 
 
     /**

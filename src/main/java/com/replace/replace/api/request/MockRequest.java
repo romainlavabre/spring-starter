@@ -1,5 +1,8 @@
 package com.replace.replace.api.request;
 
+import com.replace.replace.api.upload.UploadedFile;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +13,13 @@ import java.util.Map;
 public class MockRequest implements Request {
 
 
-    protected final Map< String, Object > parameters;
+    protected final Map< String, Object >       parameters;
+    protected final Map< String, UploadedFile > files;
 
 
     public MockRequest() {
         this.parameters = new HashMap<>();
+        this.files      = new HashMap<>();
     }
 
 
@@ -81,6 +86,30 @@ public class MockRequest implements Request {
 
 
     @Override
+    public UploadedFile getFile( final String name ) {
+        return this.files.get( name );
+    }
+
+
+    @Override
+    public List< UploadedFile > getFiles( final String name ) {
+        final List< UploadedFile > list = new ArrayList<>();
+
+        this.files.forEach( ( key, value ) -> {
+            list.add( value );
+        } );
+
+        return list;
+    }
+
+
+    @Override
+    public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
+        this.files.put( name, uploadedFile );
+    }
+
+
+    @Override
     public String getClientIp() {
         return null;
     }
@@ -140,6 +169,17 @@ public class MockRequest implements Request {
     }
 
 
+    public static Request build( final Map< String, Object > parameters, final Map< String, UploadedFile > files ) {
+
+        final Request request = new MockRequest();
+
+        parameters.forEach( request::setParameter );
+        files.forEach( request::setUploadedFile );
+
+        return request;
+    }
+
+
     public static Request build( final Map< String, Object > parameters ) {
 
         final Request request = new MockRequest();
@@ -147,5 +187,10 @@ public class MockRequest implements Request {
         parameters.forEach( request::setParameter );
 
         return request;
+    }
+
+
+    public static Request build() {
+        return new MockRequest();
     }
 }
