@@ -205,7 +205,7 @@ public class RequestImpl implements Request {
 
     @Override
     public String getBody() {
-        return null;
+        return this.body;
     }
 
 
