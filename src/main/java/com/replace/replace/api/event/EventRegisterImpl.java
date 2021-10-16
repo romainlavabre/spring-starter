@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class EventRegisterImpl implements EventRepository {
 
 
             if ( params.get( credentials.getKey() ).getClass() != credentials.getValue()
-                    && !Proxy.isProxyClass( params.get( credentials.getKey() ).getClass() ) ) {
+                    && !credentials.getValue().isAssignableFrom( params.get( credentials.getKey() ).getClass() ) ) {
                 throw new InvalidEventCredentialsException();
             }
         }
