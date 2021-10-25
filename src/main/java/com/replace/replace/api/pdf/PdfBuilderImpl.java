@@ -48,6 +48,9 @@ public class PdfBuilderImpl implements PdfBuilder {
             return null;
         }
 
+        final File tmp = new File( tmpFile );
+        tmp.delete();
+
         return new File( filename );
     }
 }
