@@ -2,6 +2,7 @@ package com.replace.replace.api.rest;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,9 @@ public interface RequestBuilder {
 
 
     RequestBuilder jsonBody( Map< String, Object > json );
+
+
+    RequestBuilder jsonBody( List< Object > json );
 
 
     RequestBuilder inContentType( String contentType );

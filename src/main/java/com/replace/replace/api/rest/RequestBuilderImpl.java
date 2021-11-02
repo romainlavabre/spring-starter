@@ -5,6 +5,7 @@ import kong.unirest.*;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -89,13 +90,23 @@ public class RequestBuilderImpl implements RequestBuilder {
 
 
     @Override
+    public RequestBuilder jsonBody( final List< Object > json ) {
+        this.requestBodyEntity = this.requestWithBody.body( (new Gson()).toJson( json ) );
+
+        this.inContentType( RequestBuilder.JSON );
+
+        return this;
+    }
+
+
+    @Override
     public RequestBuilder inContentType( final String contentType ) {
         if ( this.multipartBody != null ) {
             this.multipartBody.contentType( contentType );
         } else if ( this.requestBodyEntity != null ) {
             this.requestBodyEntity.contentType( contentType );
         } else {
-            this.requestBodyEntity.contentType( contentType );
+            this.requestWithBody.contentType( contentType );
         }
 
         return this;
