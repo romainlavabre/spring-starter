@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention( RetentionPolicy.RUNTIME )
 @Target( {ElementType.TYPE} )
 public @interface DynamicEnabled {
-    Class< DefaultRepository< ? > > repository();
+    Class< ? extends DefaultRepository< ? > > repository();
 }
