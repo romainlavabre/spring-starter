@@ -14,5 +14,19 @@ For configure your access:
 com.replace.replace.configuration.security.WebSecurityConfig;
 ```
 
+# Environment
+
+- jwt.secret={512 bits key}
+
+You can use this [generator](https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx)
+
+# Generate password
+
+You can use 
+
+```java
+PasswordEncoder.class
+``` 
+
 ---
 [BACK](../table.md)
