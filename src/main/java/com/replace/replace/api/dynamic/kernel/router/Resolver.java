@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -61,16 +62,64 @@ public class Resolver {
                             .methods( route.getRequestMethod() )
                             .build();
 
+                    Map< String, Class< ? >[] > method = getControllerMethod( route );
+                    String                      name   = null;
+                    Class< ? >[]                params = null;
+
+
+                    for ( Map.Entry< String, Class< ? >[] > entry : method.entrySet() ) {
+                        name   = entry.getKey();
+                        params = entry.getValue();
+                    }
+
+
                     requestMappingHandlerMapping.registerMapping(
                             requestMappingInfo,
                             controller,
-                            Controller.class.getMethod( "get" )
+                            Controller.class.getDeclaredMethod( name, params )
                     );
 
                     logger.info( route.getRequestMethod().toString() + " " + route.getPath() );
                 }
             }
         }
+    }
+
+
+    private Map< String, Class< ? >[] > getControllerMethod( RouteHandler.Route route ) {
+        if ( route.isGetOne() ) {
+            return Map.of( "getOne", new Class[]{long.class} );
+        }
+
+        if ( route.isGetAll() ) {
+            return Map.of( "getAll", new Class[]{} );
+        }
+
+        if ( route.isGetOneBy() ) {
+            return Map.of( "getOneBy", new Class[]{long.class} );
+        }
+
+        if ( route.isGetAllBy() ) {
+            return Map.of( "getAllBy", new Class[]{long.class} );
+        }
+
+        if ( route.isPost() ) {
+            return Map.of( "post", new Class[]{} );
+        }
+
+        if ( route.isPut() ) {
+            return Map.of( "put", new Class[]{long.class} );
+        }
+
+        if ( route.isPatch() ) {
+            return Map.of( "patch", new Class[]{long.class} );
+        }
+
+        if ( route.isDelete() ) {
+            return Map.of( "delete", new Class[]{long.class} );
+        }
+
+        return null;
     }
 
 

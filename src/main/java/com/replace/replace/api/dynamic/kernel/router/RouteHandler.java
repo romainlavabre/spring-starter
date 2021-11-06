@@ -8,6 +8,7 @@ import com.replace.replace.api.dynamic.kernel.exception.SetterNotFoundException;
 import com.replace.replace.api.dynamic.kernel.exception.ToManySetterParameterException;
 import com.replace.replace.api.dynamic.kernel.setter.SetterHandler;
 import com.replace.replace.api.dynamic.kernel.util.Formatter;
+import com.replace.replace.api.request.Request;
 import com.replace.replace.configuration.security.Role;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -74,6 +75,12 @@ public class RouteHandler {
         storage.put( id, routes );
 
         return routes;
+    }
+
+
+    public static Route getRoute( Request request ) {
+        System.out.println( request.getUri() );
+        return null;
     }
 
 
@@ -258,6 +265,22 @@ public class RouteHandler {
 
         private List< TriggerResolver< ? > > triggerResolvers;
 
+        private GetOne getOne;
+
+        private GetAll getAll;
+
+        private GetOneBy getOneBy;
+
+        private GetAllBy getAllBy;
+
+        private Post post;
+
+        private Put put;
+
+        private Patch patch;
+
+        private Delete delete;
+
 
         public Route(
                 GetOne getOne,
@@ -266,6 +289,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
+            this.getOne        = getOne;
 
             if ( !getOne.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + getOne.route();
@@ -289,6 +313,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
+            this.getAll        = getAll;
 
             if ( !getAll.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + getAll.route();
@@ -311,6 +336,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
+            this.getOneBy      = getOneBy;
 
             if ( !getOneBy.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + getOneBy.route();
@@ -336,6 +362,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
+            this.getAllBy      = getAllBy;
 
             if ( !getAllBy.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + getAllBy.route();
@@ -361,7 +388,9 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.POST;
             this.subject       = subject;
             this.role          = role;
-            setters            = new ArrayList<>();
+            this.post          = post;
+
+            setters = new ArrayList<>();
 
             for ( String field : post.fields() ) {
                 setters.add( SetterHandler.toSetter( subject.getDeclaredField( field ) ) );
@@ -388,7 +417,9 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.PUT;
             this.subject       = subject;
             this.role          = role;
-            setters            = new ArrayList<>();
+            this.put           = put;
+
+            setters = new ArrayList<>();
 
             for ( String field : put.fields() ) {
                 setters.add( SetterHandler.toSetter( subject.getDeclaredField( field ) ) );
@@ -417,7 +448,9 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.PATCH;
             this.subject       = subject;
             this.role          = role;
-            setters            = new ArrayList<>();
+            this.patch         = patch;
+
+            setters = new ArrayList<>();
             setters.add( SetterHandler.toSetter( field ) );
 
             if ( !patch.route().isBlank() ) {
@@ -443,6 +476,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.DELETE;
             this.subject       = subject;
             this.role          = role;
+            this.delete        = delete;
 
             if ( !delete.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + delete.route();
@@ -471,6 +505,46 @@ public class RouteHandler {
 
         public RequestMethod getRequestMethod() {
             return requestMethod;
+        }
+
+
+        public boolean isGetOne() {
+            return getOne != null;
+        }
+
+
+        public boolean isGetAll() {
+            return getAll != null;
+        }
+
+
+        public boolean isGetOneBy() {
+            return getOneBy != null;
+        }
+
+
+        public boolean isGetAllBy() {
+            return getAllBy != null;
+        }
+
+
+        public boolean isPost() {
+            return post != null;
+        }
+
+
+        public boolean isPut() {
+            return put != null;
+        }
+
+
+        public boolean isPatch() {
+            return patch != null;
+        }
+
+
+        public boolean isDelete() {
+            return delete != null;
         }
     }
 }
