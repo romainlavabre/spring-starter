@@ -7,12 +7,18 @@ import java.lang.annotation.Target;
 
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
-public @interface Get {
-    boolean one() default true;
+public @interface GetAllBy {
+    String route() default "";
 
 
-    boolean all() default true;
+    boolean enabled() default false;
 
 
-    String[] byRelation() default {};
+    String field();
+
+
+    String[] roles() default {"*"};
+
+
+    boolean authenticated() default true;
 }

@@ -9,7 +9,16 @@ import java.lang.annotation.Target;
 @Target( ElementType.FIELD )
 public @interface EntryPoint {
 
-    Get get() default @Get;
+    GetOne getOne() default @GetOne;
+
+
+    GetAll getAll() default @GetAll;
+
+
+    GetOneBy[] getOneBy() default {};
+
+
+    GetOneBy[] getAllBy() default {};
 
 
     Post[] post() default {};
