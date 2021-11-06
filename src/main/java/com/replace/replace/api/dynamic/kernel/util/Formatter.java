@@ -67,7 +67,11 @@ public class Formatter {
                 if ( i < iterator - 1 ) {
                     stringBuilder.append( Character.toUpperCase( characters[ ++i ] ) );
                 }
+
+                continue;
             }
+
+            stringBuilder.append( characters[ i ] );
         }
 
         return stringBuilder.toString();

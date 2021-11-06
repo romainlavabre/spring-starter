@@ -5,22 +5,24 @@ package com.replace.replace.api.dynamic.kernel.util;
  */
 public class TypeResolver {
 
-    public static String toWrapper( Class< ? > type ) {
+    public static Class< ? > toWrapper( Class< ? > type ) {
         if ( !type.isPrimitive() ) {
-            return type.getName();
+            return type;
         }
 
         switch ( type.getName() ) {
             case "byte":
-                return Byte.class.getName();
+                return Byte.class;
             case "short":
-                return Short.class.getName();
+                return Short.class;
             case "int":
-                return Integer.class.getName();
+                return Integer.class;
             case "long":
-                return Long.class.getName();
+                return Long.class;
             case "char":
-                return Character.class.getName();
+                return Character.class;
+            case "boolean":
+                return Boolean.class;
             default:
                 return null;
         }

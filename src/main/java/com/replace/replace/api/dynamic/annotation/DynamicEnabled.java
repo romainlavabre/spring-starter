@@ -14,4 +14,7 @@ import java.lang.annotation.Target;
 @Target( {ElementType.TYPE} )
 public @interface DynamicEnabled {
     Class< ? extends DefaultRepository< ? > > repository();
+
+
+    String suffixPlural() default "s";
 }

@@ -14,6 +14,9 @@ public @interface GetAllBy {
     boolean enabled() default false;
 
 
+    Class< ? > entity();
+    
+
     String field();
 
 

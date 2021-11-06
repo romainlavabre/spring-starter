@@ -7,21 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
-public @interface GetOneBy {
-    String route() default "";
-
-
-    boolean enabled() default false;
-
-
-    Class< ? > entity();
-
-
-    String field();
-
-
-    String[] roles() default {"*"};
-
-
-    boolean authenticated() default true;
+public @interface Setter {
+    String value();
 }

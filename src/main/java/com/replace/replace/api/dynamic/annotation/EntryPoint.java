@@ -18,7 +18,7 @@ public @interface EntryPoint {
     GetOneBy[] getOneBy() default {};
 
 
-    GetOneBy[] getAllBy() default {};
+    GetAllBy[] getAllBy() default {};
 
 
     Post[] post() default {};
