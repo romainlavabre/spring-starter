@@ -1,4 +1,5 @@
 package com.replace.replace.configuration.dynamic;
 
-public enum RouteIdentifier {
+public enum TriggerIdentifier {
+    PERSON_CATEGORY
 }

@@ -1,7 +1,6 @@
 package com.replace.replace.api.dynamic.annotation;
 
-import com.replace.replace.api.dynamic.api.RedirectResolver;
-import com.replace.replace.configuration.dynamic.RouteIdentifier;
+import com.replace.replace.api.dynamic.api.TriggerResolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,7 +13,8 @@ import java.lang.annotation.Target;
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
 public @interface Put {
-    RouteIdentifier id();
+
+    String route() default "";
 
 
     String[] roles() default {"*"};
@@ -26,8 +26,8 @@ public @interface Put {
     String[] fields() default {"*"};
 
 
-    Class< RedirectResolver< ? > >[] redirectTo();
+    Class< ? extends TriggerResolver< ? > >[] triggers() default {};
 
 
-    Class< com.replace.replace.api.crud.Update< ? > > executor();
+    Class< ? extends com.replace.replace.api.crud.Update< ? > > executor() default DefaultUpdate.class;
 }
