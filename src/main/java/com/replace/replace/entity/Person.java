@@ -7,8 +7,9 @@ import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.configuration.security.Role;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
+import com.replace.replace.module.person.CategoryResolver;
 import com.replace.replace.module.person.constraint.UniquePhone;
-import com.replace.replace.module.person.trigger.CategoryTrigger;
+import com.replace.replace.module.person.trigger.CategoryTriggerProvider;
 import com.replace.replace.repository.PersonRepository;
 
 import javax.persistence.*;
@@ -34,7 +35,13 @@ public class Person {
             getAll = @GetAll( enabled = true, authenticated = false ),
             getOneBy = @GetOneBy( entity = Friend.class ),
             post = {
-                    @Post( fields = {"name", "phone", "age"}, triggers = {CategoryTrigger.class} )
+                    @Post(
+                            fields = {"name", "phone", "age"},
+                            triggers = {
+                                    @Trigger( triggerId = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, attachToField = "friends" ),
+                                    @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, customProvider = CategoryTriggerProvider.class )
+                            }
+                    )
             },
             delete = {
                     @Delete( roles = {Role.ADMIN} )
@@ -72,7 +79,9 @@ public class Person {
 
     @EntryPoint(
             patch = {
-                    @Patch( triggers = {CategoryTrigger.class} )
+                    @Patch( triggers = {
+                            @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, customProvider = CategoryTriggerProvider.class )
+                    } )
             }
     )
     @Json( groups = {
@@ -96,8 +105,8 @@ public class Person {
             patch = {
                     @Patch
             },
-            triggers = {
-                    @Trigger( id = TriggerIdentifier.PERSON_CATEGORY )
+            unmanagedTriggers = {
+                    @UnmanagedTrigger( id = TriggerIdentifier.PERSON_CATEGORY, executor = CategoryResolver.class )
             }
     )
     @Json( groups = {

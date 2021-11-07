@@ -3,6 +3,7 @@ package com.replace.replace.entity;
 import com.replace.replace.api.dynamic.annotation.*;
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
+import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
 import com.replace.replace.repository.FriendRepository;
@@ -19,8 +20,11 @@ public class Friend {
     @EntryPoint(
             getOne = @GetOne( enabled = true ),
             getAllBy = {@GetAllBy( enabled = true, entity = Person.class )},
-            post = @Post( fields = {"name", "person"} ),
-            delete = @Delete
+            post = {@Post( fields = {"name", "person"} )},
+            delete = {@Delete},
+            createTriggers = {
+                    @CreateTrigger( id = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, fields = {"name"} )
+            }
     )
     @Json( groups = {
             @Group( name = GroupType.ADMIN )

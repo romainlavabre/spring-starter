@@ -33,5 +33,14 @@ public @interface EntryPoint {
     Delete[] delete() default {};
 
 
-    Trigger[] triggers() default {};
+    CreateTrigger[] createTriggers() default {};
+
+
+    UpdateTrigger[] updateTriggers() default {};
+
+
+    DeleteTrigger[] deleteTriggers() default {};
+
+
+    UnmanagedTrigger[] unmanagedTriggers() default {};
 }

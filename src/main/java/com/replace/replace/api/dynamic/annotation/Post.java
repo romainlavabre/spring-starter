@@ -1,7 +1,5 @@
 package com.replace.replace.api.dynamic.annotation;
 
-import com.replace.replace.api.dynamic.api.TriggerResolver;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,7 +23,7 @@ public @interface Post {
     String[] fields() default {"*"};
 
 
-    Class< ? extends TriggerResolver< ? > >[] triggers() default {};
+    Trigger[] triggers() default {};
 
 
     Class< ? extends com.replace.replace.api.crud.Create< ? > > executor() default DefaultCreate.class;

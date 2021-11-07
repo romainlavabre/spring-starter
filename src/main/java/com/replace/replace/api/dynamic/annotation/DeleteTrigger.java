@@ -1,27 +1,29 @@
 package com.replace.replace.api.dynamic.annotation;
 
+import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author Romain Lavabre <romainlavabre98@gmail.com>
- */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
-public @interface Delete {
+public @interface DeleteTrigger {
 
-    String route() default "";
-
-
-    String[] roles() default {"*"};
+    TriggerIdentifier id();
 
 
-    boolean authenticated() default true;
+    TriggerIdentifier[] createTriggers() default {};
 
 
-    Trigger[] triggers() default {};
+    TriggerIdentifier[] updateTriggers() default {};
+
+
+    TriggerIdentifier[] deleteTriggers() default {};
+
+
+    TriggerIdentifier[] unmanagedTriggers() default {};
 
 
     Class< ? extends com.replace.replace.api.crud.Delete< ? > > executor() default DefaultDelete.class;

@@ -1,21 +1,30 @@
 package com.replace.replace.api.dynamic.annotation;
 
-import com.replace.replace.api.dynamic.api.TriggerResolver;
+import com.replace.replace.api.dynamic.api.CustomProvider;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 
 public @interface Trigger {
 
-    TriggerIdentifier id();
+    /**
+     * @return Target trigger
+     */
+    TriggerIdentifier triggerId();
 
 
-    Class< ? extends TriggerResolver< ? > >[] triggers() default {};
+    /**
+     * @return Field to attach result of CreateTrigger
+     */
+    String attachToField() default "";
 
 
-    Class< ? extends com.replace.replace.api.crud.Create< ? > > create() default DefaultCreate.class;
+    /**
+     * @return Fields that provide the resource
+     */
+    String providerField() default "";
 
 
-    Class< ? extends com.replace.replace.api.crud.Update< ? > > update() default DefaultUpdate.class;
-
-
-    Class< ? extends com.replace.replace.api.crud.Delete< ? > > delete() default DefaultDelete.class;
+    /**
+     * @return Custom provider for Update / Delete & Unmanaged Triggers
+     */
+    Class< ? extends CustomProvider > customProvider() default CustomProvider.class;
 }
