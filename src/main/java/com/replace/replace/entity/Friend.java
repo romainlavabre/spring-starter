@@ -1,6 +1,9 @@
 package com.replace.replace.entity;
 
 import com.replace.replace.api.dynamic.annotation.*;
+import com.replace.replace.api.json.annotation.Group;
+import com.replace.replace.api.json.annotation.Json;
+import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
 import com.replace.replace.repository.FriendRepository;
 
@@ -14,11 +17,14 @@ import javax.persistence.*;
 public class Friend {
 
     @EntryPoint(
-            getOne = @GetOne,
+            getOne = @GetOne( enabled = true ),
             getOneBy = {@GetOneBy( enabled = true, entity = Person.class )},
             post = @Post( fields = {"name"} ),
             delete = @Delete
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
@@ -28,9 +34,15 @@ public class Friend {
                     @Patch
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private String name;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN, object = true )
+    } )
     @ManyToOne( cascade = {CascadeType.PERSIST} )
     private Person person;
 
@@ -49,7 +61,7 @@ public class Friend {
         if ( name == null || name.isBlank() ) {
             throw new HttpUnprocessableEntityException( "FRIEND_NAME_REQUIRED" );
         }
-        
+
         this.name = name;
 
         return this;

@@ -3,6 +3,7 @@ package com.replace.replace.api.dynamic.kernel.entry;
 import com.replace.replace.api.dynamic.annotation.GetAll;
 import com.replace.replace.api.dynamic.annotation.GetOne;
 import com.replace.replace.api.dynamic.annotation.GetOneBy;
+import com.replace.replace.api.dynamic.api.DeleteEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.NoRouteMatchException;
 import com.replace.replace.api.dynamic.kernel.router.RouteHandler;
@@ -31,16 +32,20 @@ import java.util.Map;
 @Service
 public class Controller {
 
-    protected final Logger             logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+    protected final DeleteEntry        deleteEntry;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
     protected final ApplicationContext applicationContext;
 
 
     public Controller(
+            DeleteEntry deleteEntry,
             DataStorageHandler dataStorageHandler,
             Request request,
             ApplicationContext applicationContext ) {
+        this.deleteEntry        = deleteEntry;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
         this.applicationContext = applicationContext;
@@ -118,8 +123,19 @@ public class Controller {
 
 
     @Transactional
-    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id ) {
-        return null;
+    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id )
+            throws NoRouteMatchException {
+        RouteHandler.Route route = RouteHandler.getRoute( request, GetOne.class );
+
+        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+
+        Object subject = defaultRepository.findOrFail( id );
+
+        deleteEntry.delete( request, subject );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
     }
 
 
