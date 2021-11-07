@@ -9,6 +9,8 @@ import com.replace.replace.api.dynamic.kernel.util.Formatter;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.configuration.security.Role;
 import com.replace.replace.repository.DefaultRepository;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Field;
@@ -17,12 +19,24 @@ import java.util.*;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@Service
 public class RouteHandler {
 
-    protected static final Map< String, List< Route > > storage = new HashMap<>();
+    protected final Map< String, List< Route > > storage = new HashMap<>();
+
+    protected final ApplicationContext applicationContext;
+    protected final SetterHandler      setterHandler;
 
 
-    public static List< Route > toRoute( Class< ? > subject, Field field ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchFieldException, NoSuchMethodException {
+    public RouteHandler(
+            ApplicationContext applicationContext,
+            SetterHandler setterHandler ) {
+        this.applicationContext = applicationContext;
+        this.setterHandler      = setterHandler;
+    }
+
+
+    public List< Route > toRoute( Class< ? > subject, Field field ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchFieldException, NoSuchMethodException {
 
         String id = Formatter.toSnakeCase( subject.getSimpleName() ) + EntityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
 
@@ -77,7 +91,7 @@ public class RouteHandler {
     }
 
 
-    public static Route getRoute( Request request, Class< ? > httpType ) throws NoRouteMatchException {
+    public Route getRoute( Request request, Class< ? > httpType ) throws NoRouteMatchException {
 
         String pluralEntity = request.getUri().split( "/" )[ 2 ];
 
@@ -103,47 +117,47 @@ public class RouteHandler {
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetOne getOne, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+    private List< Route > getRoute( Class< ? > subject, GetOne getOne, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
         return getRouteCore( subject, getOne, field, getOne.roles(), getOne.authenticated(), getOne.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetAll getAll, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+    private List< Route > getRoute( Class< ? > subject, GetAll getAll, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
         return getRouteCore( subject, getAll, field, getAll.roles(), getAll.authenticated(), getAll.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetOneBy getOneBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+    private List< Route > getRoute( Class< ? > subject, GetOneBy getOneBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
         return getRouteCore( subject, getOneBy, field, getOneBy.roles(), getOneBy.authenticated(), getOneBy.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetAllBy getAllBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+    private List< Route > getRoute( Class< ? > subject, GetAllBy getAllBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
         return getRouteCore( subject, getAllBy, field, getAllBy.roles(), getAllBy.authenticated(), getAllBy.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Post post, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
+    private List< Route > getRoute( Class< ? > subject, Post post, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
         return getRouteCore( subject, post, field, post.roles(), post.authenticated(), post.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Put put, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
+    private List< Route > getRoute( Class< ? > subject, Put put, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
         return getRouteCore( subject, put, field, put.roles(), put.authenticated(), put.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Patch patch, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchMethodException, NoSuchFieldException {
+    private List< Route > getRoute( Class< ? > subject, Patch patch, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchMethodException, NoSuchFieldException {
         return getRouteCore( subject, patch, field, patch.roles(), patch.authenticated(), patch.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Delete delete, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+    private List< Route > getRoute( Class< ? > subject, Delete delete, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
         return getRouteCore( subject, delete, field, delete.roles(), delete.authenticated(), delete.route() );
     }
 
 
-    private static List< Route > getRouteCore( Class< ? > subject, Object annotation, Field field, String[] roles, boolean authenticated, String route ) throws NoSuchMethodException, SetterNotFoundException, MultipleSetterFoundException, ToManySetterParameterException, InvalidSetterParameterType, NoSuchFieldException {
+    private List< Route > getRouteCore( Class< ? > subject, Object annotation, Field field, String[] roles, boolean authenticated, String route ) throws NoSuchMethodException, SetterNotFoundException, MultipleSetterFoundException, ToManySetterParameterException, InvalidSetterParameterType, NoSuchFieldException {
         List< Route > routes = new ArrayList<>();
 
         if ( roles.length == 1 && roles[ 0 ].equals( "*" ) ) {
@@ -164,7 +178,7 @@ public class RouteHandler {
     }
 
 
-    public static class Route {
+    public class Route {
         private String path;
 
         private RequestMethod requestMethod;
@@ -202,7 +216,7 @@ public class RouteHandler {
                 setters = new ArrayList<>();
 
                 for ( String localField : (( Post ) annotation).fields() ) {
-                    setters.add( SetterHandler.toSetter( subject.getDeclaredField( localField ) ) );
+                    setters.add( setterHandler.toSetter( subject.getDeclaredField( localField ) ) );
                 }
             }
 
@@ -210,13 +224,13 @@ public class RouteHandler {
                 setters = new ArrayList<>();
 
                 for ( String localField : (( Put ) annotation).fields() ) {
-                    setters.add( SetterHandler.toSetter( subject.getDeclaredField( localField ) ) );
+                    setters.add( setterHandler.toSetter( subject.getDeclaredField( localField ) ) );
                 }
             }
 
             if ( annotation instanceof Patch ) {
                 setters = new ArrayList<>();
-                setters.add( SetterHandler.toSetter( field ) );
+                setters.add( setterHandler.toSetter( field ) );
             }
         }
 

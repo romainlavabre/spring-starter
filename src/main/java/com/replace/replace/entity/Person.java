@@ -7,6 +7,7 @@ import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.configuration.security.Role;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
+import com.replace.replace.module.person.constraint.UniquePhone;
 import com.replace.replace.module.person.trigger.CategoryTrigger;
 import com.replace.replace.repository.PersonRepository;
 
@@ -57,6 +58,7 @@ public class Person {
     @Column( nullable = false )
     private String name;
 
+    @Constraint( {UniquePhone.class} )
     @EntryPoint(
             patch = {
                     @Patch
@@ -65,7 +67,7 @@ public class Person {
     @Json( groups = {
             @Group( name = GroupType.ADMIN )
     } )
-    @Column( nullable = false )
+    @Column( nullable = false, unique = true )
     private String phone;
 
     @EntryPoint(

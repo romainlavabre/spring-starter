@@ -45,6 +45,12 @@ public class PersonRepositoryImpl extends AbstractRepository< Person > implement
 
 
     @Override
+    public Optional< Person > findByPhone( String phone ) {
+        return personJpa.findByPhone( phone );
+    }
+
+
+    @Override
     protected Class< Person > getClassType() {
         return Person.class;
     }

@@ -25,15 +25,18 @@ public class Resolver {
     protected final Logger                       logger = LoggerFactory.getLogger( this.getClass() );
     protected final RequestMappingHandlerMapping requestMappingHandlerMapping;
     protected final ApplicationContext           applicationContext;
+    protected final RouteHandler                 routeHandler;
     protected final Controller                   controller;
 
 
     public Resolver(
             RequestMappingHandlerMapping requestMappingHandlerMapping,
             ApplicationContext applicationContext,
+            RouteHandler routeHandler,
             Controller controller ) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
         this.applicationContext           = applicationContext;
+        this.routeHandler                 = routeHandler;
         this.controller                   = controller;
     }
 
@@ -54,7 +57,7 @@ public class Resolver {
             logger.info( "Found " + managed + " for dynamic framework" );
 
             for ( Field field : managed.getDeclaredFields() ) {
-                for ( RouteHandler.Route route : RouteHandler.toRoute( managed, field ) ) {
+                for ( RouteHandler.Route route : routeHandler.toRoute( managed, field ) ) {
 
                     RequestMappingInfo requestMappingInfo = RequestMappingInfo
                             .paths( route.getPath() )

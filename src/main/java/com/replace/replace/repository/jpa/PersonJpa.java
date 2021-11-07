@@ -14,4 +14,7 @@ import java.util.Optional;
 public interface PersonJpa extends JpaRepository< Person, Long > {
 
     Optional< Person > findByFriendsContains( Friend friend );
+
+
+    Optional< Person > findByPhone( String phone );
 }

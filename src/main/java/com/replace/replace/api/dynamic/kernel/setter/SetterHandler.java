@@ -1,6 +1,8 @@
 package com.replace.replace.api.dynamic.kernel.setter;
 
+import com.replace.replace.api.dynamic.annotation.Constraint;
 import com.replace.replace.api.dynamic.annotation.RequestParameter;
+import com.replace.replace.api.dynamic.api.CustomConstraint;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.InvalidSetterParameterType;
 import com.replace.replace.api.dynamic.kernel.exception.MultipleSetterFoundException;
@@ -12,6 +14,8 @@ import com.replace.replace.api.request.Request;
 import com.replace.replace.repository.DefaultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -23,12 +27,20 @@ import java.util.*;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@Service
 public class SetterHandler {
 
     protected static final Map< String, Setter > storage = new HashMap<>();
 
+    protected final ApplicationContext applicationContext;
 
-    public static Setter toSetter( Field field )
+
+    public SetterHandler( ApplicationContext applicationContext ) {
+        this.applicationContext = applicationContext;
+    }
+
+
+    public Setter toSetter( Field field )
             throws InvalidSetterParameterType,
                    ToManySetterParameterException,
                    MultipleSetterFoundException,
@@ -41,7 +53,7 @@ public class SetterHandler {
             return storage.get( id );
         }
 
-        Setter setter = new Setter( field );
+        Setter setter = new Setter( field, applicationContext );
 
         storage.put( id, setter );
 
@@ -52,6 +64,8 @@ public class SetterHandler {
     public static class Setter {
 
         private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+        private final ApplicationContext applicationContext;
 
         private String requestParameter;
 
@@ -71,14 +85,18 @@ public class SetterHandler {
 
         private boolean isComputed;
 
+        private final List< CustomConstraint > customConstraints;
 
-        public Setter( Field field )
+
+        public Setter( Field field, ApplicationContext applicationContext )
                 throws InvalidSetterParameterType,
                        ToManySetterParameterException,
                        MultipleSetterFoundException,
                        SetterNotFoundException,
                        NoSuchMethodException {
-            this.field = field;
+            this.field              = field;
+            this.applicationContext = applicationContext;
+            customConstraints       = new ArrayList<>();
             compute();
         }
 
@@ -102,11 +120,13 @@ public class SetterHandler {
                 List< Object > values = request.getParameters( requestParameter );
 
                 if ( values == null ) {
+                    callConstraint( entity, null );
                     method.invoke( entity, TypeResolver.castTo( genericType, null ) );
                     return;
                 }
 
                 for ( Object value : values ) {
+                    callConstraint( entity, value );
                     method.invoke( entity, TypeResolver.castTo( genericType, value ) );
                 }
 
@@ -115,13 +135,16 @@ public class SetterHandler {
                 Long value = ( Long ) TypeResolver.castTo( Long.class, request.getParameter( requestParameter ) );
 
                 DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                Object            relation          = defaultRepository.findOrFail( value );
 
-                method.invoke( entity, defaultRepository.findOrFail( value ) );
+                callConstraint( entity, relation );
+                method.invoke( entity, relation );
                 return;
             } else if ( isArrayOrCollection ) {
                 List< Object > values = request.getParameters( requestParameter );
 
                 if ( values == null ) {
+                    callConstraint( entity, null );
                     method.invoke( entity, TypeResolver.castTo( genericType, null ) );
                     return;
                 }
@@ -130,6 +153,9 @@ public class SetterHandler {
 
                 for ( Object value : values ) {
                     Long castedValue = ( Long ) TypeResolver.castTo( Long.class, value );
+
+                    callConstraint( entity, castedValue );
+
                     method.invoke( entity, defaultRepository.findOrFail( castedValue ) );
                 }
 
@@ -138,6 +164,7 @@ public class SetterHandler {
 
             Object value = TypeResolver.castTo( methodParameter, request.getParameter( requestParameter ) );
 
+            callConstraint( entity, value );
 
             method.invoke( entity, value );
         }
@@ -150,6 +177,13 @@ public class SetterHandler {
 
         public Field getField() {
             return field;
+        }
+
+
+        private void callConstraint( Object entity, Object newValue ) {
+            for ( CustomConstraint customConstraint : customConstraints ) {
+                customConstraint.check( entity, newValue );
+            }
         }
 
 
@@ -216,6 +250,14 @@ public class SetterHandler {
                     this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() );
                 } else {
                     this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() + "_id" );
+                }
+            }
+
+            Constraint constraint = field.getAnnotation( Constraint.class );
+
+            if ( constraint != null ) {
+                for ( Class< ? extends CustomConstraint > customConstraintClass : constraint.value() ) {
+                    customConstraints.add( applicationContext.getBean( customConstraintClass ) );
                 }
             }
 

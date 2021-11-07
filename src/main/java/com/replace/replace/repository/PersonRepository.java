@@ -13,4 +13,7 @@ public interface PersonRepository extends DefaultRepository< Person > {
 
 
     Person findOrFailByFriend( Friend friend );
+
+
+    Optional< Person > findByPhone( String phone );
 }

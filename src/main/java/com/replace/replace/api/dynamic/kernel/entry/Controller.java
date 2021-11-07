@@ -37,6 +37,7 @@ public class Controller {
     protected final CreateEntry        createEntry;
     protected final UpdateEntry        updateEntry;
     protected final DeleteEntry        deleteEntry;
+    protected final RouteHandler       routeHandler;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
     protected final ApplicationContext applicationContext;
@@ -46,12 +47,14 @@ public class Controller {
             CreateEntry createEntry,
             UpdateEntry updateEntry,
             DeleteEntry deleteEntry,
+            RouteHandler routeHandler,
             DataStorageHandler dataStorageHandler,
             Request request,
             ApplicationContext applicationContext ) {
         this.createEntry        = createEntry;
         this.updateEntry        = updateEntry;
         this.deleteEntry        = deleteEntry;
+        this.routeHandler       = routeHandler;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
         this.applicationContext = applicationContext;
@@ -61,7 +64,7 @@ public class Controller {
     public ResponseEntity< Map< String, Object > > getOne( @PathVariable( "id" ) long id )
             throws NoRouteMatchException,
                    IllegalAccessException {
-        RouteHandler.Route route = RouteHandler.getRoute( request, GetOne.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
 
         DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
 
@@ -74,7 +77,7 @@ public class Controller {
     public ResponseEntity< List< Map< String, Object > > > getAll()
             throws NoRouteMatchException,
                    IllegalAccessException {
-        RouteHandler.Route route = RouteHandler.getRoute( request, GetAll.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, GetAll.class );
 
         DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
 
@@ -89,7 +92,7 @@ public class Controller {
                    IllegalAccessException,
                    NoSuchMethodException,
                    InvocationTargetException {
-        RouteHandler.Route route = RouteHandler.getRoute( request, GetOneBy.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, GetOneBy.class );
 
         DefaultRepository< ? > relationRepository = EntityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
 
@@ -110,7 +113,7 @@ public class Controller {
                    NoSuchMethodException,
                    InvocationTargetException,
                    IllegalAccessException {
-        RouteHandler.Route route = RouteHandler.getRoute( request, GetAllBy.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, GetAllBy.class );
 
         DefaultRepository< ? > relationRepository = applicationContext.getBean( EntityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
 
@@ -129,7 +132,7 @@ public class Controller {
     @Transactional
     public ResponseEntity< Map< String, Object > > post()
             throws Throwable {
-        RouteHandler.Route route = RouteHandler.getRoute( request, Post.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, Post.class );
 
         Object subject = route.getSubject().getDeclaredConstructor().newInstance();
 
@@ -146,7 +149,7 @@ public class Controller {
     @Transactional
     public ResponseEntity< Map< String, Object > > put( @PathVariable( "id" ) long id )
             throws Throwable {
-        RouteHandler.Route route = RouteHandler.getRoute( request, Put.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, Put.class );
 
         DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
         Object                 subject           = defaultRepository.findOrFail( id );
@@ -164,7 +167,7 @@ public class Controller {
     @Transactional
     public ResponseEntity< Void > patch( @PathVariable( "id" ) long id )
             throws Throwable {
-        RouteHandler.Route route = RouteHandler.getRoute( request, Patch.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, Patch.class );
 
         DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
         Object                 subject           = defaultRepository.findOrFail( id );
@@ -180,7 +183,7 @@ public class Controller {
     @Transactional
     public ResponseEntity< Void > delete( @PathVariable( "id" ) long id )
             throws NoRouteMatchException {
-        RouteHandler.Route route = RouteHandler.getRoute( request, GetOne.class );
+        RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
 
         DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
 
