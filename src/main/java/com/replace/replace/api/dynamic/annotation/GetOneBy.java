@@ -11,9 +11,6 @@ public @interface GetOneBy {
     String route() default "";
 
 
-    boolean enabled() default false;
-
-
     Class< ? > entity();
 
 

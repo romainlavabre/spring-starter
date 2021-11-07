@@ -19,6 +19,10 @@ public class TypeResolver {
                 return Integer.class;
             case "long":
                 return Long.class;
+            case "float":
+                return Float.class;
+            case "double":
+                return Double.class;
             case "char":
                 return Character.class;
             case "boolean":
@@ -35,6 +39,8 @@ public class TypeResolver {
                 || object.getClass().equals( Short.class )
                 || object.getClass().equals( Integer.class )
                 || object.getClass().equals( Long.class )
+                || object.getClass().equals( Float.class )
+                || object.getClass().equals( Double.class )
                 || object.getClass().equals( Character.class )
                 || object.getClass().equals( Boolean.class );
     }
@@ -59,6 +65,14 @@ public class TypeResolver {
 
         if ( type == Long.class ) {
             return Long.valueOf( value.toString() );
+        }
+
+        if ( type == Float.class ) {
+            return Float.valueOf( value.toString() );
+        }
+
+        if ( type == Double.class ) {
+            return Double.valueOf( value.toString() );
         }
 
         if ( type == Character.class ) {

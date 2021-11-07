@@ -34,12 +34,13 @@ public class Person {
     @EntryPoint(
             getOne = @GetOne( enabled = true ),
             getAll = @GetAll( enabled = true, authenticated = false ),
-            getOneBy = @GetOneBy( entity = Friend.class ),
+            getOneBy = {@GetOneBy( entity = Friend.class ), @GetOneBy( entity = Car.class )},
             post = {
                     @Post(
                             fields = {"name", "phone", "age"},
                             triggers = {
                                     @Trigger( triggerId = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, attachToField = "friends" ),
+                                    @Trigger( triggerId = TriggerIdentifier.ATTACH_CAR_TO_PERSON, attachToField = "car" ),
                                     @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, customProvider = CategoryTriggerProvider.class )
                             }
                     )
@@ -123,17 +124,17 @@ public class Person {
     @Column( nullable = false )
     private byte category;
 
-    @Setter( "addFriend" )
-    @EntryPoint(
-            patch = {
-                    @Patch
-            }
-    )
     @Json( groups = {
             @Group( name = GroupType.ADMIN, object = true )
     } )
     @OneToMany( mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     private final List< Friend > friends;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN, object = true )
+    } )
+    @OneToOne( mappedBy = "person", cascade = {CascadeType.PERSIST} )
+    private Car car;
 
 
     public Person() {
@@ -246,6 +247,22 @@ public class Person {
             if ( friend.getPerson() != this ) {
                 friend.setPerson( this );
             }
+        }
+
+        return this;
+    }
+
+
+    public Car getCar() {
+        return car;
+    }
+
+
+    public Person setCar( Car car ) {
+        this.car = car;
+
+        if ( car.getPerson() != this ) {
+            car.setPerson( this );
         }
 
         return this;

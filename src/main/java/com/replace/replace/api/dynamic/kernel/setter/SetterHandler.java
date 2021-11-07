@@ -274,7 +274,12 @@ public class SetterHandler {
 
             methodParameter = TypeResolver.toWrapper( method.getParameterTypes()[ 0 ] );
 
+            if ( methodParameter == null ) {
+                logger.error( "Unable to resolve parameter type for setter " + method.getName() + " in " + method.getDeclaringClass().getName() );
+            }
+
             if ( !isArrayOrCollection
+                    && !isRelation
                     && !methodParameter.getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
                 throw new InvalidSetterParameterType( method );
             }

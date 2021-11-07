@@ -11,9 +11,6 @@ public @interface GetAllBy {
     String route() default "";
 
 
-    boolean enabled() default false;
-
-
     Class< ? > entity();
 
 
