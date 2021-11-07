@@ -13,6 +13,7 @@ import com.replace.replace.module.person.trigger.CategoryTriggerProvider;
 import com.replace.replace.repository.PersonRepository;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,7 +107,7 @@ public class Person {
                     @Patch
             },
             unmanagedTriggers = {
-                    @UnmanagedTrigger( id = TriggerIdentifier.PERSON_CATEGORY, executor = CategoryResolver.class )
+                    @UnmanagedTrigger( id = TriggerIdentifier.PERSON_CATEGORY, updateExecutor = CategoryResolver.class )
             }
     )
     @Json( groups = {
@@ -125,7 +126,12 @@ public class Person {
             @Group( name = GroupType.ADMIN, object = true )
     } )
     @OneToMany( mappedBy = "person" )
-    private List< Friend > friends;
+    private final List< Friend > friends;
+
+
+    public Person() {
+        friends = new ArrayList<>();
+    }
 
 
     public long getId() {

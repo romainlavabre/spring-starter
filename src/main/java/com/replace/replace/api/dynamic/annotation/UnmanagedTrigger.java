@@ -1,5 +1,8 @@
 package com.replace.replace.api.dynamic.annotation;
 
+import com.replace.replace.api.crud.Create;
+import com.replace.replace.api.crud.Delete;
+import com.replace.replace.api.crud.Update;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 
 import java.lang.annotation.ElementType;
@@ -14,17 +17,14 @@ public @interface UnmanagedTrigger {
     TriggerIdentifier id();
 
 
-    TriggerIdentifier[] createTriggers() default {};
+    Trigger[] triggers() default {};
 
 
-    TriggerIdentifier[] updateTriggers() default {};
+    Class< ? extends Create< ? > > createExecutor() default DefaultCreate.class;
 
 
-    TriggerIdentifier[] deleteTriggers() default {};
+    Class< ? extends Update< ? > > updateExecutor() default DefaultUpdate.class;
 
 
-    TriggerIdentifier[] unmanagedTriggers() default {};
-
-
-    Class< ? extends com.replace.replace.api.dynamic.api.UnmanagedTrigger > executor();
+    Class< ? extends Delete< ? > > deleteExecutor() default DefaultDelete.class;
 }

@@ -14,16 +14,7 @@ public @interface DeleteTrigger {
     TriggerIdentifier id();
 
 
-    TriggerIdentifier[] createTriggers() default {};
-
-
-    TriggerIdentifier[] updateTriggers() default {};
-
-
-    TriggerIdentifier[] deleteTriggers() default {};
-
-
-    TriggerIdentifier[] unmanagedTriggers() default {};
+    Trigger[] triggers() default {};
 
 
     Class< ? extends com.replace.replace.api.crud.Delete< ? > > executor() default DefaultDelete.class;

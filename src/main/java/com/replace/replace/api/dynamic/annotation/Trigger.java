@@ -18,6 +18,12 @@ public @interface Trigger {
 
 
     /**
+     * @return Relation creation is optional
+     */
+    boolean optional() default true;
+
+
+    /**
      * @return Fields that provide the resource
      */
     String providerField() default "";

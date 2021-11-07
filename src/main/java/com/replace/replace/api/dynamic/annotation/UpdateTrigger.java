@@ -17,16 +17,7 @@ public @interface UpdateTrigger {
     String[] fields() default {"*"};
 
 
-    TriggerIdentifier[] createTriggers() default {};
-
-
-    TriggerIdentifier[] updateTriggers() default {};
-
-
-    TriggerIdentifier[] deleteTriggers() default {};
-
-
-    TriggerIdentifier[] unmanagedTriggers() default {};
+    Trigger[] triggers() default {};
 
 
     Class< ? extends com.replace.replace.api.crud.Update< ? > > executor() default DefaultUpdate.class;

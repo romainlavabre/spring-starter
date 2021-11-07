@@ -179,14 +179,14 @@ public class Controller {
 
     @Transactional
     public ResponseEntity< Void > delete( @PathVariable( "id" ) long id )
-            throws NoRouteMatchException {
+            throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
 
         DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
 
         Object subject = defaultRepository.findOrFail( id );
 
-        deleteEntry.delete( request, subject );
+        deleteEntry.delete( request, subject, route );
 
         dataStorageHandler.save();
 

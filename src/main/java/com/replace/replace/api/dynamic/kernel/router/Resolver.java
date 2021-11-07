@@ -1,11 +1,10 @@
 package com.replace.replace.api.dynamic.kernel.router;
 
+import com.replace.replace.api.dynamic.annotation.EntryPoint;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.entry.Controller;
-import com.replace.replace.api.dynamic.kernel.exception.InvalidSetterParameterType;
-import com.replace.replace.api.dynamic.kernel.exception.MultipleSetterFoundException;
-import com.replace.replace.api.dynamic.kernel.exception.SetterNotFoundException;
-import com.replace.replace.api.dynamic.kernel.exception.ToManySetterParameterException;
+import com.replace.replace.api.dynamic.kernel.exception.*;
+import com.replace.replace.api.dynamic.kernel.trigger.TriggerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,6 +25,7 @@ public class Resolver {
     protected final RequestMappingHandlerMapping requestMappingHandlerMapping;
     protected final ApplicationContext           applicationContext;
     protected final RouteHandler                 routeHandler;
+    protected final TriggerHandler               triggerHandler;
     protected final Controller                   controller;
 
 
@@ -33,10 +33,12 @@ public class Resolver {
             RequestMappingHandlerMapping requestMappingHandlerMapping,
             ApplicationContext applicationContext,
             RouteHandler routeHandler,
+            TriggerHandler triggerHandler,
             Controller controller ) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
         this.applicationContext           = applicationContext;
         this.routeHandler                 = routeHandler;
+        this.triggerHandler               = triggerHandler;
         this.controller                   = controller;
     }
 
@@ -48,7 +50,8 @@ public class Resolver {
                    ToManySetterParameterException,
                    MultipleSetterFoundException,
                    InvalidSetterParameterType,
-                   NoSuchFieldException {
+                   NoSuchFieldException,
+                   UnmanagedTriggerMissingExecutorException {
 
 
         for ( EntityHandler.Entity entity : EntityHandler.toEntity( applicationContext ) ) {
@@ -57,6 +60,14 @@ public class Resolver {
             logger.info( "Found " + managed + " for dynamic framework" );
 
             for ( Field field : managed.getDeclaredFields() ) {
+                EntryPoint entryPoint = field.getAnnotation( EntryPoint.class );
+
+                if ( entryPoint == null ) {
+                    continue;
+                }
+
+                triggerHandler.load( field, entryPoint );
+
                 for ( RouteHandler.Route route : routeHandler.toRoute( managed, field ) ) {
 
                     RequestMappingInfo requestMappingInfo = RequestMappingInfo

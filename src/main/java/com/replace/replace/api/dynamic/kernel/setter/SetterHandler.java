@@ -101,29 +101,16 @@ public class SetterHandler {
         }
 
 
-        public void invoke( Request request, Object entity )
+        public void invokeWithValue( Object entity, Object newValue )
                 throws InvocationTargetException, IllegalAccessException {
-
-            logger.debug( "Search in request parameter \"" + requestParameter + "\"" );
-
-            if ( isArrayOrCollection ) {
-                if ( Collection.class.isAssignableFrom( field.getType() ) ) {
-                    Collection collection = ( Collection ) field.get( entity );
-
-                    if ( collection != null ) {
-                        collection.clear();
-                    }
-                }
-            }
-
             if ( isArrayOrCollection && !isRelation ) {
-                List< Object > values = request.getParameters( requestParameter );
-
-                if ( values == null ) {
+                if ( newValue == null ) {
                     callConstraint( entity, null );
                     method.invoke( entity, TypeResolver.castTo( genericType, null ) );
                     return;
                 }
+
+                List< Object > values = ( List< Object > ) newValue;
 
                 for ( Object value : values ) {
                     callConstraint( entity, value );
@@ -132,22 +119,50 @@ public class SetterHandler {
 
                 return;
             } else if ( isRelation && !isArrayOrCollection ) {
-                Long value = ( Long ) TypeResolver.castTo( Long.class, request.getParameter( requestParameter ) );
+                Object relation;
 
-                DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
-                Object            relation          = defaultRepository.findOrFail( value );
+                if ( TypeResolver.isWrapperOrPrimitive( newValue ) ) {
+
+                    Long              value             = ( Long ) TypeResolver.castTo( Long.class, newValue );
+                    DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                    relation = defaultRepository.findOrFail( value );
+                } else {
+                    relation = newValue;
+                }
+
 
                 callConstraint( entity, relation );
                 method.invoke( entity, relation );
                 return;
             } else if ( isArrayOrCollection ) {
-                List< Object > values = request.getParameters( requestParameter );
-
-                if ( values == null ) {
+                if ( newValue == null ) {
                     callConstraint( entity, null );
                     method.invoke( entity, TypeResolver.castTo( genericType, null ) );
                     return;
                 }
+
+                if ( !newValue.getClass().isArray() && !newValue.getClass().isAssignableFrom( Collection.class ) ) {
+                    Object relation;
+
+                    if ( TypeResolver.isWrapperOrPrimitive( newValue ) ) {
+                        Long value = ( Long ) TypeResolver.castTo( Long.class, newValue );
+
+                        DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                        relation = defaultRepository.findOrFail( value );
+
+                        callConstraint( entity, relation );
+                        method.invoke( entity, relation );
+                    } else {
+                        relation = newValue;
+                    }
+
+                    callConstraint( entity, relation );
+                    method.invoke( entity, relation );
+
+                    return;
+                }
+
+                List< Object > values = ( List< Object > ) newValue;
 
                 DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
 
@@ -162,11 +177,29 @@ public class SetterHandler {
                 return;
             }
 
-            Object value = TypeResolver.castTo( methodParameter, request.getParameter( requestParameter ) );
+            Object value = TypeResolver.castTo( methodParameter, newValue );
 
             callConstraint( entity, value );
 
             method.invoke( entity, value );
+        }
+
+
+        public void invoke( Request request, Object entity )
+                throws InvocationTargetException, IllegalAccessException {
+
+            logger.debug( "Search in request parameter \"" + requestParameter + "\"" );
+
+
+            if ( isArrayOrCollection ) {
+                List< Object > values = request.getParameters( requestParameter );
+
+                invokeWithValue( entity, values );
+
+                return;
+            }
+
+            invokeWithValue( entity, request.getParameter( requestParameter ) );
         }
 
 
@@ -177,6 +210,11 @@ public class SetterHandler {
 
         public Field getField() {
             return field;
+        }
+
+
+        public String getRequestParameter() {
+            return requestParameter;
         }
 
 

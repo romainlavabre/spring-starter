@@ -1,19 +1,28 @@
 package com.replace.replace.module.person;
 
-import com.replace.replace.api.dynamic.api.UnmanagedTrigger;
+import com.replace.replace.api.crud.Update;
+import com.replace.replace.api.history.HistoryHandler;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.entity.Person;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-public class CategoryResolver implements UnmanagedTrigger {
+@Service( "PersonCategoryResolver" )
+public class CategoryResolver implements Update< Person > {
+
+    protected final HistoryHandler historyHandler;
+
+
+    public CategoryResolver( HistoryHandler historyHandler ) {
+        this.historyHandler = historyHandler;
+    }
 
 
     @Override
-    public void handle( Request request, Object object ) {
-        Person person = ( Person ) object;
-        
+    public void update( Request request, Person person ) {
+
         if ( person.getAge() <= 20 ) {
             person.setCategory( Person.CATEGORY_YOUNG );
         } else if ( person.getAge() <= 50 ) {
@@ -21,5 +30,7 @@ public class CategoryResolver implements UnmanagedTrigger {
         } else {
             person.setCategory( Person.CATEGORY_OLD );
         }
+
+        historyHandler.update( person, "category" );
     }
 }

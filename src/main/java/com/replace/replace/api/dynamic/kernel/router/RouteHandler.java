@@ -1,7 +1,6 @@
 package com.replace.replace.api.dynamic.kernel.router;
 
 import com.replace.replace.api.dynamic.annotation.*;
-import com.replace.replace.api.dynamic.api.TriggerResolver;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.*;
 import com.replace.replace.api.dynamic.kernel.setter.SetterHandler;
@@ -45,10 +44,6 @@ public class RouteHandler {
         }
 
         EntryPoint entryPoint = field.getAnnotation( EntryPoint.class );
-
-        if ( entryPoint == null ) {
-            return new ArrayList<>();
-        }
 
         List< Route > routes = new ArrayList<>();
 
@@ -179,19 +174,21 @@ public class RouteHandler {
 
 
     public class Route {
-        private String path;
+        private final String path;
 
-        private RequestMethod requestMethod;
+        private final RequestMethod requestMethod;
 
-        private String role;
+        private final String role;
 
-        private Class< ? > subject;
+        private final Class< ? > subject;
 
         private List< SetterHandler.Setter > setters;
 
-        private List< TriggerResolver< ? > > triggerResolvers;
+        private final List< Trigger > triggers;
 
-        private Object httpType;
+        private final Object httpType;
+
+        private Object executor;
 
 
         public Route(
@@ -210,6 +207,7 @@ public class RouteHandler {
             this.subject       = subject;
             this.role          = role;
             this.httpType      = annotation;
+            triggers           = new ArrayList<>();
             path               = getRoute( route, annotation, field );
 
             if ( annotation instanceof Post ) {
@@ -218,19 +216,39 @@ public class RouteHandler {
                 for ( String localField : (( Post ) annotation).fields() ) {
                     setters.add( setterHandler.toSetter( subject.getDeclaredField( localField ) ) );
                 }
-            }
 
-            if ( annotation instanceof Put ) {
+                triggers.addAll( Arrays.asList( (( Post ) annotation).triggers() ) );
+
+                if ( (( Post ) annotation).executor() != DefaultCreate.class ) {
+                    executor = applicationContext.getBean( (( Post ) annotation).executor() );
+                }
+            } else if ( annotation instanceof Put ) {
                 setters = new ArrayList<>();
 
                 for ( String localField : (( Put ) annotation).fields() ) {
                     setters.add( setterHandler.toSetter( subject.getDeclaredField( localField ) ) );
                 }
-            }
 
-            if ( annotation instanceof Patch ) {
+                triggers.addAll( Arrays.asList( (( Put ) annotation).triggers() ) );
+
+                if ( (( Put ) annotation).executor() != DefaultUpdate.class ) {
+                    executor = applicationContext.getBean( (( Put ) annotation).executor() );
+                }
+            } else if ( annotation instanceof Patch ) {
                 setters = new ArrayList<>();
                 setters.add( setterHandler.toSetter( field ) );
+
+                triggers.addAll( Arrays.asList( (( Patch ) annotation).triggers() ) );
+
+                if ( (( Patch ) annotation).executor() != DefaultUpdate.class ) {
+                    executor = applicationContext.getBean( (( Patch ) annotation).executor() );
+                }
+            } else if ( annotation instanceof Delete ) {
+                triggers.addAll( Arrays.asList( (( Delete ) annotation).triggers() ) );
+
+                if ( (( Delete ) annotation).executor() != DefaultDelete.class ) {
+                    executor = applicationContext.getBean( (( Delete ) annotation).executor() );
+                }
             }
         }
 
@@ -367,6 +385,11 @@ public class RouteHandler {
 
         public List< SetterHandler.Setter > getSetters() {
             return setters;
+        }
+
+
+        public List< Trigger > getTriggers() {
+            return triggers;
         }
 
 

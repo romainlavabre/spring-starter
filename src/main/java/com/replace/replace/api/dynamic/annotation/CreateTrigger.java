@@ -20,16 +20,7 @@ public @interface CreateTrigger {
     boolean setByArray() default true;
 
 
-    TriggerIdentifier[] createTriggers() default {};
-
-
-    TriggerIdentifier[] updateTriggers() default {};
-
-
-    TriggerIdentifier[] deleteTriggers() default {};
-
-
-    TriggerIdentifier[] unmanagedTriggers() default {};
+    Trigger[] triggers() default {};
 
 
     Class< ? extends com.replace.replace.api.crud.Create< ? > > executor() default DefaultCreate.class;
