@@ -1,4 +1,4 @@
-package com.replace.replace.api.dynamic.api;
+package com.replace.replace.api.dynamic.kernel.entry;
 
 import com.replace.replace.api.request.Request;
 

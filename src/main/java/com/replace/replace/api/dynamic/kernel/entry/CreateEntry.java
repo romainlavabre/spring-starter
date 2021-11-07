@@ -1,4 +1,4 @@
-package com.replace.replace.api.dynamic.api;
+package com.replace.replace.api.dynamic.kernel.entry;
 
 import com.replace.replace.api.dynamic.kernel.router.RouteHandler;
 import com.replace.replace.api.request.Request;
@@ -6,7 +6,7 @@ import com.replace.replace.api.request.Request;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-public interface UpdateEntry {
-    void update( Request request, Object entity, RouteHandler.Route route )
+public interface CreateEntry {
+    void create( Request request, Object entity, RouteHandler.Route route )
             throws Throwable;
 }

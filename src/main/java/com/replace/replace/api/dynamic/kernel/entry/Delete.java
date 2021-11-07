@@ -1,6 +1,5 @@
 package com.replace.replace.api.dynamic.kernel.entry;
 
-import com.replace.replace.api.dynamic.api.DeleteEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.history.HistoryHandler;
 import com.replace.replace.api.request.Request;

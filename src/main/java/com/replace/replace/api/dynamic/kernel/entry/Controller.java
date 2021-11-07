@@ -1,9 +1,6 @@
 package com.replace.replace.api.dynamic.kernel.entry;
 
 import com.replace.replace.api.dynamic.annotation.*;
-import com.replace.replace.api.dynamic.api.CreateEntry;
-import com.replace.replace.api.dynamic.api.DeleteEntry;
-import com.replace.replace.api.dynamic.api.UpdateEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.NoRouteMatchException;
 import com.replace.replace.api.dynamic.kernel.router.RouteHandler;

@@ -1,6 +1,5 @@
 package com.replace.replace.api.dynamic.kernel.entry;
 
-import com.replace.replace.api.dynamic.api.CreateEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.router.RouteHandler;
 import com.replace.replace.api.dynamic.kernel.setter.SetterHandler;
