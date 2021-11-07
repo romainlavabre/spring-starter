@@ -3,6 +3,7 @@ package com.replace.replace.api.dynamic.kernel.entry;
 import com.replace.replace.api.dynamic.annotation.*;
 import com.replace.replace.api.dynamic.api.CreateEntry;
 import com.replace.replace.api.dynamic.api.DeleteEntry;
+import com.replace.replace.api.dynamic.api.UpdateEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.NoRouteMatchException;
 import com.replace.replace.api.dynamic.kernel.router.RouteHandler;
@@ -34,6 +35,7 @@ public class Controller {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     protected final CreateEntry        createEntry;
+    protected final UpdateEntry        updateEntry;
     protected final DeleteEntry        deleteEntry;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -42,11 +44,13 @@ public class Controller {
 
     public Controller(
             CreateEntry createEntry,
+            UpdateEntry updateEntry,
             DeleteEntry deleteEntry,
             DataStorageHandler dataStorageHandler,
             Request request,
             ApplicationContext applicationContext ) {
         this.createEntry        = createEntry;
+        this.updateEntry        = updateEntry;
         this.deleteEntry        = deleteEntry;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
@@ -59,7 +63,7 @@ public class Controller {
                    IllegalAccessException {
         RouteHandler.Route route = RouteHandler.getRoute( request, GetOne.class );
 
-        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
 
         return ResponseEntity.ok(
                 Encoder.encode( defaultRepository.findOrFail( id ), getGroup( route.getRole() ) )
@@ -140,14 +144,36 @@ public class Controller {
 
 
     @Transactional
-    public ResponseEntity< Map< String, Object > > put( @PathVariable( "id" ) long id ) {
-        return null;
+    public ResponseEntity< Map< String, Object > > put( @PathVariable( "id" ) long id )
+            throws Throwable {
+        RouteHandler.Route route = RouteHandler.getRoute( request, Put.class );
+
+        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        Object                 subject           = defaultRepository.findOrFail( id );
+
+        updateEntry.update( request, subject, route );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.ok(
+                Encoder.encode( subject, getGroup( route.getRole() ) )
+        );
     }
 
 
     @Transactional
-    public ResponseEntity< Void > patch( @PathVariable( "id" ) long id ) {
-        return null;
+    public ResponseEntity< Void > patch( @PathVariable( "id" ) long id )
+            throws Throwable {
+        RouteHandler.Route route = RouteHandler.getRoute( request, Patch.class );
+
+        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        Object                 subject           = defaultRepository.findOrFail( id );
+
+        updateEntry.update( request, subject, route );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
     }
 
 

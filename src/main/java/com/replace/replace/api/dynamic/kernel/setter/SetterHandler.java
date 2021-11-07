@@ -148,6 +148,11 @@ public class SetterHandler {
         }
 
 
+        public Field getField() {
+            return field;
+        }
+
+
         private void compute()
                 throws SetterNotFoundException,
                        MultipleSetterFoundException,

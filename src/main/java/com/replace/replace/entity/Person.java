@@ -57,7 +57,6 @@ public class Person {
     @Column( nullable = false )
     private String name;
 
-    @RequestParameter( name = "person_my_phone" )
     @EntryPoint(
             patch = {
                     @Patch
