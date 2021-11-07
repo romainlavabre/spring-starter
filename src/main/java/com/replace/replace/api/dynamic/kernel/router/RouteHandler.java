@@ -616,7 +616,7 @@ public class RouteHandler {
                     return (( GetAllBy ) httpType).method();
                 }
 
-                return "findOrFailBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
+                return "findBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
             }
 
             return null;

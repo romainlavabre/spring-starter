@@ -18,7 +18,7 @@ public class Friend {
 
     @EntryPoint(
             getOne = @GetOne( enabled = true ),
-            getOneBy = {@GetOneBy( enabled = true, entity = Person.class )},
+            getAllBy = {@GetAllBy( enabled = true, entity = Person.class )},
             post = @Post( fields = {"name"} ),
             delete = @Delete
     )

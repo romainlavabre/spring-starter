@@ -1,6 +1,7 @@
 package com.replace.replace.api.dynamic.kernel.entry;
 
 import com.replace.replace.api.dynamic.annotation.GetAll;
+import com.replace.replace.api.dynamic.annotation.GetAllBy;
 import com.replace.replace.api.dynamic.annotation.GetOne;
 import com.replace.replace.api.dynamic.annotation.GetOneBy;
 import com.replace.replace.api.dynamic.api.DeleteEntry;
@@ -99,8 +100,24 @@ public class Controller {
     }
 
 
-    public ResponseEntity< List< Map< String, Object > > > getAllBy( @PathVariable( "id" ) long id ) {
-        return null;
+    public ResponseEntity< List< Map< String, Object > > > getAllBy( @PathVariable( "id" ) long id )
+            throws NoRouteMatchException,
+                   NoSuchMethodException,
+                   InvocationTargetException,
+                   IllegalAccessException {
+        RouteHandler.Route route = RouteHandler.getRoute( request, GetAllBy.class );
+
+        DefaultRepository< ? > relationRepository = applicationContext.getBean( EntityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
+
+        Object relation = relationRepository.findOrFail( id );
+
+        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+
+        Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetAllBy ) route.getHttpType()).entity() );
+
+        return ResponseEntity.ok(
+                Encoder.encode( ( List< ? extends Object > ) method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
+        );
     }
 
 
