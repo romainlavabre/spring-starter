@@ -17,5 +17,5 @@ public @interface Trigger {
     Class< ? extends com.replace.replace.api.crud.Update< ? > > update() default DefaultUpdate.class;
 
 
-    Class< ? extends com.replace.replace.api.crud.Delete< ? > > executor() default DefaultDelete.class;
+    Class< ? extends com.replace.replace.api.crud.Delete< ? > > delete() default DefaultDelete.class;
 }

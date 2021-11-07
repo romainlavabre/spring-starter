@@ -4,6 +4,7 @@ import com.replace.replace.api.dynamic.annotation.DynamicEnabled;
 import com.replace.replace.api.dynamic.kernel.router.Resolver;
 import com.replace.replace.repository.DefaultRepository;
 import org.reflections.Reflections;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class EntityHandler {
     protected static final Map< Class< ? >, Entity > storage = new HashMap<>();
 
 
-    public static Collection< Entity > toEntity() {
+    public static Collection< Entity > toEntity( ApplicationContext applicationContext ) {
         if ( storage.size() > 0 ) {
             return storage.values();
         }
@@ -27,10 +28,10 @@ public class EntityHandler {
         Reflections reflections = new Reflections( basePackage );
 
         for ( Class< ? > managed : reflections.getTypesAnnotatedWith( DynamicEnabled.class ) ) {
-            storage.put( managed, new Entity( managed ) );
+            storage.put( managed, new Entity( managed, ( DefaultRepository< ? extends DefaultRepository< ? > > ) applicationContext.getBean( managed.getAnnotation( DynamicEnabled.class ).repository() ) ) );
         }
 
-        return toEntity();
+        return toEntity( applicationContext );
     }
 
 
@@ -54,12 +55,15 @@ public class EntityHandler {
 
         private Class< ? > subject;
 
+        private final DefaultRepository< ? extends DefaultRepository< ? > > defaultRepository;
 
-        public Entity( Class< ? > subject ) {
-            dynamicEnabled    = subject.getAnnotation( DynamicEnabled.class );
-            this.suffixPlural = dynamicEnabled.suffixPlural();
-            this.repository   = dynamicEnabled.repository();
-            this.subject      = subject;
+
+        public Entity( Class< ? > subject, DefaultRepository< ? extends DefaultRepository< ? > > defaultRepository ) {
+            dynamicEnabled         = subject.getAnnotation( DynamicEnabled.class );
+            this.suffixPlural      = dynamicEnabled.suffixPlural();
+            this.repository        = dynamicEnabled.repository();
+            this.defaultRepository = defaultRepository;
+            this.subject           = subject;
         }
 
 
@@ -80,6 +84,11 @@ public class EntityHandler {
 
         public Class< ? > getSubject() {
             return subject;
+        }
+
+
+        public DefaultRepository< ? extends DefaultRepository< ? > > getDefaultRepository() {
+            return defaultRepository;
         }
     }
 }

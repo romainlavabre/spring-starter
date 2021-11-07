@@ -1,9 +1,7 @@
 package com.replace.replace.api.dynamic.kernel.entry;
 
-import com.replace.replace.api.dynamic.annotation.GetAll;
-import com.replace.replace.api.dynamic.annotation.GetAllBy;
-import com.replace.replace.api.dynamic.annotation.GetOne;
-import com.replace.replace.api.dynamic.annotation.GetOneBy;
+import com.replace.replace.api.dynamic.annotation.*;
+import com.replace.replace.api.dynamic.api.CreateEntry;
 import com.replace.replace.api.dynamic.api.DeleteEntry;
 import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.NoRouteMatchException;
@@ -35,6 +33,7 @@ public class Controller {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+    protected final CreateEntry        createEntry;
     protected final DeleteEntry        deleteEntry;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -42,10 +41,12 @@ public class Controller {
 
 
     public Controller(
+            CreateEntry createEntry,
             DeleteEntry deleteEntry,
             DataStorageHandler dataStorageHandler,
             Request request,
             ApplicationContext applicationContext ) {
+        this.createEntry        = createEntry;
         this.deleteEntry        = deleteEntry;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
@@ -86,7 +87,7 @@ public class Controller {
                    InvocationTargetException {
         RouteHandler.Route route = RouteHandler.getRoute( request, GetOneBy.class );
 
-        DefaultRepository< ? > relationRepository = applicationContext.getBean( EntityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getRepository() );
+        DefaultRepository< ? > relationRepository = EntityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
 
         Object relation = relationRepository.findOrFail( id );
 
@@ -122,8 +123,19 @@ public class Controller {
 
 
     @Transactional
-    public ResponseEntity< Map< String, Object > > post() {
-        return null;
+    public ResponseEntity< Map< String, Object > > post()
+            throws Throwable {
+        RouteHandler.Route route = RouteHandler.getRoute( request, Post.class );
+
+        Object subject = route.getSubject().getDeclaredConstructor().newInstance();
+
+        createEntry.create( request, subject, route );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.ok(
+                Encoder.encode( subject, getGroup( route.getRole() ) )
+        );
     }
 
 

@@ -19,7 +19,7 @@ public class Friend {
     @EntryPoint(
             getOne = @GetOne( enabled = true ),
             getAllBy = {@GetAllBy( enabled = true, entity = Person.class )},
-            post = @Post( fields = {"name"} ),
+            post = @Post( fields = {"name", "person"} ),
             delete = @Delete
     )
     @Json( groups = {

@@ -1,18 +1,23 @@
 package com.replace.replace.api.dynamic.kernel.setter;
 
+import com.replace.replace.api.dynamic.annotation.RequestParameter;
+import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.exception.InvalidSetterParameterType;
 import com.replace.replace.api.dynamic.kernel.exception.MultipleSetterFoundException;
 import com.replace.replace.api.dynamic.kernel.exception.SetterNotFoundException;
 import com.replace.replace.api.dynamic.kernel.exception.ToManySetterParameterException;
 import com.replace.replace.api.dynamic.kernel.util.Formatter;
 import com.replace.replace.api.dynamic.kernel.util.TypeResolver;
+import com.replace.replace.api.request.Request;
+import com.replace.replace.repository.DefaultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -48,9 +53,19 @@ public class SetterHandler {
 
         private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+        private String requestParameter;
+
         private Method method;
 
+        private Class< ? > methodParameter;
+
         private boolean isArrayOrCollection;
+
+        private boolean isRelation;
+
+        private EntityHandler.Entity relationType;
+
+        private Class< ? > genericType;
 
         private final Field field;
 
@@ -65,6 +80,71 @@ public class SetterHandler {
                        NoSuchMethodException {
             this.field = field;
             compute();
+        }
+
+
+        public void invoke( Request request, Object entity )
+                throws InvocationTargetException, IllegalAccessException {
+
+            logger.debug( "Search in request parameter \"" + requestParameter + "\"" );
+
+            if ( isArrayOrCollection ) {
+                if ( Collection.class.isAssignableFrom( field.getType() ) ) {
+                    Collection collection = ( Collection ) field.get( entity );
+
+                    if ( collection != null ) {
+                        collection.clear();
+                    }
+                }
+            }
+
+            if ( isArrayOrCollection && !isRelation ) {
+                List< Object > values = request.getParameters( requestParameter );
+
+                if ( values == null ) {
+                    method.invoke( entity, TypeResolver.castTo( genericType, null ) );
+                    return;
+                }
+
+                for ( Object value : values ) {
+                    method.invoke( entity, TypeResolver.castTo( genericType, value ) );
+                }
+
+                return;
+            } else if ( isRelation && !isArrayOrCollection ) {
+                Long value = ( Long ) TypeResolver.castTo( Long.class, request.getParameter( requestParameter ) );
+
+                DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+
+                method.invoke( entity, defaultRepository.findOrFail( value ) );
+                return;
+            } else if ( isArrayOrCollection ) {
+                List< Object > values = request.getParameters( requestParameter );
+
+                if ( values == null ) {
+                    method.invoke( entity, TypeResolver.castTo( genericType, null ) );
+                    return;
+                }
+
+                DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+
+                for ( Object value : values ) {
+                    Long castedValue = ( Long ) TypeResolver.castTo( Long.class, value );
+                    method.invoke( entity, defaultRepository.findOrFail( castedValue ) );
+                }
+
+                return;
+            }
+
+            Object value = TypeResolver.castTo( methodParameter, request.getParameter( requestParameter ) );
+
+
+            method.invoke( entity, value );
+        }
+
+
+        public Method getMethod() {
+            return method;
         }
 
 
@@ -86,6 +166,25 @@ public class SetterHandler {
                 isArrayOrCollection = true;
             }
 
+            if ( field.isAnnotationPresent( OneToOne.class )
+                    || field.isAnnotationPresent( OneToMany.class )
+                    || field.isAnnotationPresent( ManyToOne.class )
+                    || field.isAnnotationPresent( ManyToMany.class ) ) {
+                isRelation = true;
+
+                if ( !isArrayOrCollection ) {
+                    relationType = EntityHandler.getEntity( field.getType() );
+                } else {
+                    ParameterizedType parameterizedType = ( ParameterizedType ) field.getGenericType();
+                    relationType = EntityHandler.getEntity( ( Class< ? > ) parameterizedType.getActualTypeArguments()[ 0 ] );
+                }
+            }
+
+            if ( isArrayOrCollection ) {
+                ParameterizedType parameterizedType = ( ParameterizedType ) field.getGenericType();
+                genericType = ( Class< ? > ) parameterizedType.getActualTypeArguments()[ 0 ];
+            }
+
             method = searchSetter();
 
             if ( method.getParameterCount() != 1 ) {
@@ -96,11 +195,24 @@ public class SetterHandler {
                 logger.error( "Type parameter of setter " + method.getName() + " in " + method.getDeclaringClass().getName() + " is primitive, this could throw a NullPointerException" );
             }
 
+            methodParameter = TypeResolver.toWrapper( method.getParameterTypes()[ 0 ] );
+
             if ( !isArrayOrCollection
-                    && !TypeResolver.toWrapper( method.getParameterTypes()[ 0 ] ).getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
+                    && !methodParameter.getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
                 throw new InvalidSetterParameterType( method );
             }
 
+            RequestParameter requestParameter = field.getAnnotation( RequestParameter.class );
+
+            if ( requestParameter != null ) {
+                this.requestParameter = requestParameter.name();
+            } else {
+                if ( !isRelation ) {
+                    this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() );
+                } else {
+                    this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() + "_id" );
+                }
+            }
 
             isComputed = true;
         }

@@ -39,28 +39,28 @@ public class RouteHandler {
         List< Route > routes = new ArrayList<>();
 
         if ( entryPoint.getOne().enabled() ) {
-            routes.addAll( getRoute( subject, entryPoint.getOne() ) );
+            routes.addAll( getRoute( subject, entryPoint.getOne(), field ) );
         }
 
         if ( entryPoint.getAll().enabled() ) {
-            routes.addAll( getRoute( subject, entryPoint.getAll() ) );
+            routes.addAll( getRoute( subject, entryPoint.getAll(), field ) );
         }
 
 
         for ( GetOneBy getOneBy : entryPoint.getOneBy() ) {
-            routes.addAll( getRoute( subject, getOneBy ) );
+            routes.addAll( getRoute( subject, getOneBy, field ) );
         }
 
         for ( GetAllBy getAllBy : entryPoint.getAllBy() ) {
-            routes.addAll( getRoute( subject, getAllBy ) );
+            routes.addAll( getRoute( subject, getAllBy, field ) );
         }
 
         for ( Post post : entryPoint.post() ) {
-            routes.addAll( getRoute( subject, post ) );
+            routes.addAll( getRoute( subject, post, field ) );
         }
 
         for ( Put put : entryPoint.put() ) {
-            routes.addAll( getRoute( subject, put ) );
+            routes.addAll( getRoute( subject, put, field ) );
         }
 
         for ( Patch patch : entryPoint.patch() ) {
@@ -68,7 +68,7 @@ public class RouteHandler {
         }
 
         for ( Delete delete : entryPoint.delete() ) {
-            routes.addAll( getRoute( subject, delete ) );
+            routes.addAll( getRoute( subject, delete, field ) );
         }
 
         storage.put( id, routes );
@@ -103,168 +103,61 @@ public class RouteHandler {
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetOne getOne ) {
-        List< Route > routes = new ArrayList<>();
-
-        if ( getOne.roles().length == 1 && getOne.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( getOne, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : getOne.roles() ) {
-                routes.add( new Route( getOne, subject, role ) );
-            }
-        }
-
-        if ( !getOne.authenticated() ) {
-            routes.add( new Route( getOne, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, GetOne getOne, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+        return getRouteCore( subject, getOne, field, getOne.roles(), getOne.authenticated(), getOne.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetAll getAll ) {
-        List< Route > routes = new ArrayList<>();
-
-        if ( getAll.roles().length == 1 && getAll.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( getAll, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : getAll.roles() ) {
-                routes.add( new Route( getAll, subject, role ) );
-            }
-        }
-
-        if ( !getAll.authenticated() ) {
-            routes.add( new Route( getAll, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, GetAll getAll, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+        return getRouteCore( subject, getAll, field, getAll.roles(), getAll.authenticated(), getAll.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetOneBy getOneBy ) {
-        List< Route > routes = new ArrayList<>();
-
-        if ( getOneBy.roles().length == 1 && getOneBy.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( getOneBy, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : getOneBy.roles() ) {
-                routes.add( new Route( getOneBy, subject, role ) );
-            }
-        }
-
-        if ( !getOneBy.authenticated() ) {
-            routes.add( new Route( getOneBy, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, GetOneBy getOneBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+        return getRouteCore( subject, getOneBy, field, getOneBy.roles(), getOneBy.authenticated(), getOneBy.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, GetAllBy getAllBy ) {
-        List< Route > routes = new ArrayList<>();
-
-        if ( getAllBy.roles().length == 1 && getAllBy.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( getAllBy, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : getAllBy.roles() ) {
-                routes.add( new Route( getAllBy, subject, role ) );
-            }
-        }
-
-        if ( !getAllBy.authenticated() ) {
-            routes.add( new Route( getAllBy, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, GetAllBy getAllBy, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+        return getRouteCore( subject, getAllBy, field, getAllBy.roles(), getAllBy.authenticated(), getAllBy.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Post post ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
-        List< Route > routes = new ArrayList<>();
-
-        if ( post.roles().length == 1 && post.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( post, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : post.roles() ) {
-                routes.add( new Route( post, subject, role ) );
-            }
-        }
-
-        if ( !post.authenticated() ) {
-            routes.add( new Route( post, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, Post post, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
+        return getRouteCore( subject, post, field, post.roles(), post.authenticated(), post.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Put put ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
-        List< Route > routes = new ArrayList<>();
-
-        if ( put.roles().length == 1 && put.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( put, subject, role.getName() ) );
-            }
-        } else {
-            for ( String role : put.roles() ) {
-                routes.add( new Route( put, subject, role ) );
-            }
-        }
-
-        if ( !put.authenticated() ) {
-            routes.add( new Route( put, subject, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, Put put, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchFieldException, NoSuchMethodException {
+        return getRouteCore( subject, put, field, put.roles(), put.authenticated(), put.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Patch patch, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchMethodException {
-        List< Route > routes = new ArrayList<>();
-
-        if ( patch.roles().length == 1 && patch.roles()[ 0 ].equals( "*" ) ) {
-            for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( patch, subject, field, role.getName() ) );
-            }
-        } else {
-            for ( String role : patch.roles() ) {
-                routes.add( new Route( patch, subject, field, role ) );
-            }
-        }
-
-        if ( !patch.authenticated() ) {
-            routes.add( new Route( patch, subject, field, null ) );
-        }
-
-        return routes;
+    private static List< Route > getRoute( Class< ? > subject, Patch patch, Field field ) throws InvalidSetterParameterType, ToManySetterParameterException, MultipleSetterFoundException, SetterNotFoundException, NoSuchMethodException, NoSuchFieldException {
+        return getRouteCore( subject, patch, field, patch.roles(), patch.authenticated(), patch.route() );
     }
 
 
-    private static List< Route > getRoute( Class< ? > subject, Delete delete ) {
+    private static List< Route > getRoute( Class< ? > subject, Delete delete, Field field ) throws NoSuchMethodException, SetterNotFoundException, NoSuchFieldException, ToManySetterParameterException, InvalidSetterParameterType, MultipleSetterFoundException {
+        return getRouteCore( subject, delete, field, delete.roles(), delete.authenticated(), delete.route() );
+    }
+
+
+    private static List< Route > getRouteCore( Class< ? > subject, Object annotation, Field field, String[] roles, boolean authenticated, String route ) throws NoSuchMethodException, SetterNotFoundException, MultipleSetterFoundException, ToManySetterParameterException, InvalidSetterParameterType, NoSuchFieldException {
         List< Route > routes = new ArrayList<>();
 
-        if ( delete.roles().length == 1 && delete.roles()[ 0 ].equals( "*" ) ) {
+        if ( roles.length == 1 && roles[ 0 ].equals( "*" ) ) {
             for ( Field role : Role.class.getFields() ) {
-                routes.add( new Route( delete, subject, role.getName() ) );
+                routes.add( new Route( annotation, subject, role.getName(), field, route ) );
             }
         } else {
-            for ( String role : delete.roles() ) {
-                routes.add( new Route( delete, subject, role ) );
+            for ( String role : roles ) {
+                routes.add( new Route( annotation, subject, role, field, route ) );
             }
         }
 
-        if ( !delete.authenticated() ) {
-            routes.add( new Route( delete, subject, null ) );
+        if ( !authenticated ) {
+            routes.add( new Route( annotation, subject, null, field, route ) );
         }
 
         return routes;
@@ -288,213 +181,43 @@ public class RouteHandler {
 
 
         public Route(
-                GetOne getOne,
+                Object annotation,
                 Class< ? > subject,
-                String role ) {
-            this.requestMethod = RequestMethod.GET;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = getOne;
-
-            if ( !getOne.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getOne.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "{id:[0-9]+}" );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                GetAll getAll,
-                Class< ? > subject,
-                String role ) {
-            this.requestMethod = RequestMethod.GET;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = getAll;
-
-            if ( !getAll.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + getAll.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + EntityHandler.getEntity( subject ).getSuffixPlural() ) );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                GetOneBy getOneBy,
-                Class< ? > subject,
-                String role ) {
-            this.requestMethod = RequestMethod.GET;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = getOneBy;
-
-            if ( !getOneBy.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getOneBy.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "by" )
-                    .add( Formatter.toSnakeCase( getOneBy.entity().getSimpleName() ) )
-                    .add( "{id:[0-9]+}" );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                GetAllBy getAllBy,
-                Class< ? > subject,
-                String role ) {
-            this.requestMethod = RequestMethod.GET;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = getAllBy;
-
-            if ( !getAllBy.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getAllBy.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "by" )
-                    .add( Formatter.toSnakeCase( getAllBy.entity().getSimpleName() ) )
-                    .add( "{id:[0-9]+}" );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                Post post,
-                Class< ? > subject,
-                String role ) throws NoSuchFieldException, SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchMethodException {
-            this.requestMethod = RequestMethod.POST;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = post;
-
-            setters = new ArrayList<>();
-
-            for ( String field : post.fields() ) {
-                setters.add( SetterHandler.toSetter( subject.getDeclaredField( field ) ) );
-            }
-
-            if ( !post.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + post.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                Put put,
-                Class< ? > subject,
-                String role ) throws NoSuchFieldException, SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchMethodException {
-            this.requestMethod = RequestMethod.PUT;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = put;
-
-            setters = new ArrayList<>();
-
-            for ( String field : put.fields() ) {
-                setters.add( SetterHandler.toSetter( subject.getDeclaredField( field ) ) );
-            }
-
-            if ( !put.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + put.route();
-                return;
-            }
-
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "{id:[0-9]+}" );
-
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                Patch patch,
-                Class< ? > subject,
+                String role,
                 Field field,
-                String role ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchMethodException {
-            this.requestMethod = RequestMethod.PATCH;
+                String route )
+                throws NoSuchFieldException,
+                       SetterNotFoundException,
+                       ToManySetterParameterException,
+                       MultipleSetterFoundException,
+                       InvalidSetterParameterType,
+                       NoSuchMethodException {
+            this.requestMethod = getRequestMethod( annotation );
             this.subject       = subject;
             this.role          = role;
-            this.httpType      = patch;
+            this.httpType      = annotation;
+            path               = getRoute( route, annotation, field );
 
-            setters = new ArrayList<>();
-            setters.add( SetterHandler.toSetter( field ) );
+            if ( annotation instanceof Post ) {
+                setters = new ArrayList<>();
 
-            if ( !patch.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + patch.route();
-                return;
+                for ( String localField : (( Post ) annotation).fields() ) {
+                    setters.add( SetterHandler.toSetter( subject.getDeclaredField( localField ) ) );
+                }
             }
 
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "{id:[0-9]+}" )
-                    .add( Formatter.toSnakeCase( field.getName() ) );
+            if ( annotation instanceof Put ) {
+                setters = new ArrayList<>();
 
-            path = "/" + stringJoiner.toString();
-        }
-
-
-        public Route(
-                Delete delete,
-                Class< ? > subject,
-                String role ) {
-            this.requestMethod = RequestMethod.DELETE;
-            this.subject       = subject;
-            this.role          = role;
-            this.httpType      = delete;
-
-            if ( !delete.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + delete.route();
-                return;
+                for ( String localField : (( Put ) annotation).fields() ) {
+                    setters.add( SetterHandler.toSetter( subject.getDeclaredField( localField ) ) );
+                }
             }
 
-            StringJoiner stringJoiner = new StringJoiner( "/" );
-            stringJoiner
-                    .add( getPathPartRole( role ) )
-                    .add( getPluralEntity( subject ) )
-                    .add( "{id:[0-9]+}" );
-
-            path = "/" + stringJoiner.toString();
+            if ( annotation instanceof Patch ) {
+                setters = new ArrayList<>();
+                setters.add( SetterHandler.toSetter( field ) );
+            }
         }
 
 
@@ -617,6 +340,79 @@ public class RouteHandler {
                 }
 
                 return "findBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
+            }
+
+            return null;
+        }
+
+
+        public Class< ? > getSubject() {
+            return subject;
+        }
+
+
+        public List< SetterHandler.Setter > getSetters() {
+            return setters;
+        }
+
+
+        private String getRoute( String route, Object annotation, Field field ) {
+            if ( !route.isBlank() ) {
+                return "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + route;
+            }
+
+            String       idPart       = "{id:[0-9]+}";
+            StringJoiner stringJoiner = new StringJoiner( "/" );
+            stringJoiner
+                    .add( getPathPartRole( role ) )
+                    .add( getPluralEntity( subject ) );
+
+            if ( annotation instanceof GetOne
+                    || annotation instanceof Put
+                    || annotation instanceof Delete ) {
+                stringJoiner.add( idPart );
+            } else if ( annotation instanceof GetOneBy ) {
+                stringJoiner
+                        .add( "by" )
+                        .add( Formatter.toSnakeCase( (( GetOneBy ) annotation).entity().getSimpleName() ) )
+                        .add( "{id:[0-9]+}" );
+            } else if ( annotation instanceof GetAllBy ) {
+                stringJoiner
+                        .add( "by" )
+                        .add( Formatter.toSnakeCase( (( GetAllBy ) annotation).entity().getSimpleName() ) )
+                        .add( idPart );
+            } else if ( annotation instanceof Patch ) {
+                stringJoiner
+                        .add( idPart )
+                        .add( Formatter.toSnakeCase( field.getName() ) );
+            }
+
+            return "/" + stringJoiner.toString();
+        }
+
+
+        private RequestMethod getRequestMethod( Object annotation ) {
+            if ( annotation instanceof GetOne
+                    || annotation instanceof GetAll
+                    || annotation instanceof GetOneBy
+                    || annotation instanceof GetAllBy ) {
+                return RequestMethod.GET;
+            }
+
+            if ( annotation instanceof Post ) {
+                return RequestMethod.POST;
+            }
+
+            if ( annotation instanceof Put ) {
+                return RequestMethod.PUT;
+            }
+
+            if ( annotation instanceof Patch ) {
+                return RequestMethod.PATCH;
+            }
+
+            if ( annotation instanceof Delete ) {
+                return RequestMethod.DELETE;
             }
 
             return null;

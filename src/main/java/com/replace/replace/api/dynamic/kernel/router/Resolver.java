@@ -48,9 +48,9 @@ public class Resolver {
                    NoSuchFieldException {
 
 
-        for ( EntityHandler.Entity entity : EntityHandler.toEntity() ) {
+        for ( EntityHandler.Entity entity : EntityHandler.toEntity( applicationContext ) ) {
             Class< ? > managed = entity.getSubject();
-            
+
             logger.info( "Found " + managed + " for dynamic framework" );
 
             for ( Field field : managed.getDeclaredFields() ) {
