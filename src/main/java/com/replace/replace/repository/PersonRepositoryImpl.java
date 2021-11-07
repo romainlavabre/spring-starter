@@ -1,10 +1,13 @@
 package com.replace.replace.repository;
 
+import com.replace.replace.entity.Friend;
 import com.replace.replace.entity.Person;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.replace.replace.exception.HttpNotFoundException;
+import com.replace.replace.repository.jpa.PersonJpa;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.util.Optional;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -12,10 +15,32 @@ import javax.persistence.EntityManager;
 @Service
 public class PersonRepositoryImpl extends AbstractRepository< Person > implements PersonRepository {
 
+    protected final PersonJpa personJpa;
+
+
     public PersonRepositoryImpl(
             EntityManager entityManager,
-            JpaRepository< Person, Long > jpaRepository ) {
-        super( entityManager, jpaRepository );
+            PersonJpa personJpa ) {
+        super( entityManager, personJpa );
+        this.personJpa = personJpa;
+    }
+
+
+    @Override
+    public Optional< Person > findByFriend( Friend friend ) {
+        return personJpa.findByFriendsContains( friend );
+    }
+
+
+    @Override
+    public Person findOrFailByFriend( Friend friend ) {
+        Optional< Person > optionalPerson = findByFriend( friend );
+
+        if ( optionalPerson.isPresent() ) {
+            return optionalPerson.get();
+        }
+
+        throw new HttpNotFoundException( "PERSON_NOT_FOUND" );
     }
 
 

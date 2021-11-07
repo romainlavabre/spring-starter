@@ -96,7 +96,8 @@ public class SetterHandler {
                 logger.error( "Type parameter of setter " + method.getName() + " in " + method.getDeclaringClass().getName() + " is primitive, this could throw a NullPointerException" );
             }
 
-            if ( !TypeResolver.toWrapper( method.getParameterTypes()[ 0 ] ).getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
+            if ( !isArrayOrCollection
+                    && !TypeResolver.toWrapper( method.getParameterTypes()[ 0 ] ).getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
                 throw new InvalidSetterParameterType( method );
             }
 
@@ -109,9 +110,6 @@ public class SetterHandler {
                 throws SetterNotFoundException, MultipleSetterFoundException, NoSuchMethodException {
             com.replace.replace.api.dynamic.annotation.Setter setter = field.getAnnotation( com.replace.replace.api.dynamic.annotation.Setter.class );
 
-            if ( setter != null ) {
-                return field.getDeclaringClass().getMethod( setter.value() );
-            }
 
             List< String > searchs = new ArrayList<>();
             List< Method > founds  = new ArrayList<>();
@@ -120,6 +118,10 @@ public class SetterHandler {
                 searchs.add( "add" + Formatter.toPascalCase( field.getName() ) );
             } else {
                 searchs.add( "set" + Formatter.toPascalCase( field.getName() ) );
+            }
+
+            if ( setter != null ) {
+                searchs.add( setter.value() );
             }
 
             for ( Method method : field.getDeclaringClass().getDeclaredMethods() ) {

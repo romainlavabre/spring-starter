@@ -2,14 +2,13 @@ package com.replace.replace.api.dynamic.kernel.router;
 
 import com.replace.replace.api.dynamic.annotation.*;
 import com.replace.replace.api.dynamic.api.TriggerResolver;
-import com.replace.replace.api.dynamic.kernel.exception.InvalidSetterParameterType;
-import com.replace.replace.api.dynamic.kernel.exception.MultipleSetterFoundException;
-import com.replace.replace.api.dynamic.kernel.exception.SetterNotFoundException;
-import com.replace.replace.api.dynamic.kernel.exception.ToManySetterParameterException;
+import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
+import com.replace.replace.api.dynamic.kernel.exception.*;
 import com.replace.replace.api.dynamic.kernel.setter.SetterHandler;
 import com.replace.replace.api.dynamic.kernel.util.Formatter;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.configuration.security.Role;
+import com.replace.replace.repository.DefaultRepository;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Field;
@@ -25,7 +24,7 @@ public class RouteHandler {
 
     public static List< Route > toRoute( Class< ? > subject, Field field ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchFieldException, NoSuchMethodException {
 
-        String id = subject.getName() + field.getName();
+        String id = Formatter.toSnakeCase( subject.getSimpleName() ) + EntityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
 
         if ( storage.containsKey( id ) ) {
             return storage.get( id );
@@ -78,9 +77,29 @@ public class RouteHandler {
     }
 
 
-    public static Route getRoute( Request request ) {
-        System.out.println( request.getUri() );
-        return null;
+    public static Route getRoute( Request request, Class< ? > httpType ) throws NoRouteMatchException {
+
+        String pluralEntity = request.getUri().split( "/" )[ 2 ];
+
+        for ( Map.Entry< String, List< Route > > entry : storage.entrySet() ) {
+            String firstPart = entry.getKey().split( "::" )[ 0 ];
+
+            if ( !pluralEntity.equals( firstPart ) ) {
+                continue;
+            }
+
+            for ( Route route : entry.getValue() ) {
+                if ( !route.isHttpType( httpType ) ) {
+                    continue;
+                }
+
+                if ( route.isMatchWithPath( request.getUri() ) ) {
+                    return route;
+                }
+            }
+        }
+
+        throw new NoRouteMatchException();
     }
 
 
@@ -265,21 +284,7 @@ public class RouteHandler {
 
         private List< TriggerResolver< ? > > triggerResolvers;
 
-        private GetOne getOne;
-
-        private GetAll getAll;
-
-        private GetOneBy getOneBy;
-
-        private GetAllBy getAllBy;
-
-        private Post post;
-
-        private Put put;
-
-        private Patch patch;
-
-        private Delete delete;
+        private Object httpType;
 
 
         public Route(
@@ -289,17 +294,17 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
-            this.getOne        = getOne;
+            this.httpType      = getOne;
 
             if ( !getOne.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + getOne.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getOne.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "{id:[0-9]+}" );
 
             path = "/" + stringJoiner.toString();
@@ -313,7 +318,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
-            this.getAll        = getAll;
+            this.httpType      = getAll;
 
             if ( !getAll.route().isBlank() ) {
                 path = "/" + getPathPartRole( role ) + getAll.route();
@@ -323,7 +328,7 @@ public class RouteHandler {
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) );
+                    .add( Formatter.toSnakeCase( subject.getSimpleName() + EntityHandler.getEntity( subject ).getSuffixPlural() ) );
 
             path = "/" + stringJoiner.toString();
         }
@@ -336,17 +341,17 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
-            this.getOneBy      = getOneBy;
+            this.httpType      = getOneBy;
 
             if ( !getOneBy.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + getOneBy.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getOneBy.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "by" )
                     .add( Formatter.toSnakeCase( getOneBy.entity().getSimpleName() ) )
                     .add( "{id:[0-9]+}" );
@@ -362,17 +367,17 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.GET;
             this.subject       = subject;
             this.role          = role;
-            this.getAllBy      = getAllBy;
+            this.httpType      = getAllBy;
 
             if ( !getAllBy.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + getAllBy.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + getAllBy.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "by" )
                     .add( Formatter.toSnakeCase( getAllBy.entity().getSimpleName() ) )
                     .add( "{id:[0-9]+}" );
@@ -388,7 +393,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.POST;
             this.subject       = subject;
             this.role          = role;
-            this.post          = post;
+            this.httpType      = post;
 
             setters = new ArrayList<>();
 
@@ -397,14 +402,14 @@ public class RouteHandler {
             }
 
             if ( !post.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + post.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + post.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) );
+                    .add( getPluralEntity( subject ) );
 
             path = "/" + stringJoiner.toString();
         }
@@ -417,7 +422,7 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.PUT;
             this.subject       = subject;
             this.role          = role;
-            this.put           = put;
+            this.httpType      = put;
 
             setters = new ArrayList<>();
 
@@ -426,14 +431,14 @@ public class RouteHandler {
             }
 
             if ( !put.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + put.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + put.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "{id:[0-9]+}" );
 
             path = "/" + stringJoiner.toString();
@@ -448,20 +453,20 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.PATCH;
             this.subject       = subject;
             this.role          = role;
-            this.patch         = patch;
+            this.httpType      = patch;
 
             setters = new ArrayList<>();
             setters.add( SetterHandler.toSetter( field ) );
 
             if ( !patch.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + patch.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + patch.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "{id:[0-9]+}" )
                     .add( Formatter.toSnakeCase( field.getName() ) );
 
@@ -476,25 +481,20 @@ public class RouteHandler {
             this.requestMethod = RequestMethod.DELETE;
             this.subject       = subject;
             this.role          = role;
-            this.delete        = delete;
+            this.httpType      = delete;
 
             if ( !delete.route().isBlank() ) {
-                path = "/" + getPathPartRole( role ) + delete.route();
+                path = "/" + getPathPartRole( role ) + "/" + getPluralEntity( subject ) + delete.route();
                 return;
             }
 
             StringJoiner stringJoiner = new StringJoiner( "/" );
             stringJoiner
                     .add( getPathPartRole( role ) )
-                    .add( Formatter.toSnakeCase( subject.getSimpleName() + subject.getAnnotation( DynamicEnabled.class ).suffixPlural() ) )
+                    .add( getPluralEntity( subject ) )
                     .add( "{id:[0-9]+}" );
 
             path = "/" + stringJoiner.toString();
-        }
-
-
-        private String getPathPartRole( String role ) {
-            return role != null ? role.replace( "ROLE_", "" ).toLowerCase() : "guest";
         }
 
 
@@ -509,42 +509,127 @@ public class RouteHandler {
 
 
         public boolean isGetOne() {
-            return getOne != null;
+            return httpType instanceof GetOne;
         }
 
 
         public boolean isGetAll() {
-            return getAll != null;
+            return httpType instanceof GetAll;
         }
 
 
         public boolean isGetOneBy() {
-            return getOneBy != null;
+            return httpType instanceof GetOneBy;
         }
 
 
         public boolean isGetAllBy() {
-            return getAllBy != null;
+            return httpType instanceof GetAllBy;
         }
 
 
         public boolean isPost() {
-            return post != null;
+            return httpType instanceof Post;
         }
 
 
         public boolean isPut() {
-            return put != null;
+            return httpType instanceof Put;
         }
 
 
         public boolean isPatch() {
-            return patch != null;
+            return httpType instanceof Patch;
         }
 
 
         public boolean isDelete() {
-            return delete != null;
+            return httpType instanceof Delete;
+        }
+
+
+        public boolean isHttpType( Class< ? > httpType ) {
+            return httpType.isAssignableFrom( this.httpType.getClass() );
+        }
+
+
+        public boolean isMatchWithPath( String uri ) {
+            String[] uriPart  = uri.split( "/" );
+            String[] pathPart = path.split( "/" );
+
+            if ( uriPart.length != pathPart.length ) {
+                return false;
+            }
+
+            StringJoiner uriCompare  = new StringJoiner( "/" );
+            StringJoiner pathCompare = new StringJoiner( "/" );
+
+            for ( int i = 0; i < uriPart.length; i++ ) {
+                if ( pathPart[ i ].contains( "{" ) ) {
+                    pathPart[ i ] = pathPart[ i ].replace( "{", "" ).replace( "}", "" );
+
+                    if ( pathPart[ i ].contains( ":" ) ) {
+                        String regex = pathPart[ i ].split( ":" )[ 1 ];
+
+                        if ( uriPart[ i ].matches( regex ) ) {
+                            pathPart[ i ] = uriPart[ i ];
+                        }
+                    } else {
+                        pathPart[ i ] = uriPart[ i ];
+                    }
+                }
+
+                uriCompare.add( uriPart[ i ] );
+                pathCompare.add( pathPart[ i ] );
+            }
+
+            return uriCompare.toString().equals( pathCompare.toString() );
+        }
+
+
+        public Class< ? extends DefaultRepository< ? > > getRepository() {
+            return EntityHandler.getEntity( subject ).getRepository();
+        }
+
+
+        public String getRole() {
+            return role;
+        }
+
+
+        public Object getHttpType() {
+            return httpType;
+        }
+
+
+        public String getRepositoryMethod() {
+            if ( httpType instanceof GetOneBy ) {
+                if ( !(( GetOneBy ) httpType).method().isBlank() ) {
+                    return (( GetOneBy ) httpType).method();
+                }
+
+                return "findOrFailBy" + Formatter.toPascalCase( (( GetOneBy ) httpType).entity().getSimpleName() );
+            }
+
+            if ( httpType instanceof GetAllBy ) {
+                if ( !(( GetAllBy ) httpType).method().isBlank() ) {
+                    return (( GetAllBy ) httpType).method();
+                }
+
+                return "findOrFailBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
+            }
+
+            return null;
+        }
+
+
+        private String getPathPartRole( String role ) {
+            return role != null ? role.replace( "ROLE_", "" ).toLowerCase() : "guest";
+        }
+
+
+        private String getPluralEntity( Class< ? > subject ) {
+            return Formatter.toSnakeCase( subject.getSimpleName() + EntityHandler.getEntity( subject ).getSuffixPlural() );
         }
     }
 }

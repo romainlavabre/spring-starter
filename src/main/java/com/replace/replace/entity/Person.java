@@ -1,13 +1,17 @@
 package com.replace.replace.entity;
 
 import com.replace.replace.api.dynamic.annotation.*;
+import com.replace.replace.api.json.annotation.Group;
+import com.replace.replace.api.json.annotation.Json;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.configuration.security.Role;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
 import com.replace.replace.module.person.trigger.CategoryTrigger;
 import com.replace.replace.repository.PersonRepository;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -27,6 +31,7 @@ public class Person {
     @EntryPoint(
             getOne = @GetOne( enabled = true ),
             getAll = @GetAll( enabled = true, authenticated = false ),
+            getOneBy = @GetOneBy( entity = Friend.class ),
             post = {
                     @Post( fields = {"name", "phone", "age"}, triggers = {CategoryTrigger.class} )
             },
@@ -34,6 +39,9 @@ public class Person {
                     @Delete( roles = {Role.ADMIN} )
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
@@ -43,6 +51,9 @@ public class Person {
                     @Patch
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private String name;
 
@@ -52,6 +63,9 @@ public class Person {
                     @Patch
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private String phone;
 
@@ -60,6 +74,9 @@ public class Person {
                     @Patch( triggers = {CategoryTrigger.class} )
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private int age;
 
@@ -68,6 +85,9 @@ public class Person {
                     @Patch
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private byte status;
 
@@ -79,8 +99,23 @@ public class Person {
                     @Trigger( id = TriggerIdentifier.PERSON_CATEGORY )
             }
     )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Column( nullable = false )
     private byte category;
+
+    @Setter( "addFriend" )
+    @EntryPoint(
+            patch = {
+                    @Patch
+            }
+    )
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN, object = true )
+    } )
+    @OneToMany( mappedBy = "person" )
+    private List< Friend > friends;
 
 
     public long getId() {
@@ -171,6 +206,24 @@ public class Person {
         }
 
         this.category = category;
+
+        return this;
+    }
+
+
+    public List< Friend > getFriends() {
+        return friends;
+    }
+
+
+    public Person addFriend( Friend friend ) {
+        if ( !friends.contains( friend ) ) {
+            friends.add( friend );
+
+            if ( friend.getPerson() != this ) {
+                friend.setPerson( this );
+            }
+        }
 
         return this;
     }

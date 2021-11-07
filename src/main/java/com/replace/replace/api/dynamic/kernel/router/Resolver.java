@@ -1,12 +1,11 @@
 package com.replace.replace.api.dynamic.kernel.router;
 
-import com.replace.replace.api.dynamic.annotation.DynamicEnabled;
+import com.replace.replace.api.dynamic.kernel.entity.EntityHandler;
 import com.replace.replace.api.dynamic.kernel.entry.Controller;
 import com.replace.replace.api.dynamic.kernel.exception.InvalidSetterParameterType;
 import com.replace.replace.api.dynamic.kernel.exception.MultipleSetterFoundException;
 import com.replace.replace.api.dynamic.kernel.exception.SetterNotFoundException;
 import com.replace.replace.api.dynamic.kernel.exception.ToManySetterParameterException;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -49,9 +47,10 @@ public class Resolver {
                    InvalidSetterParameterType,
                    NoSuchFieldException {
 
-        Set< Class< ? > > manageds = scanClassWithAnnotation();
 
-        for ( Class< ? > managed : manageds ) {
+        for ( EntityHandler.Entity entity : EntityHandler.toEntity() ) {
+            Class< ? > managed = entity.getSubject();
+            
             logger.info( "Found " + managed + " for dynamic framework" );
 
             for ( Field field : managed.getDeclaredFields() ) {
@@ -120,14 +119,5 @@ public class Resolver {
         }
 
         return null;
-    }
-
-
-    private Set< Class< ? > > scanClassWithAnnotation() {
-        String basePackage = Resolver.class.getPackage().getName().replace( ".api.dynamic.kernel.router", "" );
-
-        Reflections reflections = new Reflections( basePackage );
-
-        return reflections.getTypesAnnotatedWith( DynamicEnabled.class );
     }
 }

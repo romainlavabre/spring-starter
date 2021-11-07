@@ -15,9 +15,9 @@ public @interface GetAllBy {
 
 
     Class< ? > entity();
-    
 
-    String field();
+
+    String method() default "";
 
 
     String[] roles() default {"*"};
