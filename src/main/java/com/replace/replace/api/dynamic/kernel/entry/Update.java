@@ -48,18 +48,17 @@ public class Update implements UpdateEntry {
 
         if ( executor != null ) {
             (( com.replace.replace.api.crud.Update ) executor).update( request, subject );
-            return;
-        }
+        } else {
+            for ( SetterHandler.Setter setter : setters ) {
 
-        for ( SetterHandler.Setter setter : setters ) {
+                try {
+                    setter.invoke( request, subject );
+                } catch ( InvocationTargetException e ) {
+                    throw e.getCause();
+                }
 
-            try {
-                setter.invoke( request, subject );
-            } catch ( InvocationTargetException e ) {
-                throw e.getCause();
+                historyHandler.update( subject, setter.getField().getName() );
             }
-
-            historyHandler.update( subject, setter.getField().getName() );
         }
 
 

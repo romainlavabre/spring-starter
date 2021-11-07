@@ -94,6 +94,9 @@ public class Person {
     @EntryPoint(
             patch = {
                     @Patch
+            },
+            updateTriggers = {
+                    @UpdateTrigger( id = TriggerIdentifier.PERSON_STATUS, fields = {"status"} )
             }
     )
     @Json( groups = {
@@ -107,7 +110,11 @@ public class Person {
                     @Patch
             },
             unmanagedTriggers = {
-                    @UnmanagedTrigger( id = TriggerIdentifier.PERSON_CATEGORY, updateExecutor = CategoryResolver.class )
+                    @UnmanagedTrigger(
+                            id = TriggerIdentifier.PERSON_CATEGORY,
+                            updateExecutor = CategoryResolver.class,
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.PERSON_STATUS )}
+                    )
             }
     )
     @Json( groups = {
@@ -125,7 +132,7 @@ public class Person {
     @Json( groups = {
             @Group( name = GroupType.ADMIN, object = true )
     } )
-    @OneToMany( mappedBy = "person" )
+    @OneToMany( mappedBy = "person", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     private final List< Friend > friends;
 
 

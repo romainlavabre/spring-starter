@@ -41,17 +41,14 @@ public class Delete implements DeleteEntry {
 
         if ( executor != null ) {
             (( com.replace.replace.api.crud.Delete ) executor).delete( request, subject );
-            return;
+        } else {
+            EntityHandler.Entity entity = EntityHandler.getEntity( subject.getClass() );
+            historyHandler.delete( subject );
+
+            DefaultRepository defaultRepository = entity.getDefaultRepository();
+            defaultRepository.remove( subject );
         }
 
-        EntityHandler.Entity entity = EntityHandler.getEntity( subject.getClass() );
-
-        historyHandler.delete( subject );
-
-
-        DefaultRepository defaultRepository = entity.getDefaultRepository();
-
-        defaultRepository.remove( subject );
 
         Trigger.getInstance().handleTriggers( request, nextTriggers, subject );
     }

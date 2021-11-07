@@ -56,19 +56,19 @@ public class Create implements CreateEntry {
 
         if ( executor != null ) {
             (( com.replace.replace.api.crud.Create ) executor).create( request, subject );
-            return;
-        }
+        } else {
+            for ( SetterHandler.Setter setter : setters ) {
 
-        for ( SetterHandler.Setter setter : setters ) {
-
-            try {
-                setter.invoke( request, subject );
-            } catch ( InvocationTargetException e ) {
-                throw e.getCause();
+                try {
+                    setter.invoke( request, subject );
+                } catch ( InvocationTargetException e ) {
+                    throw e.getCause();
+                }
             }
+            
+            historyHandler.create( subject );
         }
 
-        historyHandler.create( subject );
 
         Trigger.getInstance().handleTriggers( request, nextTriggers, subject );
 
