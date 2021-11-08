@@ -29,6 +29,9 @@ public @interface Trigger {
     String providerField() default "";
 
 
+    boolean provideMe() default false;
+
+
     /**
      * @return Custom provider for Update / Delete & Unmanaged Triggers
      */

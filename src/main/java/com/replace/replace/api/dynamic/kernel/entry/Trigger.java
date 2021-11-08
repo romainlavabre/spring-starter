@@ -104,6 +104,11 @@ public class Trigger {
 
     protected void handleUpdateTrigger( Request request, TriggerHandler.Trigger targetTrigger, com.replace.replace.api.dynamic.annotation.Trigger trigger, Object lastSubject )
             throws Throwable {
+        if ( trigger.provideMe() ) {
+            update.update( request, lastSubject, targetTrigger.getSetters(), targetTrigger.getTriggers(), targetTrigger.getExecutor() );
+            return;
+        }
+
         if ( !trigger.providerField().isBlank() ) {
             Field field = lastSubject.getClass().getDeclaredField( trigger.providerField() );
 
@@ -138,6 +143,12 @@ public class Trigger {
 
     protected void handleDeleteTrigger( Request request, TriggerHandler.Trigger targetTrigger, com.replace.replace.api.dynamic.annotation.Trigger trigger, Object lastSubject )
             throws Throwable {
+
+        if ( trigger.provideMe() ) {
+            delete.delete( request, lastSubject, targetTrigger.getTriggers(), targetTrigger.getExecutor() );
+            return;
+        }
+
         if ( !trigger.providerField().isBlank() ) {
             Field field = lastSubject.getClass().getDeclaredField( trigger.providerField() );
 

@@ -9,7 +9,6 @@ import com.replace.replace.configuration.security.Role;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
 import com.replace.replace.module.person.CategoryResolver;
 import com.replace.replace.module.person.constraint.UniquePhone;
-import com.replace.replace.module.person.trigger.CategoryTriggerProvider;
 import com.replace.replace.repository.PersonRepository;
 
 import javax.persistence.*;
@@ -41,7 +40,7 @@ public class Person {
                             triggers = {
                                     @Trigger( triggerId = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, attachToField = "friends" ),
                                     @Trigger( triggerId = TriggerIdentifier.ATTACH_CAR_TO_PERSON, attachToField = "car" ),
-                                    @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, customProvider = CategoryTriggerProvider.class )
+                                    @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, provideMe = true )
                             }
                     )
             },
@@ -82,7 +81,7 @@ public class Person {
     @EntryPoint(
             patch = {
                     @Patch( triggers = {
-                            @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, customProvider = CategoryTriggerProvider.class )
+                            @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, provideMe = true )
                     } )
             }
     )
@@ -114,7 +113,7 @@ public class Person {
                     @UnmanagedTrigger(
                             id = TriggerIdentifier.PERSON_CATEGORY,
                             updateExecutor = CategoryResolver.class,
-                            triggers = {@Trigger( triggerId = TriggerIdentifier.PERSON_STATUS, customProvider = CategoryTriggerProvider.class )}
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.PERSON_STATUS, provideMe = true )}
                     )
             }
     )

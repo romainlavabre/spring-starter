@@ -6,7 +6,6 @@ import com.replace.replace.api.json.annotation.Json;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
-import com.replace.replace.module.car.provider.CarProvider;
 import com.replace.replace.module.car.trigger.OwnerResolver;
 import com.replace.replace.repository.CarRepository;
 
@@ -27,13 +26,13 @@ public class Car {
             post = {
                     @Post(
                             fields = {"mark", "power", "color", "creditPurchase", "person"},
-                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, provideMe = true )}
                     )
             },
             put = {
                     @Put(
                             fields = {"mark", "power", "color", "creditPurchase"},
-                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, provideMe = true )}
                     )
             },
             delete = {@Delete},
@@ -41,7 +40,7 @@ public class Car {
                     @CreateTrigger(
                             id = TriggerIdentifier.ATTACH_CAR_TO_PERSON,
                             fields = {"mark", "power", "color", "creditPurchase"},
-                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, provideMe = true )}
                     )
             }
     )
@@ -80,7 +79,7 @@ public class Car {
     private String color;
 
     @EntryPoint(
-            patch = {@Patch( triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )} )}
+            patch = {@Patch( triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, provideMe = true )} )}
     )
     @Json( groups = {
             @Group( name = GroupType.ADMIN )
