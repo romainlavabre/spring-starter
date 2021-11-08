@@ -114,7 +114,7 @@ public class Person {
                     @UnmanagedTrigger(
                             id = TriggerIdentifier.PERSON_CATEGORY,
                             updateExecutor = CategoryResolver.class,
-                            triggers = {@Trigger( triggerId = TriggerIdentifier.PERSON_STATUS )}
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.PERSON_STATUS, customProvider = CategoryTriggerProvider.class )}
                     )
             }
     )

@@ -280,7 +280,7 @@ public class SetterHandler {
 
             if ( !isArrayOrCollection
                     && !isRelation
-                    && !methodParameter.getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() ) ) {
+                    && (TypeResolver.toWrapper( ( Class< ? > ) type ) == null || !methodParameter.getName().equals( TypeResolver.toWrapper( ( Class< ? > ) type ).getName() )) ) {
                 throw new InvalidSetterParameterType( method );
             }
 
@@ -317,6 +317,7 @@ public class SetterHandler {
             List< Method > founds  = new ArrayList<>();
 
             if ( isArrayOrCollection ) {
+                searchs.add( "add" + Formatter.toPascalCase( field.getName() ).replaceFirst( "s$", "" ) );
                 searchs.add( "add" + Formatter.toPascalCase( field.getName() ) );
             } else {
                 searchs.add( "set" + Formatter.toPascalCase( field.getName() ) );

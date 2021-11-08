@@ -53,7 +53,9 @@ public class Trigger {
 
         SetterHandler.Setter lastSubjectRelationSetter = instance.setterHandler.toSetter( lastSubject.getClass().getDeclaredField( trigger.attachToField() ) );
 
-        if ( !(( CreateTrigger ) targetTrigger.getTrigger()).setByArray() ) {
+        if ( !(( CreateTrigger ) targetTrigger.getTrigger()).setByArray()
+                || (!lastSubjectRelationSetter.getField().getType().isPrimitive()
+                && !lastSubjectRelationSetter.getField().getType().isAssignableFrom( Collection.class )) ) {
             Object newInstance = targetTrigger.getSubject().getDeclaredConstructor().newInstance();
             create.create( request, newInstance, targetTrigger.getSetters(), targetTrigger.getTriggers(), targetTrigger.getExecutor() );
 

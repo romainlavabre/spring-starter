@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service
+@Service( "CarProvider" )
 public class CarProvider implements CustomProvider {
 
     @Override

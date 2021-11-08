@@ -23,7 +23,7 @@ public class Friend {
             post = {@Post( fields = {"name", "person"} )},
             delete = {@Delete},
             createTriggers = {
-                    @CreateTrigger( id = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, fields = {"name"}, setByArray = false )
+                    @CreateTrigger( id = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, fields = {"name"} )
             }
     )
     @Json( groups = {

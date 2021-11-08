@@ -26,7 +26,7 @@ public class Car {
             getOneBy = {@GetOneBy( entity = Person.class )},
             post = {
                     @Post(
-                            fields = {"mark", "power", "color", "creditPurchase"},
+                            fields = {"mark", "power", "color", "creditPurchase", "person"},
                             triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
                     )
             },
@@ -36,7 +36,14 @@ public class Car {
                             triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
                     )
             },
-            delete = {@Delete}
+            delete = {@Delete},
+            createTriggers = {
+                    @CreateTrigger(
+                            id = TriggerIdentifier.ATTACH_CAR_TO_PERSON,
+                            fields = {"mark", "power", "color", "creditPurchase"},
+                            triggers = {@Trigger( triggerId = TriggerIdentifier.CAR_RESOLVE_OWNER, customProvider = CarProvider.class )}
+                    )
+            }
     )
     @Json( groups = {
             @Group( name = GroupType.ADMIN )
