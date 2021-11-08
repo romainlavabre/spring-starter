@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -85,10 +84,7 @@ public class Controller {
 
 
     public ResponseEntity< Map< String, Object > > getOneBy( @PathVariable( "id" ) long id )
-            throws NoRouteMatchException,
-                   IllegalAccessException,
-                   NoSuchMethodException,
-                   InvocationTargetException {
+            throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, GetOneBy.class );
 
         DefaultRepository< ? > relationRepository = EntityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
@@ -99,17 +95,18 @@ public class Controller {
 
         Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetOneBy ) route.getHttpType()).entity() );
 
-        return ResponseEntity.ok(
-                Encoder.encode( method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
-        );
+        try {
+            return ResponseEntity.ok(
+                    Encoder.encode( method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
+            );
+        } catch ( Throwable throwable ) {
+            throw throwable.getCause();
+        }
     }
 
 
     public ResponseEntity< List< Map< String, Object > > > getAllBy( @PathVariable( "id" ) long id )
-            throws NoRouteMatchException,
-                   NoSuchMethodException,
-                   InvocationTargetException,
-                   IllegalAccessException {
+            throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, GetAllBy.class );
 
         DefaultRepository< ? > relationRepository = applicationContext.getBean( EntityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
@@ -120,9 +117,13 @@ public class Controller {
 
         Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetAllBy ) route.getHttpType()).entity() );
 
-        return ResponseEntity.ok(
-                Encoder.encode( ( List< ? extends Object > ) method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
-        );
+        try {
+            return ResponseEntity.ok(
+                    Encoder.encode( ( List< ? extends Object > ) method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
+            );
+        } catch ( Throwable throwable ) {
+            throw throwable.getCause();
+        }
     }
 
 
