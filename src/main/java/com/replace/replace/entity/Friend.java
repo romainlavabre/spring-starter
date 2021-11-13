@@ -1,8 +1,8 @@
 package com.replace.replace.entity;
 
-import com.replace.replace.api.dynamic.annotation.*;
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
+import com.replace.replace.api.top.annotation.*;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.exception.HttpUnprocessableEntityException;

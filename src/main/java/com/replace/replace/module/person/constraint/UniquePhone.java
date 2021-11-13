@@ -1,6 +1,6 @@
 package com.replace.replace.module.person.constraint;
 
-import com.replace.replace.api.dynamic.api.CustomConstraint;
+import com.replace.replace.api.top.api.CustomConstraint;
 import com.replace.replace.exception.HttpConflictException;
 import com.replace.replace.repository.PersonRepository;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.replace.replace.module.person.trigger;
 
-import com.replace.replace.api.dynamic.api.ResourceProvider;
+import com.replace.replace.api.top.api.ResourceProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
