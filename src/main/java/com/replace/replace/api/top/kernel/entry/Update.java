@@ -20,12 +20,17 @@ public class Update implements UpdateEntry {
 
     protected final  HistoryHandler historyHandler;
     protected final  TriggerHandler triggerHandler;
+    protected final  EntityHandler  entityHandler;
     protected static Update         instance;
 
 
-    public Update( HistoryHandler historyHandler, TriggerHandler triggerHandler ) {
+    public Update(
+            HistoryHandler historyHandler,
+            TriggerHandler triggerHandler,
+            EntityHandler entityHandler ) {
         this.historyHandler = historyHandler;
         this.triggerHandler = triggerHandler;
+        this.entityHandler  = entityHandler;
         instance            = this;
     }
 
@@ -64,7 +69,7 @@ public class Update implements UpdateEntry {
 
         Trigger.getInstance().handleTriggers( request, nextTriggers, subject );
 
-        DefaultRepository defaultRepository = EntityHandler.getEntity( subject.getClass() ).getDefaultRepository();
+        DefaultRepository defaultRepository = entityHandler.getEntity( subject.getClass() ).getDefaultRepository();
 
         defaultRepository.persist( subject );
     }

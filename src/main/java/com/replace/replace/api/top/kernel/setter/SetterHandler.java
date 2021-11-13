@@ -33,10 +33,14 @@ public class SetterHandler {
     protected static final Map< String, Setter > storage = new HashMap<>();
 
     protected final ApplicationContext applicationContext;
+    protected final EntityHandler      entityHandler;
 
 
-    public SetterHandler( ApplicationContext applicationContext ) {
+    public SetterHandler(
+            ApplicationContext applicationContext,
+            EntityHandler entityHandler ) {
         this.applicationContext = applicationContext;
+        this.entityHandler      = entityHandler;
     }
 
 
@@ -53,7 +57,7 @@ public class SetterHandler {
             return storage.get( id );
         }
 
-        Setter setter = new Setter( field, applicationContext );
+        Setter setter = new Setter( field, applicationContext, entityHandler );
 
         storage.put( id, setter );
 
@@ -66,6 +70,7 @@ public class SetterHandler {
         private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
         private final ApplicationContext applicationContext;
+        private final EntityHandler      entityHandler;
 
         private String requestParameter;
 
@@ -88,7 +93,7 @@ public class SetterHandler {
         private final List< CustomConstraint > customConstraints;
 
 
-        public Setter( Field field, ApplicationContext applicationContext )
+        public Setter( Field field, ApplicationContext applicationContext, EntityHandler entityHandler )
                 throws InvalidSetterParameterType,
                        ToManySetterParameterException,
                        MultipleSetterFoundException,
@@ -96,6 +101,7 @@ public class SetterHandler {
                        NoSuchMethodException {
             this.field              = field;
             this.applicationContext = applicationContext;
+            this.entityHandler      = entityHandler;
             customConstraints       = new ArrayList<>();
             compute();
         }
@@ -124,7 +130,7 @@ public class SetterHandler {
                 if ( TypeResolver.isWrapperOrPrimitive( newValue ) ) {
 
                     Long              value             = ( Long ) TypeResolver.castTo( Long.class, newValue );
-                    DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                    DefaultRepository defaultRepository = entityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
                     relation = defaultRepository.findOrFail( value );
                 } else {
                     relation = newValue;
@@ -147,7 +153,7 @@ public class SetterHandler {
                     if ( TypeResolver.isWrapperOrPrimitive( newValue ) ) {
                         Long value = ( Long ) TypeResolver.castTo( Long.class, newValue );
 
-                        DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                        DefaultRepository defaultRepository = entityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
                         relation = defaultRepository.findOrFail( value );
 
                         callConstraint( entity, relation );
@@ -164,7 +170,7 @@ public class SetterHandler {
 
                 List< Object > values = ( List< Object > ) newValue;
 
-                DefaultRepository defaultRepository = EntityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
+                DefaultRepository defaultRepository = entityHandler.getEntity( relationType.getSubject() ).getDefaultRepository();
 
                 for ( Object value : values ) {
                     Long castedValue = ( Long ) TypeResolver.castTo( Long.class, value );
@@ -250,10 +256,10 @@ public class SetterHandler {
                 isRelation = true;
 
                 if ( !isArrayOrCollection ) {
-                    relationType = EntityHandler.getEntity( field.getType() );
+                    relationType = entityHandler.getEntity( field.getType() );
                 } else {
                     ParameterizedType parameterizedType = ( ParameterizedType ) field.getGenericType();
-                    relationType = EntityHandler.getEntity( ( Class< ? > ) parameterizedType.getActualTypeArguments()[ 0 ] );
+                    relationType = entityHandler.getEntity( ( Class< ? > ) parameterizedType.getActualTypeArguments()[ 0 ] );
                 }
             }
 

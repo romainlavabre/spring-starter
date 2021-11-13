@@ -16,10 +16,14 @@ import java.util.List;
 public class Delete implements DeleteEntry {
 
     protected final HistoryHandler historyHandler;
+    protected final EntityHandler  entityHandler;
 
 
-    public Delete( HistoryHandler historyHandler ) {
+    public Delete(
+            HistoryHandler historyHandler,
+            EntityHandler entityHandler ) {
         this.historyHandler = historyHandler;
+        this.entityHandler  = entityHandler;
     }
 
 
@@ -42,7 +46,7 @@ public class Delete implements DeleteEntry {
         if ( executor != null ) {
             (( com.replace.replace.api.crud.Delete ) executor).delete( request, subject );
         } else {
-            EntityHandler.Entity entity = EntityHandler.getEntity( subject.getClass() );
+            EntityHandler.Entity entity = entityHandler.getEntity( subject.getClass() );
             historyHandler.delete( subject );
 
             DefaultRepository defaultRepository = entity.getDefaultRepository();

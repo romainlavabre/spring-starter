@@ -24,11 +24,16 @@ public class TriggerHandler {
     protected final Map< Class< ? >, List< Trigger > > storage = new HashMap<>();
     protected final ApplicationContext                 applicationContext;
     protected final SetterHandler                      setterHandler;
+    protected final EntityHandler                      entityHandler;
 
 
-    public TriggerHandler( ApplicationContext applicationContext, SetterHandler setterHandler ) {
+    public TriggerHandler(
+            ApplicationContext applicationContext,
+            SetterHandler setterHandler,
+            EntityHandler entityHandler ) {
         this.applicationContext = applicationContext;
         this.setterHandler      = setterHandler;
+        this.entityHandler      = entityHandler;
         storage.put( CreateTrigger.class, new ArrayList<>() );
         storage.put( UpdateTrigger.class, new ArrayList<>() );
         storage.put( DeleteTrigger.class, new ArrayList<>() );
@@ -124,7 +129,7 @@ public class TriggerHandler {
                 throws NoSuchFieldException, SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchMethodException {
             triggerIdentifier = createTrigger.id();
             trigger           = createTrigger;
-            entity            = EntityHandler.getEntity( field.getDeclaringClass() );
+            entity            = entityHandler.getEntity( field.getDeclaringClass() );
             triggerType       = CreateTrigger.class;
             triggers          = new ArrayList<>( Arrays.asList( createTrigger.triggers() ) );
             setters           = loadSetters( createTrigger.fields() );
@@ -136,7 +141,7 @@ public class TriggerHandler {
                 throws NoSuchFieldException, SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchMethodException {
             triggerIdentifier = updateTrigger.id();
             trigger           = updateTrigger;
-            entity            = EntityHandler.getEntity( field.getDeclaringClass() );
+            entity            = entityHandler.getEntity( field.getDeclaringClass() );
             triggerType       = UpdateTrigger.class;
             triggers          = new ArrayList<>( Arrays.asList( updateTrigger.triggers() ) );
             setters           = loadSetters( updateTrigger.fields() );
@@ -147,7 +152,7 @@ public class TriggerHandler {
         public Trigger( Field field, DeleteTrigger deleteTrigger ) {
             triggerIdentifier = deleteTrigger.id();
             trigger           = deleteTrigger;
-            entity            = EntityHandler.getEntity( field.getDeclaringClass() );
+            entity            = entityHandler.getEntity( field.getDeclaringClass() );
             triggerType       = DeleteTrigger.class;
             triggers          = new ArrayList<>( Arrays.asList( deleteTrigger.triggers() ) );
             setters           = new ArrayList<>();
@@ -159,7 +164,7 @@ public class TriggerHandler {
                 throws UnmanagedTriggerMissingExecutorException {
             triggerIdentifier = unmanagedTrigger.id();
             trigger           = unmanagedTrigger;
-            entity            = EntityHandler.getEntity( field.getDeclaringClass() );
+            entity            = entityHandler.getEntity( field.getDeclaringClass() );
             triggerType       = UnmanagedTrigger.class;
             triggers          = new ArrayList<>( Arrays.asList( unmanagedTrigger.triggers() ) );
             setters           = new ArrayList<>();

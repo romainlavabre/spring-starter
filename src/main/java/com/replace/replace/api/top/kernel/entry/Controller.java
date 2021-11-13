@@ -34,6 +34,7 @@ public class Controller {
     protected final UpdateEntry        updateEntry;
     protected final DeleteEntry        deleteEntry;
     protected final RouteHandler       routeHandler;
+    protected final EntityHandler      entityHandler;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
     protected final ApplicationContext applicationContext;
@@ -44,6 +45,7 @@ public class Controller {
             UpdateEntry updateEntry,
             DeleteEntry deleteEntry,
             RouteHandler routeHandler,
+            EntityHandler entityHandler,
             DataStorageHandler dataStorageHandler,
             Request request,
             ApplicationContext applicationContext ) {
@@ -51,6 +53,7 @@ public class Controller {
         this.updateEntry        = updateEntry;
         this.deleteEntry        = deleteEntry;
         this.routeHandler       = routeHandler;
+        this.entityHandler      = entityHandler;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
         this.applicationContext = applicationContext;
@@ -62,7 +65,7 @@ public class Controller {
                    IllegalAccessException {
         RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
 
-        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
 
         return ResponseEntity.ok(
                 Encoder.encode( defaultRepository.findOrFail( id ), getGroup( route.getRole() ) )
@@ -87,7 +90,7 @@ public class Controller {
             throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, GetOneBy.class );
 
-        DefaultRepository< ? > relationRepository = EntityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
+        DefaultRepository< ? > relationRepository = entityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
 
         Object relation = relationRepository.findOrFail( id );
 
@@ -109,7 +112,7 @@ public class Controller {
             throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, GetAllBy.class );
 
-        DefaultRepository< ? > relationRepository = applicationContext.getBean( EntityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
+        DefaultRepository< ? > relationRepository = applicationContext.getBean( entityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
 
         Object relation = relationRepository.findOrFail( id );
 
@@ -149,7 +152,7 @@ public class Controller {
             throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, Put.class );
 
-        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
         Object                 subject           = defaultRepository.findOrFail( id );
 
         updateEntry.update( request, subject, route );
@@ -167,7 +170,7 @@ public class Controller {
             throws Throwable {
         RouteHandler.Route route = routeHandler.getRoute( request, Patch.class );
 
-        DefaultRepository< ? > defaultRepository = EntityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
         Object                 subject           = defaultRepository.findOrFail( id );
 
         updateEntry.update( request, subject, route );

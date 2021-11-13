@@ -25,19 +25,22 @@ public class RouteHandler {
 
     protected final ApplicationContext applicationContext;
     protected final SetterHandler      setterHandler;
+    protected final EntityHandler      entityHandler;
 
 
     public RouteHandler(
             ApplicationContext applicationContext,
-            SetterHandler setterHandler ) {
+            SetterHandler setterHandler,
+            EntityHandler entityHandler ) {
         this.applicationContext = applicationContext;
         this.setterHandler      = setterHandler;
+        this.entityHandler      = entityHandler;
     }
 
 
     public List< Route > toRoute( Class< ? > subject, Field field ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchFieldException, NoSuchMethodException {
 
-        String id = Formatter.toSnakeCase( subject.getSimpleName() ) + EntityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
+        String id = Formatter.toSnakeCase( subject.getSimpleName() ) + entityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
 
         if ( storage.containsKey( id ) ) {
             return storage.get( id );
@@ -343,7 +346,7 @@ public class RouteHandler {
 
 
         public Class< ? extends DefaultRepository< ? > > getRepository() {
-            return EntityHandler.getEntity( subject ).getRepository();
+            return entityHandler.getEntity( subject ).getRepository();
         }
 
 
@@ -462,7 +465,7 @@ public class RouteHandler {
 
 
         private String getPluralEntity( Class< ? > subject ) {
-            return Formatter.toSnakeCase( subject.getSimpleName() + EntityHandler.getEntity( subject ).getSuffixPlural() );
+            return Formatter.toSnakeCase( subject.getSimpleName() + entityHandler.getEntity( subject ).getSuffixPlural() );
         }
     }
 }

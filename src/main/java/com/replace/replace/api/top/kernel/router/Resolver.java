@@ -26,6 +26,7 @@ public class Resolver {
     protected final ApplicationContext           applicationContext;
     protected final RouteHandler                 routeHandler;
     protected final TriggerHandler               triggerHandler;
+    protected final EntityHandler                entityHandler;
     protected final Controller                   controller;
 
 
@@ -34,11 +35,13 @@ public class Resolver {
             ApplicationContext applicationContext,
             RouteHandler routeHandler,
             TriggerHandler triggerHandler,
+            EntityHandler entityHandler,
             Controller controller ) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
         this.applicationContext           = applicationContext;
         this.routeHandler                 = routeHandler;
         this.triggerHandler               = triggerHandler;
+        this.entityHandler                = entityHandler;
         this.controller                   = controller;
     }
 
@@ -54,7 +57,7 @@ public class Resolver {
                    UnmanagedTriggerMissingExecutorException {
 
 
-        for ( EntityHandler.Entity entity : EntityHandler.toEntity( applicationContext ) ) {
+        for ( EntityHandler.Entity entity : entityHandler.toEntity( applicationContext ) ) {
             Class< ? > managed = entity.getSubject();
 
             logger.info( "Found " + managed + " for dynamic framework" );
