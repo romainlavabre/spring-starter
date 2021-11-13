@@ -1,6 +1,6 @@
 package com.replace.replace.api.dynamic.annotation;
 
-import com.replace.replace.api.dynamic.api.CustomProvider;
+import com.replace.replace.api.dynamic.api.ResourceProvider;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 
 public @interface Trigger {
@@ -35,5 +35,5 @@ public @interface Trigger {
     /**
      * @return Custom provider for Update / Delete & Unmanaged Triggers
      */
-    Class< ? extends CustomProvider > customProvider() default CustomProvider.class;
+    Class< ? extends ResourceProvider > customProvider() default ResourceProvider.class;
 }

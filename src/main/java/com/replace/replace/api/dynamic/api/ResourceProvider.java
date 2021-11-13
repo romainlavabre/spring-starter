@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-public interface CustomProvider {
+public interface ResourceProvider {
 
     /**
      * @param subject Initial entity
