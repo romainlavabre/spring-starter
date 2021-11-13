@@ -5,29 +5,31 @@ import com.replace.replace.api.top.kernel.router.Resolver;
 import com.replace.replace.repository.DefaultRepository;
 import org.reflections.Reflections;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@Service
 public class EntityHandler {
 
-    protected static final Map< Class< ? >, Entity > storage = new HashMap<>();
+    protected Map< Class< ? >, Entity > storage;
 
 
-    public static Collection< Entity > toEntity( ApplicationContext applicationContext ) {
-        if ( storage.size() > 0 ) {
+    public Collection< Entity > toEntity( ApplicationContext applicationContext ) {
+        if ( storage != null ) {
             return storage.values();
         }
 
-        String basePackage = Resolver.class.getPackage().getName().replace( ".api.dynamic.kernel.router", "" );
+        storage = new HashMap<>();
 
-        Reflections reflections = new Reflections( basePackage );
-
-        for ( Class< ? > managed : reflections.getTypesAnnotatedWith( DynamicEnabled.class ) ) {
+        for ( Class< ? > managed : getTypesAnnotated() ) {
+            System.out.println( managed );
             storage.put( managed, new Entity( managed, ( DefaultRepository< ? extends DefaultRepository< ? > > ) applicationContext.getBean( managed.getAnnotation( DynamicEnabled.class ).repository() ) ) );
         }
 
@@ -35,7 +37,7 @@ public class EntityHandler {
     }
 
 
-    public static Entity getEntity( Class< ? > subject ) {
+    public Entity getEntity( Class< ? > subject ) {
         for ( Map.Entry< Class< ? >, Entity > entry : storage.entrySet() ) {
             if ( entry.getKey().getName().equals( subject.getName() ) ) {
                 return entry.getValue();
@@ -43,6 +45,14 @@ public class EntityHandler {
         }
 
         return null;
+    }
+
+
+    protected Set< Class< ? > > getTypesAnnotated() {
+        String      basePackage = Resolver.class.getPackage().getName().replace( ".api.dynamic.kernel.router", "" );
+        Reflections reflections = new Reflections( basePackage );
+
+        return reflections.getTypesAnnotatedWith( DynamicEnabled.class );
     }
 
 
