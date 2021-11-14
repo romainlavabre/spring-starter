@@ -48,7 +48,7 @@ public class EntityHandler {
 
 
     protected Set< Class< ? > > getTypesAnnotated() {
-        String      basePackage = Resolver.class.getPackage().getName().replace( ".api.dynamic.kernel.router", "" );
+        String      basePackage = Resolver.class.getPackage().getName().replace( ".api.poc.kernel.router", "" );
         Reflections reflections = new Reflections( basePackage );
 
         return reflections.getTypesAnnotatedWith( PocEnabled.class );
