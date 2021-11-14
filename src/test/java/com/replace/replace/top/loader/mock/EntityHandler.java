@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-public class EntityHandler extends com.replace.replace.api.top.kernel.entity.EntityHandler {
+public class EntityHandler extends com.replace.replace.api.poc.kernel.entity.EntityHandler {
 
     protected Set< Class< ? > > getTypesAnnotated() {
         return TopConfig.getSubscribers();

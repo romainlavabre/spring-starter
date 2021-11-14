@@ -2,7 +2,7 @@ package com.replace.replace.entity;
 
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
-import com.replace.replace.api.top.annotation.*;
+import com.replace.replace.api.poc.annotation.*;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.configuration.security.Role;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@DynamicEnabled( repository = PersonRepository.class )
+@PocEnabled( repository = PersonRepository.class )
 @Entity
 public class Person {
 

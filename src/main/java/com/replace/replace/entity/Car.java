@@ -2,7 +2,7 @@ package com.replace.replace.entity;
 
 import com.replace.replace.api.json.annotation.Group;
 import com.replace.replace.api.json.annotation.Json;
-import com.replace.replace.api.top.annotation.*;
+import com.replace.replace.api.poc.annotation.*;
 import com.replace.replace.configuration.dynamic.TriggerIdentifier;
 import com.replace.replace.configuration.json.GroupType;
 import com.replace.replace.exception.HttpUnprocessableEntityException;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Entity
-@DynamicEnabled( repository = CarRepository.class )
+@PocEnabled( repository = CarRepository.class )
 public class Car {
 
     @EntryPoint(

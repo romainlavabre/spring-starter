@@ -1,6 +1,6 @@
 package com.replace.replace.module.car.provider;
 
-import com.replace.replace.api.top.api.ResourceProvider;
+import com.replace.replace.api.poc.api.ResourceProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

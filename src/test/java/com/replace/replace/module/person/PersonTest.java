@@ -2,8 +2,8 @@ package com.replace.replace.module.person;
 
 import com.replace.replace.entity.Person;
 import com.replace.replace.repository.PersonRepository;
-import com.replace.replace.top.client.TopClient;
-import com.replace.replace.top.client.TopMock;
+import com.replace.replace.top.client.PocClient;
+import com.replace.replace.top.client.PocMock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,14 +19,14 @@ public class PersonTest {
 
     @Test
     public void testGetPersonReturn200() {
-        TopMock topMock = TopClient.getMocker();
+        PocMock pocMock = PocClient.getMocker();
 
-        PersonRepository personRepository = topMock.getMock( PersonRepository.class );
+        PersonRepository personRepository = pocMock.getMock( PersonRepository.class );
 
         Mockito.when( personRepository.findOrFail( Mockito.anyLong() ) )
                .thenReturn( new Person() );
 
-        TopClient.getClient()
+        PocClient.getClient()
                  .get( "/admin/persons/1" )
                  .execute()
                  .is2xxCode();
@@ -35,15 +35,15 @@ public class PersonTest {
 
     @Test
     public void testGetAllPersonReturn200() {
-        TopMock topMock = TopClient.getMocker();
+        PocMock pocMock = PocClient.getMocker();
 
-        PersonRepository personRepository = topMock.getMock( PersonRepository.class );
+        PersonRepository personRepository = pocMock.getMock( PersonRepository.class );
 
         Mockito.when( personRepository.findAll() )
                .thenReturn( List.of( new Person(), new Person() ) );
 
         List< Object > body =
-                TopClient.getClient()
+                PocClient.getClient()
                          .get( "/admin/persons" )
                          .execute()
                          .is2xxCode()
@@ -55,14 +55,14 @@ public class PersonTest {
 
     @Test
     public void testUpdatePersonName() {
-        TopMock topMock = TopClient.getMocker();
+        PocMock pocMock = PocClient.getMocker();
         Person  person  = new Person();
 
-        PersonRepository personRepository = topMock.getMock( PersonRepository.class );
+        PersonRepository personRepository = pocMock.getMock( PersonRepository.class );
         Mockito.when( personRepository.findOrFail( 1L ) )
                .thenReturn( person );
 
-        TopClient.getClient()
+        PocClient.getClient()
                  .patch( "/admin/persons/1/name" )
                  .parameters( Map.of(
                          "person_name", "romain"
@@ -76,7 +76,7 @@ public class PersonTest {
 
     @Test
     public void testUpdatePersonIdReturn404() {
-        TopClient.getClient()
+        PocClient.getClient()
                  .patch( "/admin/persons/1/id" )
                  .execute()
                  .is4xxCode()

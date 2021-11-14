@@ -1,6 +1,6 @@
 package com.replace.replace.top.loader.mock;
 
-import com.replace.replace.api.top.kernel.entry.Controller;
+import com.replace.replace.api.poc.kernel.entry.Controller;
 import com.replace.replace.top.exception.HttpNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
