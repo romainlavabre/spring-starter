@@ -1,4 +1,4 @@
-package com.replace.replace.top.client;
+package com.replace.replace.api.poc.client;
 
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;

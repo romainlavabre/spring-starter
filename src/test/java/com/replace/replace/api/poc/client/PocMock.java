@@ -1,4 +1,4 @@
-package com.replace.replace.top.client;
+package com.replace.replace.api.poc.client;
 
 import com.replace.replace.api.crud.Create;
 import com.replace.replace.api.crud.Delete;
@@ -6,8 +6,8 @@ import com.replace.replace.api.crud.Update;
 import com.replace.replace.api.poc.api.CustomConstraint;
 import com.replace.replace.api.poc.api.ResourceProvider;
 import com.replace.replace.api.poc.api.UnmanagedTrigger;
+import com.replace.replace.api.poc.loader.Context;
 import com.replace.replace.api.request.Request;
-import com.replace.replace.top.loader.Context;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;

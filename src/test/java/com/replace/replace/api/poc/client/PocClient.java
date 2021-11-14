@@ -1,9 +1,9 @@
-package com.replace.replace.top.client;
+package com.replace.replace.api.poc.client;
 
+import com.replace.replace.api.poc.loader.Context;
+import com.replace.replace.api.poc.loader.mock.MockRequest;
+import com.replace.replace.api.poc.loader.mock.MockRequestMappingHandlerMapping;
 import com.replace.replace.api.upload.UploadedFile;
-import com.replace.replace.top.loader.Context;
-import com.replace.replace.top.loader.mock.MockRequest;
-import com.replace.replace.top.loader.mock.MockRequestMappingHandlerMapping;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.replace.replace.top.loader;
+package com.replace.replace.api.poc.loader;
 
 import com.replace.replace.api.history.HistoryHandler;
 import com.replace.replace.api.poc.kernel.entity.EntityHandler;
@@ -7,11 +7,11 @@ import com.replace.replace.api.poc.kernel.router.Resolver;
 import com.replace.replace.api.poc.kernel.router.RouteHandler;
 import com.replace.replace.api.poc.kernel.setter.SetterHandler;
 import com.replace.replace.api.poc.kernel.trigger.TriggerHandler;
+import com.replace.replace.api.poc.loader.mock.MockApplicationContext;
+import com.replace.replace.api.poc.loader.mock.MockRequest;
+import com.replace.replace.api.poc.loader.mock.MockRequestMappingHandlerMapping;
 import com.replace.replace.api.request.Request;
 import com.replace.replace.api.storage.data.DataStorageHandler;
-import com.replace.replace.top.loader.mock.MockApplicationContext;
-import com.replace.replace.top.loader.mock.MockRequest;
-import com.replace.replace.top.loader.mock.MockRequestMappingHandlerMapping;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
@@ -213,7 +213,7 @@ public final class Context {
             return ( EntityHandler ) mocks.get( EntityHandler.class );
         }
 
-        mocks.put( EntityHandler.class, new com.replace.replace.top.loader.mock.EntityHandler() );
+        mocks.put( EntityHandler.class, new com.replace.replace.api.poc.loader.mock.EntityHandler() );
 
         return ( EntityHandler ) mocks.get( EntityHandler.class );
     }

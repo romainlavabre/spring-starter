@@ -1,4 +1,4 @@
-package com.replace.replace.top.exception;
+package com.replace.replace.api.poc.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

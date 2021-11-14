@@ -1,9 +1,9 @@
 package com.replace.replace.module.person;
 
+import com.replace.replace.api.poc.client.PocClient;
+import com.replace.replace.api.poc.client.PocMock;
 import com.replace.replace.entity.Person;
 import com.replace.replace.repository.PersonRepository;
-import com.replace.replace.top.client.PocClient;
-import com.replace.replace.top.client.PocMock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

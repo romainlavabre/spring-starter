@@ -1,4 +1,4 @@
-package com.replace.replace.top.loader.mock;
+package com.replace.replace.api.poc.loader.mock;
 
 import com.replace.replace.api.upload.UploadedFile;
 
