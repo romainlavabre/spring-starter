@@ -27,6 +27,10 @@ public class PocMock {
     public < T > T getMock( Class< T > type ) {
         T object = Context.getMock( type );
 
+        if ( object == null ) {
+            throw new NullPointerException( "Mock not found" );
+        }
+
         Mockito.reset( object );
 
         return object;
