@@ -29,7 +29,6 @@ public class EntityHandler {
         storage = new HashMap<>();
 
         for ( Class< ? > managed : getTypesAnnotated() ) {
-            System.out.println( managed );
             storage.put( managed, new Entity( managed, ( DefaultRepository< ? extends DefaultRepository< ? > > ) applicationContext.getBean( managed.getAnnotation( DynamicEnabled.class ).repository() ) ) );
         }
 
