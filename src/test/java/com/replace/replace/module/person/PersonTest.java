@@ -67,7 +67,7 @@ public class PersonTest {
                  .parameters( Map.of(
                          "person_name", "romain"
                  ) )
-                 .execute( true )
+                 .execute()
                  .is2xxCode();
 
         Assertions.assertEquals( person.getName(), "romain" );

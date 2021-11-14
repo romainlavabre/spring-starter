@@ -114,29 +114,24 @@ public class TopClient {
 
             return new TopAssert( responseEntity );
         } catch ( Throwable e ) {
-            if ( !(e instanceof RuntimeException) ) {
-                if ( debug ) {
-                    e.getMessage();
-                    e.printStackTrace();
-                }
-            }
-
             if ( debug ) {
-                e.getMessage();
                 e.printStackTrace();
             }
 
+            ResponseEntity< Object > responseEntity;
+            Map< String, Object >    body = (new HashMap<>());
+            body.put( "message", e.getMessage() );
+            
             ResponseStatus responseStatus = e.getClass().getAnnotation( ResponseStatus.class );
-            ResponseEntity responseEntity;
 
             if ( responseStatus != null ) {
                 responseEntity = ResponseEntity
                         .status( responseStatus.code() )
-                        .body( new HashMap<>().put( "message", e.getMessage() ) );
+                        .body( body );
             } else {
                 responseEntity = ResponseEntity
                         .status( HttpStatus.INTERNAL_SERVER_ERROR )
-                        .body( new HashMap<>().put( "message", e.getMessage() ) );
+                        .body( body );
             }
 
             return new TopAssert( responseEntity );

@@ -21,35 +21,40 @@ public class TopAssert {
 
 
     public TopAssert is1xxCode() {
-        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 100 && responseEntity.getStatusCodeValue() <= 199, String.valueOf( responseEntity.getStatusCodeValue() ) );
+        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 100 && responseEntity.getStatusCodeValue() <= 199, String.valueOf( responseEntity.getStatusCodeValue() ) + ": " + (responseEntity.getBody() != null && responseEntity.getBody() instanceof Map ? (( Map< String, Object > ) responseEntity.getBody()).get( "message" ) : "NO MESSAGE") )
+        ;
 
         return this;
     }
 
 
     public TopAssert is2xxCode() {
-        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 200 && responseEntity.getStatusCodeValue() <= 299, String.valueOf( responseEntity.getStatusCodeValue() ) );
+        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 200 && responseEntity.getStatusCodeValue() <= 299, String.valueOf( responseEntity.getStatusCodeValue() ) + ": " + (responseEntity.getBody() != null && responseEntity.getBody() instanceof Map ? (( Map< String, Object > ) responseEntity.getBody()).get( "message" ) : "NO MESSAGE") )
+        ;
 
         return this;
     }
 
 
     public TopAssert is3xxCode() {
-        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 300 && responseEntity.getStatusCodeValue() <= 399, String.valueOf( responseEntity.getStatusCodeValue() ) );
+        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 300 && responseEntity.getStatusCodeValue() <= 399, String.valueOf( responseEntity.getStatusCodeValue() ) + ": " + (responseEntity.getBody() != null && responseEntity.getBody() instanceof Map ? (( Map< String, Object > ) responseEntity.getBody()).get( "message" ) : "NO MESSAGE") )
+        ;
 
         return this;
     }
 
 
     public TopAssert is4xxCode() {
-        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 400 && responseEntity.getStatusCodeValue() <= 499, String.valueOf( responseEntity.getStatusCodeValue() ) );
+        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 400 && responseEntity.getStatusCodeValue() <= 499, String.valueOf( responseEntity.getStatusCodeValue() ) + ": " + (responseEntity.getBody() != null && responseEntity.getBody() instanceof Map ? (( Map< String, Object > ) responseEntity.getBody()).get( "message" ) : "NO MESSAGE") )
+        ;
 
         return this;
     }
 
 
     public TopAssert is5xxCode() {
-        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 500 && responseEntity.getStatusCodeValue() <= 599, String.valueOf( responseEntity.getStatusCodeValue() ) );
+        Assertions.assertTrue( responseEntity.getStatusCodeValue() >= 500 && responseEntity.getStatusCodeValue() <= 599, String.valueOf( responseEntity.getStatusCodeValue() ) + ": " + (responseEntity.getBody() != null && responseEntity.getBody() instanceof Map ? (( Map< String, Object > ) responseEntity.getBody()).get( "message" ) : "NO MESSAGE") )
+        ;
 
         return this;
     }
