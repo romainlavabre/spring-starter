@@ -75,6 +75,29 @@ public class PersonTest {
 
 
     @Test
+    public void testUpdatePersonAge() {
+        PocMock pocMock = PocClient.getMocker();
+        Person  person  = new Person();
+
+        PersonRepository personRepository = pocMock.getMock( PersonRepository.class );
+        Mockito.when( personRepository.findOrFail( 1L ) )
+               .thenReturn( person );
+
+        PocClient.getClient()
+                 .patch( "/admin/persons/1/age" )
+                 .parameters( Map.of(
+                         "person_age", 51,
+                         "person_status", Person.STATUS_ACCEPTED
+                 ) )
+                 .execute( true )
+                 .is2xxCode();
+
+        Assertions.assertEquals( person.getAge(), 51 );
+        Assertions.assertEquals( person.getCategory(), Person.CATEGORY_OLD );
+    }
+
+
+    @Test
     public void testUpdatePersonIdReturn404() {
         PocClient.getClient()
                  .patch( "/admin/persons/1/id" )
