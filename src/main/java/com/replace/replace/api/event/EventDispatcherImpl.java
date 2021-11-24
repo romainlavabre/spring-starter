@@ -66,21 +66,8 @@ public class EventDispatcherImpl implements EventDispatcher {
                 subscribers.add( eventSubscriber );
             }
         }
-
-        subscribers.sort( ( es1, es2 ) -> {
-
-            if ( es1.getPriority() == es2.getPriority() ) {
-                return 0;
-            }
-
-            if ( es1.getPriority() != 0 && es1.getPriority() < es2.getPriority() ) {
-                return 1;
-            }
-
-            return -1;
-        } );
-
-        for ( final EventSubscriber eventSubscriber : subscribers ) {
+        
+        for ( final EventSubscriber eventSubscriber : this.sortSubscribers( subscribers ) ) {
             eventSubscriber.receiveEvent( event, params );
         }
 
@@ -102,5 +89,42 @@ public class EventDispatcherImpl implements EventDispatcher {
     protected void initializeEventSubscribers( final String event ) {
 
         this.subscribers.put( event, new ArrayList<>() );
+    }
+
+
+    protected List< EventSubscriber > sortSubscribers( final List< EventSubscriber > eventSubscribers ) {
+        final List< EventSubscriber > result = new ArrayList<>();
+
+        final Map< Integer, List< EventSubscriber > > temporarySort = new HashMap<>();
+
+        int maxPriority = 0;
+
+        for ( final EventSubscriber eventSubscriber : eventSubscribers ) {
+            if ( eventSubscriber.getPriority() > maxPriority ) {
+                maxPriority = eventSubscriber.getPriority();
+            }
+
+            if ( temporarySort.containsKey( eventSubscriber.getPriority() ) ) {
+                temporarySort.get( eventSubscriber.getPriority() ).add( eventSubscriber );
+                continue;
+            }
+
+            final List< EventSubscriber > listByPriority = new ArrayList<>();
+            listByPriority.add( eventSubscriber );
+
+            temporarySort.put( eventSubscriber.getPriority(), listByPriority );
+        }
+
+        for ( int i = 1; i <= maxPriority; i++ ) {
+            if ( temporarySort.containsKey( i ) ) {
+                result.addAll( temporarySort.get( i ) );
+            }
+        }
+
+        if ( temporarySort.containsKey( 0 ) ) {
+            result.addAll( temporarySort.get( 0 ) );
+        }
+
+        return result;
     }
 }
