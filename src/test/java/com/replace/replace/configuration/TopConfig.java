@@ -1,9 +1,5 @@
 package com.replace.replace.configuration;
 
-import com.replace.replace.entity.Car;
-import com.replace.replace.entity.Friend;
-import com.replace.replace.entity.Person;
-
 import java.util.Set;
 
 /**
@@ -12,10 +8,6 @@ import java.util.Set;
 public class TopConfig {
 
     public static Set< Class< ? > > getSubscribers() {
-        return Set.of(
-                Car.class,
-                Friend.class,
-                Person.class
-        );
+        return Set.of();
     }
 }
