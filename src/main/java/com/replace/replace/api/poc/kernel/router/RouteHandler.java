@@ -374,7 +374,7 @@ public class RouteHandler {
                     return (( GetAllBy ) httpType).method();
                 }
 
-                return "findBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
+                return "findAllBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
             }
 
             return null;
