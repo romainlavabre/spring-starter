@@ -389,6 +389,114 @@ produce :
 {{url}}/{{role}}/persons/my/custom/route/{id:[0-9]+}
 ```
 
+### Trigger
+
+In one more case, you need call trigger (send mail, compute value ...)
+
+#### CreateTrigger
+
+Create trigger act like @Post entrypoint.
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.CreateTrigger;
+
+@PocEnabled( repository = FriendRepository.class )
+@Entity
+public class Friend {
+
+    @EntryPoint(
+            createTriggers = {
+                    @CreateTrigger( id = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, fields = {"name"} )
+            }
+    )
+    private long id;
+}
+```
+
+#### UpdateTrigger
+
+Update trigger act like @Put or @Patch entrypoint.
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.UpdateTrigger;
+
+@PocEnabled( repository = FriendRepository.class )
+@Entity
+public class Friend {
+
+    @EntryPoint(
+            updateTriggers = {
+                    @UpdateTrigger( id = TriggerIdentifier.COMPUTE_FRIEND_NAME, fields = {"name"} )
+            }
+    )
+    private String name;
+}
+```
+
+
+#### DeleteTrigger
+
+Delete trigger act like @Delete entrypoint.
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.CreateTrigger;
+
+@PocEnabled( repository = FriendRepository.class )
+@Entity
+public class Friend {
+
+    @EntryPoint(
+            deleteTriggers = {
+                    @DeleteTrigger( id = TriggerIdentifier.DELETE_FRIEND)
+            }
+    )
+    private long id;
+}
+```
+
+#### Call trigger
+
+In all HTTP entry point, you can specify a trigger to call.
+
+```java
+@Post(
+    fields = {"name", "phone", "age"},
+    triggers = {
+        @Trigger( triggerId = TriggerIdentifier.ATTACH_FRIEND_TO_PERSON, attachToField = "friends" ),
+        @Trigger( triggerId = TriggerIdentifier.ATTACH_CAR_TO_PERSON, attachToField = "car" ),
+        @Trigger( triggerId = TriggerIdentifier.PERSON_CATEGORY, provideMe = true )
+    }
+)
+```
+
+##### On relation creation
+
+You can fill the "attachToField" field. When your entity you be created, she will be attached to specify a field (by the setter).
+
+##### On Update or Delete trigger
+
+You must specify a target entity, for that, you can :
+
+- Set the "provideMe" field to TRUE, it will have the effect of pass the actual entity.
+- Set the "provideField" field with field name of actual entity, it will have the effect of pass the relation entity.
+- Set the "customProvider" field with a custom provider (benefit of dependency injection), it will be call.
+
+##### More information
+
+- All trigger can have a custom executor
+- All trigger can call other trigger
+
+
+### Integration tests
+
+##### Mock
+
+The context start in a singleton, so, for configure mock, you must request of POC to provide you the target mock. 
+All mock provided is cleared between tests.
+
 --- 
 
 [BACK](../table.md)
