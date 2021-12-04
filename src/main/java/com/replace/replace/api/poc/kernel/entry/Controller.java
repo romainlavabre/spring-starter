@@ -200,6 +200,11 @@ public class Controller {
 
     private String getGroup( String role ) throws IllegalAccessException {
         Field field;
+        
+        if ( role == null ) {
+            return "GUEST";
+        }
+
         try {
             field = GroupType.class.getDeclaredField( role.replaceFirst( "ROLE_", "" ).toUpperCase() );
         } catch ( NoSuchFieldException e ) {
