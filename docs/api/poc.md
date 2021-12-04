@@ -88,6 +88,37 @@ class Person {
 }
 ``` 
 
+
+### Setters
+
+Obviously, POC will call your setters for you, but he has conventions :
+
+- camelCase
+- If is array, you must specify a setter that take once value (addField(String value))
+
+Warning, in array or collection (array of values or array of relation) case, it will never clear, you can only add value, that all.
+
+If POC cannot resolve your setter, you can use
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.Setter;
+
+@PocEnabled( repository = PersonRepository.class )
+@Entity
+class Person {
+    @Setter( "setMyCoolName" )
+    private String name;
+}
+```
+
+##### Relation
+
+If your field is relation, POC will search parameter "field_name_id".
+The value must be an id of your relation. Relation's repository will be call. (findOrFail)
+
+If your relation field is collection or array, you can specify an array or once value. It's dynamic.
+
 ### HTTP GET
 
 By convention, you add this annotation to the id field.
@@ -119,7 +150,7 @@ The response payload will be build with entity that return by the repository and
 For sample, if role is ROLE_ADMIN, the entity with encoded with group ADMIN.
 
 
-#### More
+##### More
 
 In few cases, you want return entity by owner relation, you can specify 
 
@@ -245,7 +276,118 @@ It will generate
 DELETE {{url}}/{{role}}/persons/{id:[0-9]+}
 ```
 
+### HTTP PATCH
 
+You must placed @Patch annotation in target field.
+
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.Delete;
+
+@PocEnabled( repository = PersonRepository.class )
+@Entity
+class Person {
+    @EntryPoint(
+            patch = {
+                    @Patch
+            }
+    )
+    private String name;
+}
+```
+
+It will generate
+
+```textmate
+PATCH {{url}}/{{role}}/persons/{id:[0-9]+}/name
+```
+
+### Authentication & Authorization
+
+By default, all HTTP endpoint are generate for all available role (see in Role.class), and all endpoint will be authenticated.
+
+If you want released endpoint, you must set this property :
+
+```java
+authenticated = false
+```
+
+It will generate 
+
+```textmate
+{{HTTP}} {{url}}/guest/persons.*
+```
+
+If you want select specific roles, you must set this property :
+
+```java
+roles = {"ROLE_1","ROLE_2"}
+```
+
+It will generate endpoints only for these roles
+
+
+### Custom constraints
+
+POC work with your field, you are encouraged to add simple constraints inside your setters.
+In few cases, you need to call another service for check value.
+
+In this case:
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.Constraint;
+
+@PocEnabled( repository = PersonRepository.class )
+@Entity
+class Person {
+    @Constraint( {MyCustomContraint1.class} )
+    private String name;
+}
+```
+
+Your service benefit of dependency injection.
+
+Your constraint is always call <strong>before set</strong>.
+
+### More configuration
+
+- All HTTP annotation contains an extended executor, it's necessary if you have specific logic to execute.
+
+<table>
+    <tr>
+        <th>@Post</th>
+        <td>Create.class</td>
+    </tr>
+    <tr>
+        <th>@Put</th>
+        <td>Update.class</td>
+    </tr>
+    <tr>
+        <th>@Patch</th>
+        <td>Update.class</td>
+    </tr>
+    <tr>
+        <th>@Delete</th>
+        <td>Delete.class</td>
+    </tr>
+</table>
+
+
+- All HTTP annotation contains a "route" field.
+
+If you fill this field, you must start after plural entity. So :
+
+```java
+route = "/my/custom/route/{id:[0-9]+}"
+```
+
+produce :
+
+```textmate
+{{url}}/{{role}}/persons/my/custom/route/{id:[0-9]+}
+```
 
 --- 
 
