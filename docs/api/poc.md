@@ -199,6 +199,53 @@ class Person {
 - You can specify more than one @Post entry point 
 - You must explicitly fill fields to set
 
+It will generate
+
+```textmate
+POST {{url}}/{{role}}/persons
+```
+
+### HTTP PUT
+
+By convention, you add this annotation to the id field.
+
+It's identical of HTTP POST
+
+It will generate
+
+```textmate
+PUT {{url}}/{{role}}/persons
+```
+
+### HTTP DELETE
+
+By convention, you add this annotation to the id field.
+
+Very simple
+
+```java
+import com.project.project.api.poc.annotation.PocEnabled;
+import com.project.project.api.poc.annotation.Delete;
+
+@PocEnabled( repository = PersonRepository.class )
+@Entity
+class Person {
+    @EntryPoint(
+            delete = {
+                    @Delete
+            }
+    )
+    private long id;
+}
+```
+
+It will generate
+
+```textmate
+DELETE {{url}}/{{role}}/persons/{id:[0-9]+}
+```
+
+
 
 --- 
 
