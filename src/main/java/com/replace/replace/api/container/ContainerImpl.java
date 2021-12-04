@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ContainerImpl implements Container, ApplicationContextAware {
-
+    
     protected ApplicationContext applicationContext;
 
 
@@ -47,5 +47,11 @@ public class ContainerImpl implements Container, ApplicationContextAware {
 
 
         return null;
+    }
+
+
+    @Override
+    public < T > T getInstance( Class< T > type ) {
+        return this.applicationContext.getBean( type );
     }
 }
