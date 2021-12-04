@@ -34,10 +34,6 @@ public class TypeResolver {
 
 
     public static boolean isWrapperOrPrimitive( Object object ) {
-        if ( object == null ) {
-            return false;
-        }
-        
         return object.getClass().isPrimitive()
                 || object.getClass().equals( Byte.class )
                 || object.getClass().equals( Short.class )
