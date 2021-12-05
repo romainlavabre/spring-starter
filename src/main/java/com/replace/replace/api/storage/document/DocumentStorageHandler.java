@@ -16,6 +16,7 @@ public interface DocumentStorageHandler {
      */
     boolean create( String path, File file );
 
+
     /**
      * Create a file on remote server
      *
@@ -24,6 +25,7 @@ public interface DocumentStorageHandler {
      * @return TRUE if file uploaded
      */
     boolean create( String path, ByteBuffer byteBuffer );
+
 
     /**
      * Create a file on remote server
@@ -34,6 +36,7 @@ public interface DocumentStorageHandler {
      */
     boolean create( String path, byte[] bytes );
 
+
     /**
      * Remove file on remote server
      *
@@ -42,11 +45,23 @@ public interface DocumentStorageHandler {
      */
     boolean remove( String path );
 
+
+    /**
+     * Move file to another path
+     *
+     * @param path    Location of file
+     * @param newPath New location of file
+     * @return TRUE if file was removed
+     */
+    boolean move( String path, String newPath );
+    
+
     /**
      * @param path Location on server
      * @return Array of byte in server
      */
     byte[] getContent( String path );
+
 
     /**
      * Return a link for access to file
@@ -56,6 +71,7 @@ public interface DocumentStorageHandler {
      * @return The URL
      */
     String getUrl( String path, Integer duration );
+
 
     /**
      * Return a link for access to file
