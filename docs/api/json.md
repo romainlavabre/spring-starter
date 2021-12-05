@@ -118,7 +118,7 @@ import com.replace.replace.api.json.annotation.Json;
 public class Sample{
 
     @Json(groups = {
-        @Group(object = true)
+        @Group(relation = true)
     })
     private Sample1 sample1;
 }
@@ -141,7 +141,7 @@ import com.replace.replace.api.json.annotation.Json;
 public class Sample{
 
     @Json(groups = {
-        @Group(object = true, onlyId = false)
+        @Group(relation = true, onlyId = false)
     })
     private Sample1 sample1;
 }
@@ -171,7 +171,7 @@ public class Sample{
     private String name;
 
     @Json(groups = {
-        @Group(object = true, onlyId = false, ascent = true)
+        @Group(relation = true, onlyId = false, ascent = true)
     })
     private Sample1 sample1;
 }
@@ -202,8 +202,8 @@ public class Sample{
     private String name;
 
     @Json(groups = {
-        @Group(object = true, onlyId = false, ascent = true),
-        @Group(name = GroupType.GROUP_NAME, object = true, key = "sample1_id")
+        @Group(relation = true, onlyId = false, ascent = true),
+        @Group(name = GroupType.GROUP_NAME, relation = true, key = "sample1_id")
     })
     private Sample1 sample1;
 }
@@ -219,7 +219,7 @@ import com.replace.replace.api.json.annotation.Row;
 import com.replace.replace.api.json.put.Put;
 
 
-@JsonPut( group = {
+@JsonPut( groups = {
         @Group( name = GroupType.GROUP_NAME, row = {
                 @Row( key = "key", handler = Put.class )
         } )

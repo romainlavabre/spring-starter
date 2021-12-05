@@ -1,13 +1,8 @@
 package com.replace.replace.api.json;
 
-import com.replace.replace.api.json.annotation.Group;
-import com.replace.replace.api.json.annotation.Json;
-import com.replace.replace.api.json.annotation.JsonPut;
-import com.replace.replace.api.json.annotation.Row;
-import com.replace.replace.api.json.formatter.Formatter;
-import com.replace.replace.api.json.overwritter.Overwrite;
-import com.replace.replace.api.json.put.Put;
+import com.replace.replace.api.container.Container;
 import com.replace.replace.configuration.json.GroupType;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -15,7 +10,20 @@ import java.util.*;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@Service
 public class Encoder {
+
+    private static Encoder              instance;
+    private final  List< EntityParser > entitiesParser;
+    private final  Container            container;
+
+
+    public Encoder( Container container ) {
+        entitiesParser = new ArrayList<>();
+        instance       = this;
+        this.container = container;
+    }
+
 
     public static < T > Map< String, Object > encode( final T entity ) {
 
@@ -78,146 +86,19 @@ public class Encoder {
 
 
     protected static Map< String, Object > core( final Object entity, final String targetGroup ) {
-        assert entity != null : "variable entity should not be null";
+        Class< ? > search = entity.getClass();
 
-        final Map< String, Object > mapped = new HashMap<>();
-
-        for ( final Field field : Encoder.getAllField( entity ) ) {
-            final Json json = field.getAnnotation( Json.class );
-
-            if ( json == null ) {
-                continue;
-            }
-
-            searchGroup:
-            for ( final Group group : List.of( json.groups() ) ) {
-
-                if ( !group.name().equals( targetGroup ) ) {
-                    continue;
-                }
-
-                field.setAccessible( true );
-
-                final String key    = group.key().isBlank() || group.key().isEmpty() ? field.getName() : group.key();
-                Object       object = null;
-
-                try {
-                    object = field.get( entity );
-                } catch ( final IllegalAccessException e ) {
-                    e.printStackTrace();
-                }
-
-                if ( object == null ) {
-                    mapped.put( key, null );
-                    break searchGroup;
-                }
-
-
-                if ( !group.object() || group.onlyId() ) {
-
-                    if ( group.object() ) {
-
-                        boolean onArray = false;
-
-                        final List< Object > ids;
-                        final List< Long >   nextIds = new ArrayList<>();
-
-                        if ( object instanceof Map ) {
-                            onArray = true;
-                            final Map< Object, Object > map = ( Map< Object, Object > ) object;
-
-                            ids = new ArrayList( map.values() );
-                        } else if ( object instanceof Collection ) {
-                            onArray = true;
-                            ids     = new ArrayList<>();
-                            (( Collection< ? > ) object).forEach( ids::add );
-                        } else {
-                            ids = List.of( object );
-                        }
-
-
-                        for ( final Object data : ids ) {
-
-                            try {
-                                final Field relationId = data.getClass().getDeclaredField( "id" );
-                                relationId.setAccessible( true );
-                                nextIds.add( ( Long ) relationId.get( data ) );
-                            } catch ( final IllegalAccessException | NoSuchFieldException e ) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        if ( onArray ) {
-                            object = nextIds;
-                        } else {
-                            if ( nextIds.size() > 0 ) {
-                                object = nextIds.get( 0 );
-                            } else {
-                                object = nextIds;
-                            }
-                        }
-                    }
-
-                    if ( !group.overwrite().isInterface() ) {
-
-                        try {
-                            object = (( Overwrite ) group.overwrite().newInstance()).overwrite( object );
-                        } catch ( final InstantiationException | IllegalAccessException e ) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if ( !group.formatter().isInterface() ) {
-                        try {
-                            object = (( Formatter ) group.formatter().newInstance()).format( object );
-                        } catch ( final InstantiationException | IllegalAccessException e ) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    mapped.put( key, object );
-                    break searchGroup;
-                }
-
-                if ( object instanceof List ) {
-                    object = Encoder.< List >encode( ( List ) object, targetGroup );
-                } else if ( object instanceof Map ) {
-                    object = Encoder.< Map >encode( ( Map ) object, targetGroup );
-                } else {
-                    object = Encoder.encode( object, targetGroup );
-                }
-
-                if ( !group.ascent() ) {
-                    mapped.put( key, object );
-                } else {
-                    final Map< String, Object > objectMap = ( Map< String, Object > ) object;
-
-                    for ( final Map.Entry< String, Object > entry : objectMap.entrySet() ) {
-                        mapped.put( entry.getKey(), entry.getValue() );
-                    }
-                }
+        for ( EntityParser entityParser : instance.entitiesParser ) {
+            if ( entityParser.getType().equals( search ) ) {
+                return entityParser.parse( entity, targetGroup );
             }
         }
 
-        final JsonPut jsonPut = entity.getClass().getAnnotation( JsonPut.class );
+        EntityParser entityParser = new EntityParser( entity.getClass(), instance.container );
 
-        if ( jsonPut != null ) {
-            for ( final Group group : jsonPut.group() ) {
-                if ( !group.name().equals( targetGroup ) ) {
-                    continue;
-                }
+        instance.entitiesParser.add( entityParser );
 
-                for ( final Row row : group.row() ) {
-                    try {
-                        mapped.put( row.key(), (( Put ) row.handler().newInstance()).build( entity ) );
-                    } catch ( final InstantiationException | IllegalAccessException e ) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        return mapped;
+        return entityParser.parse( entity, targetGroup );
     }
 
 

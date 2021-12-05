@@ -1,6 +1,6 @@
 package com.replace.replace.api.json.annotation;
 
-import com.replace.replace.api.json.formatter.Formatter;
+import com.replace.replace.api.json.overwritter.DefaultOverwrite;
 import com.replace.replace.api.json.overwritter.Overwrite;
 
 import java.lang.annotation.ElementType;
@@ -20,17 +20,14 @@ public @interface Group {
     boolean ascent() default false;
 
 
-    boolean object() default false;
-
-
     String key() default "";
 
 
-    Class formatter() default Formatter.class;
-
-
-    Class overwrite() default Overwrite.class;
+    Class< ? extends Overwrite< ? > > overwrite() default DefaultOverwrite.class;
 
 
     Row[] row() default {};
+
+
+    boolean forceEncoding() default false;
 }
