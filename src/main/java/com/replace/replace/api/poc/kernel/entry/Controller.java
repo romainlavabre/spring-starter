@@ -200,7 +200,7 @@ public class Controller {
 
     private String getGroup( String role ) throws IllegalAccessException {
         Field field;
-        
+
         if ( role == null ) {
             return "GUEST";
         }

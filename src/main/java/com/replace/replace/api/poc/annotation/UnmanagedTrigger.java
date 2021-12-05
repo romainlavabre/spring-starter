@@ -3,7 +3,7 @@ package com.replace.replace.api.poc.annotation;
 import com.replace.replace.api.crud.Create;
 import com.replace.replace.api.crud.Delete;
 import com.replace.replace.api.crud.Update;
-import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.configuration.poc.TriggerIdentifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,4 +27,7 @@ public @interface UnmanagedTrigger {
 
 
     Class< ? extends Delete< ? > > deleteExecutor() default DefaultDelete.class;
+
+
+    Class< ? extends com.replace.replace.api.poc.api.UnmanagedTrigger > unmanagedExecutor() default DefaultUnmanagedExecutor.class;
 }

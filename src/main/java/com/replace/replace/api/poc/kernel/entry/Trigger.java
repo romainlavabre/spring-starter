@@ -51,20 +51,25 @@ public class Trigger {
     protected void handleCreateTrigger( Request request, TriggerHandler.Trigger targetTrigger, com.replace.replace.api.poc.annotation.Trigger trigger, Object lastSubject )
             throws Throwable {
 
-        SetterHandler.Setter lastSubjectRelationSetter = instance.setterHandler.toSetter( lastSubject.getClass().getDeclaredField( trigger.attachToField() ) );
+        SetterHandler.Setter lastSubjectRelationSetter = null;
 
+        if ( !trigger.attachToField().isBlank() ) {
+            lastSubjectRelationSetter = instance.setterHandler.toSetter( lastSubject.getClass().getDeclaredField( trigger.attachToField() ) );
+        }
 
-        if ( !(( CreateTrigger ) targetTrigger.getTrigger()).setByArray()
-                || lastSubjectRelationSetter.getField().getType().isPrimitive()
-                || !Collection.class.isAssignableFrom( lastSubjectRelationSetter.getField().getType() ) ) {
-            Object newInstance = targetTrigger.getSubject().getDeclaredConstructor().newInstance();
-            create.create( request, newInstance, targetTrigger.getSetters(), targetTrigger.getTriggers(), targetTrigger.getExecutor() );
+        if ( lastSubjectRelationSetter != null ) {
+            if ( !(( CreateTrigger ) targetTrigger.getTrigger()).setByArray()
+                    || lastSubjectRelationSetter.getField().getType().isPrimitive()
+                    || !Collection.class.isAssignableFrom( lastSubjectRelationSetter.getField().getType() ) ) {
+                Object newInstance = targetTrigger.getSubject().getDeclaredConstructor().newInstance();
+                create.create( request, newInstance, targetTrigger.getSetters(), targetTrigger.getTriggers(), targetTrigger.getExecutor() );
 
-            if ( !trigger.attachToField().isBlank() ) {
-                lastSubjectRelationSetter.invokeWithValue( lastSubject, newInstance );
+                if ( !trigger.attachToField().isBlank() ) {
+                    lastSubjectRelationSetter.invokeWithValue( lastSubject, newInstance );
+                }
+
+                return;
             }
-
-            return;
         }
 
         Map< String, List< Object > > parameters = new HashMap<>();
@@ -182,6 +187,50 @@ public class Trigger {
     }
 
 
+    protected void handleUnmanagedTrigger( Request request, TriggerHandler.Trigger targetTrigger, com.replace.replace.api.poc.annotation.Trigger trigger, Object lastSubject )
+            throws Throwable {
+
+        if ( trigger.provideMe() ) {
+            (( com.replace.replace.api.poc.api.UnmanagedTrigger ) targetTrigger.getExecutor()).handle( request, lastSubject );
+            handleTriggers( request, targetTrigger.getTriggers(), lastSubject );
+            return;
+        }
+
+        if ( !trigger.providerField().isBlank() ) {
+            Field field = lastSubject.getClass().getDeclaredField( trigger.providerField() );
+
+            if ( field.getType().isArray() || field.getType().isAssignableFrom( Collection.class ) ) {
+                List< Object > entities = ( List< Object > ) field.get( lastSubject );
+
+                if ( entities == null ) {
+                    return;
+                }
+
+                for ( Object entity : entities ) {
+                    (( com.replace.replace.api.poc.api.UnmanagedTrigger ) targetTrigger.getExecutor()).handle( request, entity );
+                    handleTriggers( request, targetTrigger.getTriggers(), entity );
+                }
+            } else {
+                Object entity = field.get( lastSubject );
+
+                if ( entity == null ) {
+                    return;
+                }
+
+                (( com.replace.replace.api.poc.api.UnmanagedTrigger ) targetTrigger.getExecutor()).handle( request, entity );
+                handleTriggers( request, targetTrigger.getTriggers(), entity );
+            }
+
+            return;
+        }
+
+        for ( Object entity : applicationContext.getBean( trigger.customProvider() ).getResources( lastSubject ) ) {
+            (( com.replace.replace.api.poc.api.UnmanagedTrigger ) targetTrigger.getExecutor()).handle( request, entity );
+            handleTriggers( request, targetTrigger.getTriggers(), entity );
+        }
+    }
+
+
     protected void handleTriggers( Request request, List< com.replace.replace.api.poc.annotation.Trigger > triggers, Object lastSubject ) throws Throwable {
         for ( com.replace.replace.api.poc.annotation.Trigger trigger : triggers ) {
             TriggerHandler.Trigger target = triggerHandler.getTrigger( trigger.triggerId() );
@@ -205,6 +254,8 @@ public class Trigger {
                     handleUpdateTrigger( request, target, trigger, lastSubject );
                 } else if ( target.isDeleteExecutor() ) {
                     handleDeleteTrigger( request, target, trigger, lastSubject );
+                } else if ( target.isUnmanagedExecutor() ) {
+                    handleUnmanagedTrigger( request, target, trigger, lastSubject );
                 }
             }
         }

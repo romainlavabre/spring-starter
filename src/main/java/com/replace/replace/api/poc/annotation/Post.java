@@ -1,5 +1,7 @@
 package com.replace.replace.api.poc.annotation;
 
+import com.replace.replace.api.crud.Create;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,5 +28,5 @@ public @interface Post {
     Trigger[] triggers() default {};
 
 
-    Class< ? extends com.replace.replace.api.crud.Create< ? > > executor() default DefaultCreate.class;
+    Class< ? extends Create< ? > > executor() default DefaultCreate.class;
 }

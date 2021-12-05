@@ -1,6 +1,7 @@
 package com.replace.replace.api.poc.annotation;
 
-import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.api.crud.Update;
+import com.replace.replace.configuration.poc.TriggerIdentifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,5 +21,5 @@ public @interface UpdateTrigger {
     Trigger[] triggers() default {};
 
 
-    Class< ? extends com.replace.replace.api.crud.Update< ? > > executor() default DefaultUpdate.class;
+    Class< ? extends Update< ? > > executor() default DefaultUpdate.class;
 }

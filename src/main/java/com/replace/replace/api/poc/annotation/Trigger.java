@@ -1,7 +1,7 @@
 package com.replace.replace.api.poc.annotation;
 
 import com.replace.replace.api.poc.api.ResourceProvider;
-import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.configuration.poc.TriggerIdentifier;
 
 public @interface Trigger {
 

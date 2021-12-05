@@ -136,7 +136,6 @@ public class SetterHandler {
                     relation = newValue;
                 }
 
-
                 callConstraint( entity, relation );
                 method.invoke( entity, relation );
                 return;
@@ -296,9 +295,9 @@ public class SetterHandler {
                 this.requestParameter = requestParameter.name();
             } else {
                 if ( !isRelation ) {
-                    this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() );
+                    this.requestParameter = com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() );
                 } else {
-                    this.requestParameter = Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() + "_id" );
+                    this.requestParameter = com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( field.getDeclaringClass().getSimpleName() + "_" + field.getName() + "_id" );
                 }
             }
 
@@ -323,8 +322,8 @@ public class SetterHandler {
             List< Method > founds  = new ArrayList<>();
 
             if ( isArrayOrCollection ) {
-                searchs.add( "add" + Formatter.toPascalCase( field.getName() ).replaceFirst( "s$", "" ) );
-                searchs.add( "add" + Formatter.toPascalCase( field.getName() ) );
+                searchs.add( "add" + com.replace.replace.api.poc.kernel.util.Formatter.toPascalCase( field.getName() ).replaceFirst( "s$", "" ) );
+                searchs.add( "add" + com.replace.replace.api.poc.kernel.util.Formatter.toPascalCase( field.getName() ) );
             } else {
                 searchs.add( "set" + Formatter.toPascalCase( field.getName() ) );
             }

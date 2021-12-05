@@ -1,5 +1,7 @@
 package com.replace.replace.api.poc.annotation;
 
+import com.replace.replace.api.crud.Update;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,5 +29,5 @@ public @interface Put {
     Trigger[] triggers() default {};
 
 
-    Class< ? extends com.replace.replace.api.crud.Update< ? > > executor() default DefaultUpdate.class;
+    Class< ? extends Update< ? > > executor() default DefaultUpdate.class;
 }

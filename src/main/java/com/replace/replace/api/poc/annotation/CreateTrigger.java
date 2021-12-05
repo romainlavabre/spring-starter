@@ -1,6 +1,7 @@
 package com.replace.replace.api.poc.annotation;
 
-import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.api.crud.Create;
+import com.replace.replace.configuration.poc.TriggerIdentifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,5 +24,5 @@ public @interface CreateTrigger {
     Trigger[] triggers() default {};
 
 
-    Class< ? extends com.replace.replace.api.crud.Create< ? > > executor() default DefaultCreate.class;
+    Class< ? extends Create< ? > > executor() default DefaultCreate.class;
 }

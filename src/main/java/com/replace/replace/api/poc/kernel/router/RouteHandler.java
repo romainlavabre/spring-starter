@@ -40,7 +40,7 @@ public class RouteHandler {
 
     public List< Route > toRoute( Class< ? > subject, Field field ) throws SetterNotFoundException, ToManySetterParameterException, MultipleSetterFoundException, InvalidSetterParameterType, NoSuchFieldException, NoSuchMethodException {
 
-        String id = Formatter.toSnakeCase( subject.getSimpleName() ) + entityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
+        String id = com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( subject.getSimpleName() ) + entityHandler.getEntity( field.getDeclaringClass() ).getSuffixPlural() + "::" + field.getName();
 
         if ( storage.containsKey( id ) ) {
             return storage.get( id );
@@ -366,7 +366,7 @@ public class RouteHandler {
                     return (( GetOneBy ) httpType).method();
                 }
 
-                return "findOrFailBy" + Formatter.toPascalCase( (( GetOneBy ) httpType).entity().getSimpleName() );
+                return "findOrFailBy" + com.replace.replace.api.poc.kernel.util.Formatter.toPascalCase( (( GetOneBy ) httpType).entity().getSimpleName() );
             }
 
             if ( httpType instanceof GetAllBy ) {
@@ -374,7 +374,7 @@ public class RouteHandler {
                     return (( GetAllBy ) httpType).method();
                 }
 
-                return "findAllBy" + Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
+                return "findAllBy" + com.replace.replace.api.poc.kernel.util.Formatter.toPascalCase( (( GetAllBy ) httpType).entity().getSimpleName() );
             }
 
             return null;
@@ -414,17 +414,17 @@ public class RouteHandler {
             } else if ( annotation instanceof GetOneBy ) {
                 stringJoiner
                         .add( "by" )
-                        .add( Formatter.toSnakeCase( (( GetOneBy ) annotation).entity().getSimpleName() ) )
+                        .add( com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( (( GetOneBy ) annotation).entity().getSimpleName() ) )
                         .add( "{id:[0-9]+}" );
             } else if ( annotation instanceof GetAllBy ) {
                 stringJoiner
                         .add( "by" )
-                        .add( Formatter.toSnakeCase( (( GetAllBy ) annotation).entity().getSimpleName() ) )
+                        .add( com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( (( GetAllBy ) annotation).entity().getSimpleName() ) )
                         .add( idPart );
             } else if ( annotation instanceof Patch ) {
                 stringJoiner
                         .add( idPart )
-                        .add( Formatter.toSnakeCase( field.getName() ) );
+                        .add( com.replace.replace.api.poc.kernel.util.Formatter.toSnakeCase( field.getName() ) );
             }
 
             return "/" + stringJoiner.toString();

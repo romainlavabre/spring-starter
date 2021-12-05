@@ -7,7 +7,7 @@ import com.replace.replace.api.poc.annotation.*;
 import com.replace.replace.api.poc.kernel.entity.EntityHandler;
 import com.replace.replace.api.poc.kernel.exception.*;
 import com.replace.replace.api.poc.kernel.setter.SetterHandler;
-import com.replace.replace.configuration.dynamic.TriggerIdentifier;
+import com.replace.replace.configuration.poc.TriggerIdentifier;
 import com.replace.replace.repository.DefaultRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -175,6 +175,8 @@ public class TriggerHandler {
                 executor = applicationContext.getBean( unmanagedTrigger.updateExecutor() );
             } else if ( unmanagedTrigger.deleteExecutor() != DefaultDelete.class ) {
                 executor = applicationContext.getBean( unmanagedTrigger.deleteExecutor() );
+            } else {
+                executor = applicationContext.getBean( unmanagedTrigger.unmanagedExecutor() );
             }
 
             if ( executor == null ) {
@@ -243,6 +245,12 @@ public class TriggerHandler {
         public boolean isDeleteExecutor() {
             return executor != null
                     && executor instanceof Delete;
+        }
+
+
+        public boolean isUnmanagedExecutor() {
+            return executor != null
+                    && executor instanceof com.replace.replace.api.poc.api.UnmanagedTrigger;
         }
 
 
