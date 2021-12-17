@@ -24,6 +24,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <!-- TOP -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
         <!-- TEST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

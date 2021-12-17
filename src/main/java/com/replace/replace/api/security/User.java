@@ -1,5 +1,7 @@
 package com.replace.replace.api.security;
 
+import com.replace.replace.api.json.annotation.Group;
+import com.replace.replace.api.json.annotation.Json;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -15,48 +17,70 @@ import java.util.Set;
 @Entity
 public class User {
 
+
+    @Json( groups = {
+            @Group
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
-    private long          id;
+    private long id;
+
+    @Json( groups = {
+            @Group
+    } )
     @Column( nullable = false )
-    private String        username;
+    private String username;
+
     @Column( nullable = false )
-    private       String        password;
+    private String password;
+
+    @Json( groups = {
+            @Group
+    } )
     @ElementCollection
     private final Set< String > roles;
     private       boolean       enable;
+
 
     public User() {
         this.roles = new HashSet<>();
     }
 
+
     public long getId() {
         return this.id;
     }
+
 
     public void setId( final long id ) {
         this.id = id;
     }
 
+
     public void setUsername( final String username ) {
         this.username = username;
     }
+
 
     public void setPassword( final String password ) {
         this.password = "{bcrypt}" + password;
     }
 
+
     public Set< String > getRoles() {
         return this.roles;
     }
+
 
     public void addRole( final String role ) {
         this.roles.add( role );
     }
 
+
     public void setEnabled( final boolean enable ) {
         this.enable = enable;
     }
+
 
     public Collection< ? extends GrantedAuthority > getAuthorities() {
         final Collection< GrantedAuthority > collection = new ArrayList<>();
@@ -68,13 +92,16 @@ public class User {
         return collection;
     }
 
+
     public String getPassword() {
         return this.password;
     }
 
+
     public String getUsername() {
         return this.username;
     }
+
 
     public boolean isEnabled() {
         return this.enable;

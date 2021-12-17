@@ -104,6 +104,23 @@ public class S3 implements DocumentStorageHandler {
 
 
     @Override
+    public boolean move( String path, String newPath ) {
+        byte[] content = getContent( path );
+
+
+        if ( create( newPath, content ) ) {
+
+            remove( path );
+
+            return true;
+        }
+
+
+        return false;
+    }
+    
+
+    @Override
     public byte[] getContent( final String path ) {
 
         final GetObjectRequest getObjectRequest = this.getObjectRequest( path );
