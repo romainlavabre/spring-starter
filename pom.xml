@@ -15,6 +15,8 @@
     <description>Basic framework installation</description>
     <properties>
         <java.version>11</java.version>
+        <!-- FIX Vulnerability -->
+        <log4j2.version>2.16.0</log4j2.version>
     </properties>
 
     <dependencies>
