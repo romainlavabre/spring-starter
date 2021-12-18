@@ -12,6 +12,7 @@ import com.replace.replace.repository.DefaultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,14 +42,14 @@ public class Controller {
 
 
     public Controller(
-            CreateEntry createEntry,
-            UpdateEntry updateEntry,
-            DeleteEntry deleteEntry,
-            RouteHandler routeHandler,
-            EntityHandler entityHandler,
-            DataStorageHandler dataStorageHandler,
-            Request request,
-            ApplicationContext applicationContext ) {
+            final CreateEntry createEntry,
+            final UpdateEntry updateEntry,
+            final DeleteEntry deleteEntry,
+            final RouteHandler routeHandler,
+            final EntityHandler entityHandler,
+            final DataStorageHandler dataStorageHandler,
+            final Request request,
+            final ApplicationContext applicationContext ) {
         this.createEntry        = createEntry;
         this.updateEntry        = updateEntry;
         this.deleteEntry        = deleteEntry;
@@ -60,15 +61,15 @@ public class Controller {
     }
 
 
-    public ResponseEntity< Map< String, Object > > getOne( @PathVariable( "id" ) long id )
+    public ResponseEntity< Map< String, Object > > getOne( @PathVariable( "id" ) final long id )
             throws NoRouteMatchException,
                    IllegalAccessException {
-        RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, GetOne.class );
 
-        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        final DefaultRepository< ? > defaultRepository = this.entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
 
         return ResponseEntity.ok(
-                Encoder.encode( defaultRepository.findOrFail( id ), getGroup( route.getRole() ) )
+                Encoder.encode( defaultRepository.findOrFail( id ), this.getGroup( route.getRole() ) )
         );
     }
 
@@ -76,55 +77,55 @@ public class Controller {
     public ResponseEntity< List< Map< String, Object > > > getAll()
             throws NoRouteMatchException,
                    IllegalAccessException {
-        RouteHandler.Route route = routeHandler.getRoute( request, GetAll.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, GetAll.class );
 
-        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+        final DefaultRepository< ? > defaultRepository = this.applicationContext.getBean( route.getRepository() );
 
         return ResponseEntity.ok(
-                Encoder.encode( defaultRepository.findAll(), getGroup( route.getRole() ) )
+                Encoder.encode( defaultRepository.findAll(), this.getGroup( route.getRole() ) )
         );
     }
 
 
-    public ResponseEntity< Map< String, Object > > getOneBy( @PathVariable( "id" ) long id )
+    public ResponseEntity< Map< String, Object > > getOneBy( @PathVariable( "id" ) final long id )
             throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, GetOneBy.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, GetOneBy.class );
 
-        DefaultRepository< ? > relationRepository = entityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
+        final DefaultRepository< ? > relationRepository = this.entityHandler.getEntity( (( GetOneBy ) route.getHttpType()).entity() ).getDefaultRepository();
 
-        Object relation = relationRepository.findOrFail( id );
+        final Object relation = relationRepository.findOrFail( id );
 
-        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+        final DefaultRepository< ? > defaultRepository = this.applicationContext.getBean( route.getRepository() );
 
-        Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetOneBy ) route.getHttpType()).entity() );
+        final Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetOneBy ) route.getHttpType()).entity() );
 
         try {
             return ResponseEntity.ok(
-                    Encoder.encode( method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
+                    Encoder.encode( method.invoke( defaultRepository, relation ), this.getGroup( route.getRole() ) )
             );
-        } catch ( Throwable throwable ) {
+        } catch ( final Throwable throwable ) {
             throw throwable.getCause();
         }
     }
 
 
-    public ResponseEntity< List< Map< String, Object > > > getAllBy( @PathVariable( "id" ) long id )
+    public ResponseEntity< List< Map< String, Object > > > getAllBy( @PathVariable( "id" ) final long id )
             throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, GetAllBy.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, GetAllBy.class );
 
-        DefaultRepository< ? > relationRepository = applicationContext.getBean( entityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
+        final DefaultRepository< ? > relationRepository = this.applicationContext.getBean( this.entityHandler.getEntity( (( GetAllBy ) route.getHttpType()).entity() ).getRepository() );
 
-        Object relation = relationRepository.findOrFail( id );
+        final Object relation = relationRepository.findOrFail( id );
 
-        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+        final DefaultRepository< ? > defaultRepository = this.applicationContext.getBean( route.getRepository() );
 
-        Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetAllBy ) route.getHttpType()).entity() );
+        final Method method = defaultRepository.getClass().getDeclaredMethod( route.getRepositoryMethod(), (( GetAllBy ) route.getHttpType()).entity() );
 
         try {
             return ResponseEntity.ok(
-                    Encoder.encode( ( List< ? extends Object > ) method.invoke( defaultRepository, relation ), getGroup( route.getRole() ) )
+                    Encoder.encode( ( List< ? extends Object > ) method.invoke( defaultRepository, relation ), this.getGroup( route.getRole() ) )
             );
-        } catch ( Throwable throwable ) {
+        } catch ( final Throwable throwable ) {
             throw throwable.getCause();
         }
     }
@@ -133,73 +134,73 @@ public class Controller {
     @Transactional
     public ResponseEntity< Map< String, Object > > post()
             throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, Post.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, Post.class );
 
-        Object subject = route.getSubject().getDeclaredConstructor().newInstance();
+        final Object subject = route.getSubject().getDeclaredConstructor().newInstance();
 
-        createEntry.create( request, subject, route );
+        this.createEntry.create( this.request, subject, route );
 
-        dataStorageHandler.save();
+        this.dataStorageHandler.save();
+
+        return ResponseEntity
+                .status( HttpStatus.CREATED )
+                .body( Encoder.encode( subject, this.getGroup( route.getRole() ) ) );
+    }
+
+
+    @Transactional
+    public ResponseEntity< Map< String, Object > > put( @PathVariable( "id" ) final long id )
+            throws Throwable {
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, Put.class );
+
+        final DefaultRepository< ? > defaultRepository = this.entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        final Object                 subject           = defaultRepository.findOrFail( id );
+
+        this.updateEntry.update( this.request, subject, route );
+
+        this.dataStorageHandler.save();
 
         return ResponseEntity.ok(
-                Encoder.encode( subject, getGroup( route.getRole() ) )
+                Encoder.encode( subject, this.getGroup( route.getRole() ) )
         );
     }
 
 
     @Transactional
-    public ResponseEntity< Map< String, Object > > put( @PathVariable( "id" ) long id )
+    public ResponseEntity< Void > patch( @PathVariable( "id" ) final long id )
             throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, Put.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, Patch.class );
 
-        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
-        Object                 subject           = defaultRepository.findOrFail( id );
+        final DefaultRepository< ? > defaultRepository = this.entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
+        final Object                 subject           = defaultRepository.findOrFail( id );
 
-        updateEntry.update( request, subject, route );
+        this.updateEntry.update( this.request, subject, route );
 
-        dataStorageHandler.save();
-
-        return ResponseEntity.ok(
-                Encoder.encode( subject, getGroup( route.getRole() ) )
-        );
-    }
-
-
-    @Transactional
-    public ResponseEntity< Void > patch( @PathVariable( "id" ) long id )
-            throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, Patch.class );
-
-        DefaultRepository< ? > defaultRepository = entityHandler.getEntity( route.getSubject() ).getDefaultRepository();
-        Object                 subject           = defaultRepository.findOrFail( id );
-
-        updateEntry.update( request, subject, route );
-
-        dataStorageHandler.save();
+        this.dataStorageHandler.save();
 
         return ResponseEntity.noContent().build();
     }
 
 
     @Transactional
-    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id )
+    public ResponseEntity< Void > delete( @PathVariable( "id" ) final long id )
             throws Throwable {
-        RouteHandler.Route route = routeHandler.getRoute( request, GetOne.class );
+        final RouteHandler.Route route = this.routeHandler.getRoute( this.request, GetOne.class );
 
-        DefaultRepository< ? > defaultRepository = applicationContext.getBean( route.getRepository() );
+        final DefaultRepository< ? > defaultRepository = this.applicationContext.getBean( route.getRepository() );
 
-        Object subject = defaultRepository.findOrFail( id );
+        final Object subject = defaultRepository.findOrFail( id );
 
-        deleteEntry.delete( request, subject, route );
+        this.deleteEntry.delete( this.request, subject, route );
 
-        dataStorageHandler.save();
+        this.dataStorageHandler.save();
 
         return ResponseEntity.noContent().build();
     }
 
 
-    private String getGroup( String role ) throws IllegalAccessException {
-        Field field;
+    private String getGroup( final String role ) throws IllegalAccessException {
+        final Field field;
 
         if ( role == null ) {
             return "GUEST";
@@ -207,8 +208,8 @@ public class Controller {
 
         try {
             field = GroupType.class.getDeclaredField( role.replaceFirst( "ROLE_", "" ).toUpperCase() );
-        } catch ( NoSuchFieldException e ) {
-            logger.error( "No json group found for " + role );
+        } catch ( final NoSuchFieldException e ) {
+            this.logger.error( "No json group found for " + role );
             return GroupType.DEFAULT;
         }
 
