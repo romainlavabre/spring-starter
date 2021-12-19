@@ -1,16 +1,15 @@
 package com.replace.replace.api.poc.kernel.entity;
 
 import com.replace.replace.api.poc.annotation.PocEnabled;
-import com.replace.replace.api.poc.kernel.router.Resolver;
+import com.replace.replace.configuration.poc.Subject;
 import com.replace.replace.repository.DefaultRepository;
-import org.reflections.Reflections;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -21,23 +20,23 @@ public class EntityHandler {
     protected Map< Class< ? >, Entity > storage;
 
 
-    public Collection< Entity > toEntity( ApplicationContext applicationContext ) {
-        if ( storage != null ) {
-            return storage.values();
+    public Collection< Entity > toEntity( final ApplicationContext applicationContext ) {
+        if ( this.storage != null ) {
+            return this.storage.values();
         }
 
-        storage = new HashMap<>();
+        this.storage = new HashMap<>();
 
-        for ( Class< ? > managed : getTypesAnnotated() ) {
-            storage.put( managed, new Entity( managed, ( DefaultRepository< ? extends DefaultRepository< ? > > ) applicationContext.getBean( managed.getAnnotation( PocEnabled.class ).repository() ) ) );
+        for ( final Class< ? > managed : this.getTypesAnnotated() ) {
+            this.storage.put( managed, new Entity( managed, ( DefaultRepository< ? extends DefaultRepository< ? > > ) applicationContext.getBean( managed.getAnnotation( PocEnabled.class ).repository() ) ) );
         }
 
-        return toEntity( applicationContext );
+        return this.toEntity( applicationContext );
     }
 
 
-    public Entity getEntity( Class< ? > subject ) {
-        for ( Map.Entry< Class< ? >, Entity > entry : storage.entrySet() ) {
+    public Entity getEntity( final Class< ? > subject ) {
+        for ( final Map.Entry< Class< ? >, Entity > entry : this.storage.entrySet() ) {
             if ( entry.getKey().getName().equals( subject.getName() ) ) {
                 return entry.getValue();
             }
@@ -47,11 +46,8 @@ public class EntityHandler {
     }
 
 
-    protected Set< Class< ? > > getTypesAnnotated() {
-        String      basePackage = Resolver.class.getPackage().getName().replace( ".api.poc.kernel.router", "" );
-        Reflections reflections = new Reflections( basePackage );
-
-        return reflections.getTypesAnnotatedWith( PocEnabled.class );
+    protected List< Class< ? > > getTypesAnnotated() {
+        return Subject.getSubject();
     }
 
 
@@ -62,42 +58,42 @@ public class EntityHandler {
 
         private final PocEnabled pocEnabled;
 
-        private Class< ? > subject;
+        private final Class< ? > subject;
 
         private final DefaultRepository< ? extends DefaultRepository< ? > > defaultRepository;
 
 
-        public Entity( Class< ? > subject, DefaultRepository< ? extends DefaultRepository< ? > > defaultRepository ) {
-            pocEnabled             = subject.getAnnotation( PocEnabled.class );
-            this.suffixPlural      = pocEnabled.suffixPlural();
-            this.repository        = pocEnabled.repository();
+        public Entity( final Class< ? > subject, final DefaultRepository< ? extends DefaultRepository< ? > > defaultRepository ) {
+            this.pocEnabled        = subject.getAnnotation( PocEnabled.class );
+            this.suffixPlural      = this.pocEnabled.suffixPlural();
+            this.repository        = this.pocEnabled.repository();
             this.defaultRepository = defaultRepository;
             this.subject           = subject;
         }
 
 
         public String getSuffixPlural() {
-            return suffixPlural;
+            return this.suffixPlural;
         }
 
 
         public Class< ? extends DefaultRepository< ? > > getRepository() {
-            return repository;
+            return this.repository;
         }
 
 
         public PocEnabled getDynamicEnabled() {
-            return pocEnabled;
+            return this.pocEnabled;
         }
 
 
         public Class< ? > getSubject() {
-            return subject;
+            return this.subject;
         }
 
 
         public DefaultRepository< ? extends DefaultRepository< ? > > getDefaultRepository() {
-            return defaultRepository;
+            return this.defaultRepository;
         }
     }
 }
