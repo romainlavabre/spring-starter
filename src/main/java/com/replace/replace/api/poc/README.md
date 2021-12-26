@@ -500,8 +500,13 @@ All mock provided is cleared between tests.
 - Module git@github.com:romainlavabre/spring-starter-security.git
 - Module git@github.com:romainlavabre/spring-starter-crud.git
 - Module git@github.com:romainlavabre/spring-starter-json.git
+- Module git@github.com:romainlavabre/spring-starter-poc-test.git
 
 ### Versions
+
+##### 1.0.1
+
+- ADD Test dependency
 
 ##### 1.0.0
 

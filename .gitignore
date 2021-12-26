@@ -36,4 +36,5 @@ build/
 /src/main/resources/application-prod.properties
 
 /src/main/java/com/replace/replace/api
+/src/test/java/com/replace/replace/api
 
