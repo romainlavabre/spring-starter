@@ -32,6 +32,7 @@ CLASSES=(
     "$1/UserRepository.java"
     "$1/config/Role.java"
     "$1/config/SecurityConfig.java"
+    "$1/controller/SecurityController.java"
 )
 
 for CLASS in "${CLASSES[@]}"; do
@@ -69,7 +70,23 @@ fi
 sed -i "s|com.$PACKAGES.api.security.config;|com.${PACKAGES}.configuration.security;|" "$DIRECTORY/Role.java"
 sed -i "s|com.$PACKAGES.api.security.config;|com.${PACKAGES}.configuration.security;|" "$DIRECTORY/SecurityConfig.java"
 
+CONTROLLER_DIRECTORY="$2/src/main/java/com/${PACKAGES//.//}/controller"
+
+if [ -f "$CONTROLLER_DIRECTORY/SecurityController.java" ]; then
+    read -p "File $CONTROLLER_DIRECTORY/SecurityController.java, Overwrite ? [Y/n] " -r OVERWRITE
+
+    if [ "$OVERWRITE" == "Y" ] || [ "$OVERWRITE" == "y" ]; then
+        mv "$1/controller/SecurityController.java" "$CONTROLLER_DIRECTORY/SecurityController.java"
+    fi
+
+else
+    mv "$1/controller/SecurityController.java" "$CONTROLLER_DIRECTORY/SecurityController.java"
+fi
+
+sed -i "s|com.$PACKAGES.api.security.controller;|com.${PACKAGES}.controller;|" "$CONTROLLER_DIRECTORY/SecurityController.java"
+
 rm -Rf "$1/config"
+rm -Rf "$1/controller"
 
 info "
 Yo need to add this dependencies in your pom.xml
