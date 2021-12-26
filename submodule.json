@@ -16,105 +16,105 @@
     {
         "name": "Event",
         "repository": "git@github.com:romainlavabre/spring-starter-event.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/event"
     },
     {
         "name": "History",
         "repository": "git@github.com:romainlavabre/spring-starter-history.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/history"
     },
     {
         "name": "Json",
         "repository": "git@github.com:romainlavabre/spring-starter-json.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/json"
     },
     {
         "name": "Mail",
         "repository": "git@github.com:romainlavabre/spring-starter-mail.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/mail"
     },
     {
         "name": "Pagination",
         "repository": "git@github.com:romainlavabre/spring-starter-pagination.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/pagination"
     },
     {
         "name": "Pdf",
         "repository": "git@github.com:romainlavabre/spring-starter-pdf.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/pdf"
     },
     {
         "name": "Poc",
         "repository": "git@github.com:romainlavabre/spring-starter-poc.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.1",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/poc"
     },
     {
         "name": "PocTest",
         "repository": "git@github.com:romainlavabre/spring-starter-poc-test.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/test/java/com/fairfair/test/api/poc"
     },
     {
         "name": "Request",
         "repository": "git@github.com:romainlavabre/spring-starter-request.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/request"
     },
     {
         "name": "Crud",
         "repository": "git@github.com:romainlavabre/spring-starter-crud.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/crud"
     },
     {
         "name": "Rest",
         "repository": "git@github.com:romainlavabre/spring-starter-rest.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/rest"
     },
     {
         "name": "Security",
         "repository": "git@github.com:romainlavabre/spring-starter-security.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/security"
     },
     {
         "name": "Sms",
         "repository": "git@github.com:romainlavabre/spring-starter-sms.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/sms"
     },
     {
         "name": "Template",
         "repository": "git@github.com:romainlavabre/spring-starter-template.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/template"
     },
     {
         "name": "Upload",
         "repository": "git@github.com:romainlavabre/spring-starter-upload.git",
-        "tag": "SNAPSHOT",
+        "tag": "1.0.0",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/fairfair/test/api/upload"
     }
