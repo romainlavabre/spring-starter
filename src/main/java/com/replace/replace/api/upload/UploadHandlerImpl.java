@@ -1,5 +1,6 @@
 package com.replace.replace.api.upload;
 
+import com.replace.replace.api.request.UploadedFile;
 import com.replace.replace.api.upload.exception.UploadException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;

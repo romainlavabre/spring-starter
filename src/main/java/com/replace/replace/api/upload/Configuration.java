@@ -1,9 +1,9 @@
 package com.replace.replace.api.upload;
 
 import com.replace.replace.api.container.Container;
-import com.replace.replace.api.upload.Move.MoveRule;
 import com.replace.replace.api.upload.annotation.*;
 import com.replace.replace.api.upload.duplication.DuplicationRule;
+import com.replace.replace.api.upload.move.MoveRule;
 import com.replace.replace.configuration.upload.UploadConfig;
 import org.springframework.stereotype.Service;
 

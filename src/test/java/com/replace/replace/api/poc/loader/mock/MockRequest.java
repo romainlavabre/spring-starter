@@ -1,6 +1,6 @@
 package com.replace.replace.api.poc.loader.mock;
 
-import com.replace.replace.api.upload.UploadedFile;
+import com.replace.replace.api.request.UploadedFile;
 
 import java.util.Map;
 

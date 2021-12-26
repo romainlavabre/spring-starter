@@ -1,7 +1,5 @@
 package com.replace.replace.api.request;
 
-import com.replace.replace.api.upload.UploadedFile;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
+ * {@see https://github.com/romainlavabre/spring-starter-event.git}
  */
 @Service
 public class EventConfig implements Event {

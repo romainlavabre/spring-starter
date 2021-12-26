@@ -1,6 +1,6 @@
 package com.replace.replace.api.upload.duplication;
 
-import com.replace.replace.api.upload.UploadedFile;
+import com.replace.replace.api.request.UploadedFile;
 import com.replace.replace.api.upload.exception.DuplicationException;
 
 /**
