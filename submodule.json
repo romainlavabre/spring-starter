@@ -2,119 +2,119 @@
     {
         "name": "Container",
         "repository": "git@github.com:romainlavabre/spring-starter-container.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/container"
     },
     {
         "name": "Environment",
         "repository": "git@github.com:romainlavabre/spring-starter-environment.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/environment"
     },
     {
         "name": "Event",
         "repository": "git@github.com:romainlavabre/spring-starter-event.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/event"
     },
     {
         "name": "History",
         "repository": "git@github.com:romainlavabre/spring-starter-history.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/history"
     },
     {
         "name": "Json",
         "repository": "git@github.com:romainlavabre/spring-starter-json.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/json"
     },
     {
         "name": "Mail",
         "repository": "git@github.com:romainlavabre/spring-starter-mail.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/mail"
     },
     {
         "name": "Pagination",
         "repository": "git@github.com:romainlavabre/spring-starter-pagination.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/pagination"
     },
     {
         "name": "Pdf",
         "repository": "git@github.com:romainlavabre/spring-starter-pdf.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/pdf"
     },
     {
         "name": "Poc",
         "repository": "git@github.com:romainlavabre/spring-starter-poc.git",
-        "tag": "1.0.1",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/poc"
     },
     {
         "name": "PocTest",
         "repository": "git@github.com:romainlavabre/spring-starter-poc-test.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/test/java/com/replace/replace/api/poc"
     },
     {
         "name": "Request",
         "repository": "git@github.com:romainlavabre/spring-starter-request.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/request"
     },
     {
         "name": "Crud",
         "repository": "git@github.com:romainlavabre/spring-starter-crud.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/crud"
     },
     {
         "name": "Rest",
         "repository": "git@github.com:romainlavabre/spring-starter-rest.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/rest"
     },
     {
         "name": "Security",
         "repository": "git@github.com:romainlavabre/spring-starter-security.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/security"
     },
     {
         "name": "Sms",
         "repository": "git@github.com:romainlavabre/spring-starter-sms.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/sms"
     },
     {
         "name": "Template",
         "repository": "git@github.com:romainlavabre/spring-starter-template.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/template"
     },
     {
         "name": "Upload",
         "repository": "git@github.com:romainlavabre/spring-starter-upload.git",
-        "tag": "1.0.0",
+        "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/upload"
     }
