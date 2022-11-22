@@ -20,41 +20,41 @@ public class StampManagedEntity {
 
 
     public StampManagedEntity() {
-        this.persistedEntities = new ArrayList<>();
-        this.removedEntities   = new ArrayList<>();
+        persistedEntities = new ArrayList<>();
+        removedEntities   = new ArrayList<>();
     }
 
 
-    public void buffer( final Object entity ) {
-        if ( !this.persistedEntities.contains( entity ) ) {
-            this.persistedEntities.add( entity );
+    public void buffer( Object entity ) {
+        if ( !persistedEntities.contains( entity ) ) {
+            persistedEntities.add( entity );
         }
     }
 
 
-    public void remove( final Object entity ) {
-        this.persistedEntities.remove( entity );
+    public void remove( Object entity ) {
+        persistedEntities.remove( entity );
 
-        this.removedEntities.add( entity );
+        removedEntities.add( entity );
     }
 
 
-    public void collectBuffer( final EntityManager entityManager ) {
+    public void collectBuffer( EntityManager entityManager ) {
 
-        final Iterator< Object > iteratorPersistedEntities = this.persistedEntities.iterator();
+        Iterator< Object > iteratorPersistedEntities = persistedEntities.iterator();
 
         while ( iteratorPersistedEntities.hasNext() ) {
-            final Object entity = iteratorPersistedEntities.next();
+            Object entity = iteratorPersistedEntities.next();
 
             entityManager.persist( entity );
 
             iteratorPersistedEntities.remove();
         }
 
-        final Iterator< Object > iteratorRemovedEntities = this.removedEntities.iterator();
+        Iterator< Object > iteratorRemovedEntities = removedEntities.iterator();
 
         while ( iteratorRemovedEntities.hasNext() ) {
-            final Object entity = iteratorRemovedEntities.next();
+            Object entity = iteratorRemovedEntities.next();
 
             entityManager.remove( entity );
 
