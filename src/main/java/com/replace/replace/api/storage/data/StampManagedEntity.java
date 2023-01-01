@@ -3,7 +3,7 @@ package com.replace.replace.api.storage.data;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

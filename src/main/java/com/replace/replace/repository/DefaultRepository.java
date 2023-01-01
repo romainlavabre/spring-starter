@@ -1,6 +1,6 @@
 package com.replace.replace.repository;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
