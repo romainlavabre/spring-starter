@@ -16,14 +16,14 @@
     {
         "name": "Event",
         "repository": "git@github.com:romainlavabre/spring-starter-event.git",
-        "tag": "2.[0-9]*.[0-9]*",
+        "tag": "3.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/event"
     },
     {
         "name": "History",
         "repository": "git@github.com:romainlavabre/spring-starter-history.git",
-        "tag": "2.[0-9]*.[0-9]*",
+        "tag": "3.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
         "target": "/src/main/java/com/replace/replace/api/history"
     },
