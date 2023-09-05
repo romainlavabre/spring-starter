@@ -17,8 +17,6 @@ public class ReplaceApplication {
 
     @Bean
     public WebMvcConfigurer corsConfigurer( final Environment environment ) {
-
-
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings( final CorsRegistry registry ) {
