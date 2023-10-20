@@ -20,7 +20,6 @@ public class ReplaceApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings( final CorsRegistry registry ) {
-
                 final String pattern = "/**";
                 final String origins = environment.getEnv( "request.allowed-origin" );
 
