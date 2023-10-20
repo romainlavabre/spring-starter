@@ -21,7 +21,7 @@ class FairfairCallCenterApplicationTests {
         DB.getConfiguration().addArg( "--user=root" );
         DB.setDefaultPort( 3305 );
         DB.start();
-        DB.getDB().createDB( "service-emergency" );
+        DB.getDB().createDB( "service-call-center" );
     }
 
 

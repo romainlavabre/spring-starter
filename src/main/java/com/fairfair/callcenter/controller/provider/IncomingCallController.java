@@ -1,4 +1,4 @@
-package com.fairfair.callcenter.controller.callcenter;
+package com.fairfair.callcenter.controller.provider;
 
 import com.fairfair.callcenter.api.request.Request;
 import com.fairfair.callcenter.api.storage.data.DataStorageHandler;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@RestController( "CallCenterIncomingCallController" )
-@RequestMapping( path = "/call_center/incoming_calls" )
+@RestController( "ProviderIncomingCallController" )
+@RequestMapping( path = "/provider/incoming_calls" )
 public class IncomingCallController {
 
     protected final DataStorageHandler dataStorageHandler;

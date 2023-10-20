@@ -47,7 +47,7 @@ public class Security {
                 .dispatcherTypeMatchers( DispatcherType.ERROR ).permitAll()
                 .requestMatchers( HttpMethod.OPTIONS ).permitAll()
                 .requestMatchers( PUBLIC_ENDPOINT ).permitAll()
-                .requestMatchers( "/admin/**" ).hasRole( new SecurityRole( Role.ROLE_ADMIN ).toString() )
+                .requestMatchers( "/provider/**" ).hasRole( new SecurityRole( Role.ROLE_FAIRFAIR_CALL_CENTER_PROVIDER ).toString() )
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer( OAuth2ResourceServerConfigurer::jwt )
