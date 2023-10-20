@@ -1,121 +1,121 @@
 [
     {
-        "name": "Container",
-        "repository": "git@github.com:romainlavabre/spring-starter-container.git",
+        "name": "DataSource",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-datasource.git",
         "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/container"
+        "target": "/src/main/java/com/fairfair/callcenter/api/datasource"
     },
     {
-        "name": "Environment",
-        "repository": "git@github.com:romainlavabre/spring-starter-environment.git",
-        "tag": "1.[0-9]*.[0-9]*",
+        "name": "Security",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-security.git",
+        "tag": "4.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/environment"
-    },
-    {
-        "name": "Event",
-        "repository": "git@github.com:romainlavabre/spring-starter-event.git",
-        "tag": "3.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/event"
+        "target": "/src/main/java/com/fairfair/callcenter/api/security"
     },
     {
         "name": "History",
         "repository": "git@github.com:romainlavabre/spring-starter-history.git",
         "tag": "3.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/history"
+        "target": "/src/main/java/com/fairfair/callcenter/api/history"
+    },
+    {
+        "name": "Container",
+        "repository": "git@github.com:romainlavabre/spring-starter-container.git",
+        "tag": "1.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/api/container"
+    },
+    {
+        "name": "Environment",
+        "repository": "git@github.com:romainlavabre/spring-starter-environment.git",
+        "tag": "1.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/api/environment"
+    },
+    {
+        "name": "Event",
+        "repository": "git@github.com:romainlavabre/spring-starter-event.git",
+        "tag": "3.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/api/event"
     },
     {
         "name": "Json",
         "repository": "git@github.com:romainlavabre/spring-starter-json.git",
         "tag": "3.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/json"
-    },
-    {
-        "name": "Mail",
-        "repository": "git@github.com:romainlavabre/spring-starter-mail.git",
-        "tag": "3.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/mail"
-    },
-    {
-        "name": "Pagination",
-        "repository": "git@github.com:romainlavabre/spring-starter-pagination.git",
-        "tag": "3.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/pagination"
-    },
-    {
-        "name": "Pdf",
-        "repository": "git@github.com:romainlavabre/spring-starter-pdf.git",
-        "tag": "1.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/pdf"
-    },
-    {
-        "name": "Poc",
-        "repository": "git@github.com:romainlavabre/spring-starter-poc.git",
-        "tag": "1.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/poc"
-    },
-    {
-        "name": "PocTest",
-        "repository": "git@github.com:romainlavabre/spring-starter-poc-test.git",
-        "tag": "1.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/test/java/com/replace/replace/api/poc"
+        "target": "/src/main/java/com/fairfair/callcenter/api/json"
     },
     {
         "name": "Request",
         "repository": "git@github.com:romainlavabre/spring-starter-request.git",
         "tag": "2.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/request"
+        "target": "/src/main/java/com/fairfair/callcenter/api/request"
     },
     {
         "name": "Crud",
         "repository": "git@github.com:romainlavabre/spring-starter-crud.git",
         "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/crud"
+        "target": "/src/main/java/com/fairfair/callcenter/api/crud"
     },
     {
         "name": "Rest",
         "repository": "git@github.com:romainlavabre/spring-starter-rest.git",
         "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/rest"
+        "target": "/src/main/java/com/fairfair/callcenter/api/rest"
     },
     {
-        "name": "Security",
-        "repository": "git@github.com:romainlavabre/spring-starter-security.git",
-        "tag": "3.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/security"
-    },
-    {
-        "name": "Sms",
-        "repository": "git@github.com:romainlavabre/spring-starter-sms.git",
+        "name": "DataRepositorySync",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-data-repository-sync.git",
         "tag": "1.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/sms"
+        "target": "/src/main/java/com/fairfair/callcenter/api/drsync"
     },
     {
-        "name": "Template",
-        "repository": "git@github.com:romainlavabre/spring-starter-template.git",
-        "tag": "1.[0-9]*.[0-9]*",
+        "name": "SystemAction",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-action.git",
+        "tag": "4.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/template"
+        "target": "/src/main/java/com/fairfair/callcenter/system/action"
     },
     {
-        "name": "Upload",
-        "repository": "git@github.com:romainlavabre/spring-starter-upload.git",
+        "name": "SystemAuthentication",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-repository-authentication.git",
         "tag": "2.[0-9]*.[0-9]*",
         "scriptExecution": "auto",
-        "target": "/src/main/java/com/replace/replace/api/upload"
+        "target": "/src/main/java/com/fairfair/callcenter/system/repository/authentication"
+    },
+    {
+        "name": "SystemAssignment",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-repository-assignment.git",
+        "tag": "1.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/system/repository/assignment"
+    },
+    {
+        "name": "SystemUser",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-repository-user.git",
+        "tag": "3.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/system/repository/user"
+    },
+    {
+        "name": "SystemEmergency",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-repository-emergency.git",
+        "tag": "3.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/system/repository/emergency"
+    },
+    {
+        "name": "SystemEvent",
+        "repository": "git@github.com:fairfair-cloud/submodule-java-system-event.git",
+        "tag": "2.[0-9]*.[0-9]*",
+        "scriptExecution": "auto",
+        "target": "/src/main/java/com/fairfair/callcenter/system/event"
     }
 ]
